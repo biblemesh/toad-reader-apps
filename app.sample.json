@@ -2,12 +2,12 @@
     "expo": {
         "extra": {
             "IDPS": ["read.test"],
-            "LANGUAGE_CODE": "?"
+            "LANGUAGE_CODE": "en"
         },
-        "revisionId": "?",
+        "revisionId": "1",
         "splash": {
-            "backgroundColor": "?",
-            "resizeMode": "?"
+            "backgroundColor": "#ffffff",
+            "resizeMode": "contain"
         }
     }
 }
