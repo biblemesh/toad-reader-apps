@@ -1,0 +1,13 @@
+{
+    "expo": {
+        "extra": {
+            "IDPS": ["read.test"],
+            "LANGUAGE_CODE": "?"
+        },
+        "revisionId": "?",
+        "splash": {
+            "backgroundColor": "?",
+            "resizeMode": "?"
+        }
+    }
+}
