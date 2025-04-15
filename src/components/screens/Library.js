@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { updateReader } from "../../utils/updateReader"
 import useRouterState from "../../hooks/useRouterState"
 import { getReqOptionsWithAdditions, getDataOrigin, getIdsFromAccountId, safeFetch,
-         isStaging, isBeta, dashifyDomain, getQueryString, getIDPOrigin, openURL } from "../../utils/toolbox"
+         isStaging, isBeta, dashifyDomain, getQueryString, openURL, getDomainFromIdp } from "../../utils/toolbox"
 import { removeSnapshotsIfANewUpdateRequiresIt } from "../../utils/removeEpub"
 import useInstanceValue from "../../hooks/useInstanceValue"
 import useNetwork from "../../hooks/useNetwork"
@@ -1099,9 +1099,17 @@ const Library = ({
             "beta",
             "production",
           ].map(env => {
-            const { domain } = Object.values(idps)[0]
-            const url = getIDPOrigin({ domain, env })
-            const dataUrl = getDataOrigin({ domain, env })
+
+            // Extract the first IDP from the object
+            const idpObject = Object.values(idps)[0];
+            
+            // Get the domain using helper function
+            const domain = getDomainFromIdp(idpObject);
+
+            // Only generate URLs if we have a domain
+            const url = domain ? `${env === 'production' ? 'https' : 'http'}://${domain}` : '';
+            const dataUrl = domain ? `${env === 'production' ? 'https' : 'http'}://${domain}/api` : '';
+
             return (
               <View>
                 <View style={styles.p}>

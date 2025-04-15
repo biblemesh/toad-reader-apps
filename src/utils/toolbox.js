@@ -364,41 +364,87 @@ export const isBeta = () => (
 )
 
 export const getDataOrigin = ({ domain, protocol=`https`, env }={}) => {
-
-  if(env ? env === 'dev' : __DEV__) {
-    // dev environment
-    return `${protocol.replace(/s$/, '')}://${DEV_DATA_ORIGIN_OVERRIDE || `localhost`}:8080`
+  // If given a complete domain URL (containing toadreader.com), use it directly
+  if (domain && domain.includes('toadreader.com')) {
+    return `${protocol}://${domain}`;
   }
 
-  if(env ? env === 'staging' : isStaging()) {
-    // staging environment
-    return `${protocol}://${encodeDomain(domain)}.data.staging.toadreader.com`
+  // If domain is not provided, use DEV_DATA_ORIGIN_OVERRIDE
+  if (!domain && DEV_DATA_ORIGIN_OVERRIDE) {
+    return `${protocol}://${DEV_DATA_ORIGIN_OVERRIDE}`;
   }
 
-  // production or beta environment
-  return `${protocol}://${encodeDomain(domain)}.data.toadreader.com`
+  // Get environment from parameter or determine from context
+  const environment = env || (isStaging() ? 'staging' : isBeta() ? 'beta' : __DEV__ ? 'dev' : 'production');
 
+  // Format the URL based on environment
+  switch (environment) {
+    case 'dev':
+      return `${protocol.replace(/s$/, '')}://${DEV_DATA_ORIGIN_OVERRIDE || 'localhost'}:8080`;
+
+    case 'staging':
+      return `${protocol}://${encodeDomain(domain)}.data.staging.toadreader.com`;
+
+    case 'beta':
+    case 'production':
+    default:
+      return `${protocol}://${encodeDomain(domain)}.data.toadreader.com`;
+  }
 }
 
 export const getIDPOrigin = ({ domain, protocol=`https`, noBeta, env }) => {
-
-  if(env ? env === 'dev' : __DEV__) {
-    // dev environment
-    return `http://${DEV_DATA_ORIGIN_OVERRIDE || `localhost`}:19006`
+  // If given a complete domain URL, use it directly
+  if (domain) {
+    if (domain.includes('.staging.toadreader.com') || 
+        domain.includes('.beta.toadreader.com') ||
+        (domain.includes('toadreader.com') && !domain.includes('.data.'))) {
+      return `${protocol}://${domain}`;
+    }
+    
+    // Convert data domains to frontend domains
+    if (domain.includes('.data.staging.toadreader.com')) {
+      const baseDomain = domain.replace('.data.staging.toadreader.com', '');
+      return `${protocol}://${baseDomain}.staging.toadreader.com`;
+    }
+    
+    if (domain.includes('.data.toadreader.com')) {
+      const baseDomain = domain.replace('.data.toadreader.com', '');
+      // Determine if beta should be used
+      if (env === 'beta' || (isBeta() && !noBeta)) {
+        return `${protocol}://${baseDomain}.beta.toadreader.com`;
+      }
+      return `${protocol}://${domain.replace('.data.toadreader.com', '')}`;
+    }
+  }
+  
+  // If domain is not provided, use DEV_DATA_ORIGIN_OVERRIDE
+  if (!domain && DEV_DATA_ORIGIN_OVERRIDE) {
+    // Convert data domains to frontend domains
+    if (DEV_DATA_ORIGIN_OVERRIDE.includes('.data.staging.toadreader.com')) {
+      const baseDomain = DEV_DATA_ORIGIN_OVERRIDE.replace('.data.staging.toadreader.com', '');
+      return `${protocol}://${baseDomain}.staging.toadreader.com`;
+    }
+    return `${protocol}://${DEV_DATA_ORIGIN_OVERRIDE}`;
   }
 
-  if(env ? env === 'staging' : isStaging()) {
-    // staging environment
-    return `${protocol}://${dashifyDomain(domain)}.staging.toadreader.com`
+  // Get environment from parameter or determine from context
+  const environment = env || (isStaging() ? 'staging' : (isBeta() && !noBeta) ? 'beta' : __DEV__ ? 'dev' : 'production');
+  
+  // Format the URL based on environment
+  switch (environment) {
+    case 'dev':
+      return `http://${DEV_DATA_ORIGIN_OVERRIDE || 'localhost'}:19006`;
+      
+    case 'staging':
+      return `${protocol}://${dashifyDomain(domain)}.staging.toadreader.com`;
+      
+    case 'beta':
+      return `${protocol}://${dashifyDomain(domain)}.beta.toadreader.com`;
+      
+    case 'production':
+    default:
+      return `${protocol}://${domain}`;
   }
-
-  if(env ? env === 'beta' : (isBeta() && !noBeta)) {
-    // beta environment
-    return `${protocol}://${dashifyDomain(domain)}.beta.toadreader.com`
-  }
-
-  // production (or maybe beta) environment
-  return `${protocol}://${domain}`
 }
 
 export const getMBSizeStr = numBytes => {
@@ -450,7 +496,10 @@ export const safeFetch = async (uri, options={}) => {
     ))
   }
 
-  const response = await fetch(uri, options)
+  // Import fetchWithProxy dynamically to avoid circular dependencies
+  // fetchWithProxy handles the platform differences internally
+  const fetchWithProxy = (await import('./fetchWithProxy')).default;
+  const response = await fetchWithProxy(uri, options);
 
   if(numConsecutiveRequests === numConsecutiveRequestsByUri[uri]) {
     numConsecutiveRequestsByUri[uri] = 0
@@ -808,3 +857,15 @@ export const getVersionString = version => ({
   INSTRUCTOR: i18n("Interactive book (instructor edition)", "", "enhanced"),
   PUBLISHER: i18n("Interactive book (publisher edition)", "", "enhanced"),
 })[version]
+
+export const getDomainFromIdp = idpObject => {
+  if (!idpObject) return null;
+  
+  if (typeof idpObject === 'string') {
+    return idpObject;
+  } else if (idpObject && typeof idpObject === 'object') {
+    return idpObject.domain;
+  }
+  
+  return null;
+}
