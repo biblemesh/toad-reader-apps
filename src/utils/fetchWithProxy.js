@@ -1,8 +1,5 @@
-import { Platform } from 'react-native';
-
 /**
  * Simple fetch implementation with better logging
- * This implementation doesn't rely on Constants which can be undefined in some environments
  */
 const fetchWithProxy = async (url, options = {}) => {
   if (__DEV__) {
