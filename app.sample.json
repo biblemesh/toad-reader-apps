@@ -1,8 +1,19 @@
 {
     "expo": {
         "extra": {
-            "IDPS": ["read.test"],
-            "LANGUAGE_CODE": "en"
+            "IDPS": {
+                "1": {
+                    "name": "Toad Reader",
+                    "domain": "read.test",
+                    "authMethod": "SHIBBOLETH",
+                    "env": "dev"
+                }
+            },
+            "LANGUAGE_CODE": "en",
+            "SENTRY_DSN": "",
+            "DEV_DATA_ORIGIN_OVERRIDE": "read.test",
+            "REQUEST_OPTIONS": {},
+            "AMPLITUDE_API_KEY": ""
         },
         "revisionId": "1",
         "splash": {
