@@ -365,41 +365,85 @@ export const isBeta = () => (
 
 export const getDataOrigin = ({ domain, protocol=`https`, env }={}) => {
 
-  if(env ? env === 'dev' : __DEV__) {
-    // dev environment
-    return `${protocol.replace(/s$/, '')}://${DEV_DATA_ORIGIN_OVERRIDE || `localhost`}:8080`
+  // If given a complete domain URL (containing toadreader.com), use it directly
+  if (domain && domain.includes('toadreader.com')) {
+    return `${protocol}://${domain}`;
   }
 
-  if(env ? env === 'staging' : isStaging()) {
-    // staging environment
-    return `${protocol}://${encodeDomain(domain)}.data.staging.toadreader.com`
+  // If domain is not provided, use DEV_DATA_ORIGIN_OVERRIDE
+  if (!domain && DEV_DATA_ORIGIN_OVERRIDE) {
+    return `${protocol}://${DEV_DATA_ORIGIN_OVERRIDE}`;
   }
 
-  // production or beta environment
-  return `${protocol}://${encodeDomain(domain)}.data.toadreader.com`
+  // Get environment from parameter or determine from context
+  const environment = env || (isStaging() ? 'staging' : isBeta() ? 'beta' : __DEV__ ? 'dev' : 'production');
 
-}
+  // Format the URL based on environment
+  switch (environment) {
+  case 'dev':
+    return `${protocol.replace(/s$/, '')}://${DEV_DATA_ORIGIN_OVERRIDE || 'localhost'}:8080`;
+
+  case 'staging':
+    return `${protocol}://${encodeDomain(domain)}.data.staging.toadreader.com`;
+
+  case 'beta':
+     case 'production':
+     default:
+       return `${protocol}://${encodeDomain(domain)}.data.toadreader.com`;
+   }
+ }
 
 export const getIDPOrigin = ({ domain, protocol=`https`, noBeta, env }) => {
-
-  if(env ? env === 'dev' : __DEV__) {
-    // dev environment
-    return `http://${DEV_DATA_ORIGIN_OVERRIDE || `localhost`}:19006`
+  
+  // If given a complete domain URL, use it directly
+  if (domain) {
+    if (domain.includes('.staging.toadreader.com') || 
+        domain.includes('.beta.toadreader.com') ||
+        (domain.includes('toadreader.com') && !domain.includes('.data.'))) {
+      return `${protocol}://${domain}`;
+    }
+    
+         // Convert data domains to frontend domains - TEMPORARY FIX: use data domain for auth too
+     if (domain.includes('.data.staging.toadreader.com')) {
+       return `${protocol}://${domain}`;  // Use data domain directly instead of converting
+     }
+    
+    if (domain.includes('.data.toadreader.com')) {
+      const baseDomain = domain.replace('.data.toadreader.com', '');
+      // Determine if beta should be used
+      if (env === 'beta' || (isBeta() && !noBeta)) {
+        return `${protocol}://${baseDomain}.beta.toadreader.com`;
+      }
+      return `${protocol}://${domain.replace('.data.toadreader.com', '')}`;
+    }
+  }
+  
+  // If domain is not provided, use DEV_DATA_ORIGIN_OVERRIDE
+  if (!domain && DEV_DATA_ORIGIN_OVERRIDE) {
+    // QUICK FIX: Use DEV_DATA_ORIGIN_OVERRIDE directly for auth (no conversion)
+    return `${protocol}://${DEV_DATA_ORIGIN_OVERRIDE}`;
   }
 
-  if(env ? env === 'staging' : isStaging()) {
-    // staging environment
-    return `${protocol}://${dashifyDomain(domain)}.staging.toadreader.com`
-  }
-
-  if(env ? env === 'beta' : (isBeta() && !noBeta)) {
-    // beta environment
-    return `${protocol}://${dashifyDomain(domain)}.beta.toadreader.com`
-  }
-
-  // production (or maybe beta) environment
-  return `${protocol}://${domain}`
-}
+  // Get environment from parameter or determine from context
+  const environment = env || (isStaging() ? 'staging' : (isBeta() && !noBeta) ? 'beta' : __DEV__ ? 'dev' : 'production');
+  
+  // Format the URL based on environment
+  switch (environment) {
+    case 'dev':
+      return `http://${DEV_DATA_ORIGIN_OVERRIDE || 'localhost'}:19006`;
+      
+         case 'staging':
+       // QUICK FIX: Use data domain format for staging auth instead of converting
+       return `${protocol}://${encodeDomain(domain)}.data.staging.toadreader.com`;
+       
+     case 'beta':
+       return `${protocol}://${dashifyDomain(domain)}.beta.toadreader.com`;
+       
+     case 'production':
+     default:
+       return `${protocol}://${domain}`;
+   }
+ }
 
 export const getMBSizeStr = numBytes => {
   const sizeInMB = Math.round(numBytes/10000, 10) / 100
