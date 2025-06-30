@@ -20,12 +20,6 @@ const useUpdates = () => {
     isUpdatePending: isUpdatePending,
     isChecking,
     isDownloading,
-    // Legacy compatibility - map the new API to the old expected interface
-    setUpdates: () => {
-      // This was used to manually set update info, but with the new hook
-      // the state is managed internally by expo-updates
-      console.warn('setUpdates is deprecated and no longer needed with Updates.useUpdates()')
-    },
     // Additional useful properties from the new hook
     currentlyRunning,
     availableUpdate,
