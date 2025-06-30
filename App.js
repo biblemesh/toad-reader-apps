@@ -48,7 +48,7 @@ const {
 if (SENTRY_DSN) {
   Sentry.init({
     dsn: SENTRY_DSN,
-    enableInExpoDevelopment: true,
+    enabled: !__DEV__,
     release: revisionId,
     debug: true,
   })
