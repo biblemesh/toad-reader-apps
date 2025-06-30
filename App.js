@@ -42,14 +42,13 @@ const {
   LANGUAGE_CODE='en',
   IDPS,
   SENTRY_DSN,
-  revisionId,
 } = Constants.expoConfig?.extra || {}
 
 if (SENTRY_DSN) {
   Sentry.init({
     dsn: SENTRY_DSN,
     enabled: !__DEV__,
-    release: revisionId,
+    release: `${Constants.expoConfig.version}-${Updates.updateId || 'unknown'}`,
     debug: true,
   })
 }
