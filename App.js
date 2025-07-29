@@ -42,14 +42,17 @@ const {
   LANGUAGE_CODE='en',
   IDPS,
   SENTRY_DSN,
-} = Constants.expoConfig.extra
+  revisionId,
+} = Constants.expoConfig?.extra || {}
 
-Sentry.init({
-  dsn: SENTRY_DSN,
-  enableInExpoDevelopment: true,
-  release: Constants.expoConfig.revisionId,
-  debug: true,
-})
+if (SENTRY_DSN) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    enableInExpoDevelopment: true,
+    release: revisionId,
+    debug: true,
+  })
+}
 
 if(Platform.OS === 'web') {
   window.productionLog = (...params) => {

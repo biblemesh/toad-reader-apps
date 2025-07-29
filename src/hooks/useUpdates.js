@@ -1,45 +1,39 @@
-import { useCallback } from 'react'
 import * as Updates from 'expo-updates'
 
-import useRefState from './useRefState'
-
 const useUpdates = () => {
-
-  // TODO: Once I upgrade to expo 50, get rid of this hook and use expo's Updates.useUpdates hook
-
-  const [ info, setInfo, getInfo ] = useRefState({
-    isUpdateAvailable: false,
-    isUpdatePending: false,
-    isChecking: true,
-    isDownloading: false,
-  })
-
-  const setUpdates = useCallback(
-    newInfo => {
-      setInfo({
-        ...getInfo(),
-        ...newInfo,
-      })
-    },
-    [],
-  )
-
-  const eventListener = event => {
-    setInfo({
-      isUpdateAvailable: event.type === Updates.UpdateEventType.UPDATE_AVAILABLE,
-      isUpdatePending: event.type === Updates.UpdateEventType.UPDATE_AVAILABLE,
-      isChecking: false,
-      isDownloading: false,
-    })
-  }
-
-  Updates.useUpdateEvents(eventListener)
+  // Use the official Updates.useUpdates() hook from Expo SDK 52
+  const {
+    currentlyRunning,
+    isUpdateAvailable,
+    isUpdatePending,
+    isChecking,
+    isDownloading,
+    availableUpdate,
+    downloadedUpdate,
+    checkError,
+    downloadError,
+    lastCheckForUpdateTimeSinceRestart,
+  } = Updates.useUpdates()
 
   return {
-    ...info,
-    setUpdates,
+    isUpdateAvailable,
+    isUpdatePending: isUpdatePending,
+    isChecking,
+    isDownloading,
+    // Legacy compatibility - map the new API to the old expected interface
+    setUpdates: () => {
+      // This was used to manually set update info, but with the new hook
+      // the state is managed internally by expo-updates
+      console.warn('setUpdates is deprecated and no longer needed with Updates.useUpdates()')
+    },
+    // Additional useful properties from the new hook
+    currentlyRunning,
+    availableUpdate,
+    downloadedUpdate,
+    checkError,
+    downloadError,
+    lastCheckForUpdateTimeSinceRestart,
   }
-
 }
 
 export default useUpdates
