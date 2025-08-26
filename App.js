@@ -48,7 +48,7 @@ if (SENTRY_DSN) {
   Sentry.init({
     dsn: SENTRY_DSN,
     enabled: !__DEV__,
-    release: `${Constants.expoConfig.version}-${Updates.updateId || 'unknown'}`,
+    release: `${Constants.expoConfig?.version || 'unknown'}-${Updates.updateId || 'unknown'}`,
     debug: true,
   })
 }

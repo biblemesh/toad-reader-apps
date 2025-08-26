@@ -17,7 +17,7 @@ const useUpdates = () => {
 
   return {
     isUpdateAvailable,
-    isUpdatePending: isUpdatePending,
+    isUpdatePending,
     isChecking,
     isDownloading,
     // Additional useful properties from the new hook (commented out until needed)
