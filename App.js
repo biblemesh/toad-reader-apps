@@ -42,14 +42,16 @@ const {
   LANGUAGE_CODE='en',
   IDPS,
   SENTRY_DSN,
-} = Constants.expoConfig.extra
+} = Constants.expoConfig?.extra || {}
 
-Sentry.init({
-  dsn: SENTRY_DSN,
-  enableInExpoDevelopment: true,
-  release: Constants.expoConfig.revisionId,
-  debug: true,
-})
+if (SENTRY_DSN) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    enabled: !__DEV__,
+    release: `${Constants.expoConfig?.version || 'unknown'}-${Updates.updateId || 'unknown'}`,
+    debug: true,
+  })
+}
 
 if(Platform.OS === 'web') {
   window.productionLog = (...params) => {
@@ -103,7 +105,7 @@ const App = () => {
 
   usePushNotificationsSetup()
 
-  const { isUpdateAvailable, isUpdatePending, isChecking, isDownloading, setUpdates } = useUpdates() // TODO: replace with Updates.useUpdates() and get rid of setUpdates func
+  const { isUpdateAvailable, isUpdatePending, isChecking, isDownloading } = useUpdates()
 
   const getIsChecking = useInstanceValue(isChecking)
   const [ setIsCheckingInterval ] = useSetInterval()
@@ -114,14 +116,9 @@ const App = () => {
       if(isUpdateAvailable) {
         const getUpdate = async () => {
           try {
-            setUpdates({ isDownloading: true })
             await Updates.fetchUpdateAsync()
-            setUpdates({
-              isUpdatePending: true,
-              isDownloading: false,
-            })
+            // State is now managed automatically by Updates.useUpdates()
           } catch(err) {
-            setUpdates({ isDownloading: false })
             setDownloadUpdateRedoTimeout(getUpdate, 100*60)  // try again after a minute
           }
         }
@@ -143,10 +140,10 @@ const App = () => {
           && !__DEV__
         ) {
           // native app just came to foreground
+          // Updates.checkForUpdateAsync() will automatically update the state via Updates.useUpdates()
           ;(async () => {
             try {
-              const { isAvailable } = await Updates.checkForUpdateAsync()
-              if(isAvailable) setUpdates({ isUpdateAvailable: true })
+              await Updates.checkForUpdateAsync()
             } catch(err) {}
           })()
         }

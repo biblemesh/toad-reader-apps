@@ -3,7 +3,7 @@ import { Platform, StyleSheet } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
 import { i18n } from "inline-i18n"
-import { BarCodeScanner } from "expo-barcode-scanner"
+import { CameraView, useCameraPermissions } from "expo-camera"
 import { Modal } from "@ui-kitten/components"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
@@ -51,8 +51,8 @@ const ConnectToAClassroom = React.memo(({
 
   const [ code, setCode ] = useState("")
   const [ connecting, setConnecting ] = useState(false)
-  const [ hasPermission, setHasPermission ] = useState()
   const [ mode, setMode ] = useState("text")
+  const [permission, requestPermission] = useCameraPermissions()
 
   const windowDimensions = useDimensions().window
   const safeAreaInsets = useSafeAreaInsets()
@@ -65,20 +65,15 @@ const ConnectToAClassroom = React.memo(({
   useEffect(
     () => {
       setTimeout(async () => {
-        if(mode === "qr" && !hasPermission) {
-
-          const { status } = await BarCodeScanner.requestPermissionsAsync()
-
-          if(status === 'granted') {
-            setHasPermission(true)
-          } else {
+        if(mode === "qr" && !permission?.granted) {
+          const permissionResult = await requestPermission()
+          if(!permissionResult.granted) {
             setModeText()
           }
-
         }
       })
     },
-    [ mode, hasPermission ],
+    [ mode, permission ],
   )
 
   const book = books[currentBookId] || {}
@@ -166,7 +161,7 @@ const ConnectToAClassroom = React.memo(({
     <>
       {!!open && <BackFunction func={requestHide} />}
       <Dialog
-        open={!!open && (mode === 'text' || !hasPermission)}
+        open={!!open && (mode === 'text' || !permission?.granted)}
         type="confirm"
         title={i18n("Connect to a classroom", "", "enhanced")}
         message={
@@ -196,7 +191,7 @@ const ConnectToAClassroom = React.memo(({
         submitting={connecting}
       />
       <Modal
-        visible={!!open && mode === 'qr' && hasPermission}
+        visible={!!open && mode === 'qr' && permission?.granted}
         allowBackdrop={true}
         style={[
           styles.modal,
@@ -205,9 +200,12 @@ const ConnectToAClassroom = React.memo(({
           },
         ]}
       >
-        <BarCodeScanner
-          onBarCodeScanned={handleBarCodeScanned}
+        <CameraView
+          onBarcodeScanned={handleBarCodeScanned}
           style={styles.codeScanner}
+          barcodeScannerSettings={{
+            barcodeTypes: ["qr", "pdf417"],
+          }}
         />
         <Button
           style={[
