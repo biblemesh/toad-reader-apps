@@ -6,7 +6,7 @@ import Constants from 'expo-constants'
 import { i18n, getLocale } from "inline-i18n"
 import * as Updates from 'expo-updates'
 
-import * as Sentry from "./sentry"
+import Sentry from "./sentry"
 
 const {
   REQUEST_OPTIONS,
@@ -748,6 +748,19 @@ export const customizeTheme = ({ theme, fontFamily }) => {
 }
 
 export const sentry = (...params) => {
+  if(__DEV__) {
+    // In development mode, log to console instead of sending to Sentry
+    if(params.length === 1 && params[0].error) {
+      console.log('SENTRY ERROR (DEV):', params[0].error)
+    } else if(params.length === 1 && params[0].message) {
+      console.log('SENTRY MESSAGE (DEV):', String(params[0].message))
+    } else {
+      console.log('SENTRY ERROR (DEV):', params.map(param => JSON.stringify(param)).join("\n"))
+    }
+    return
+  }
+
+  // Production mode - send to Sentry
   if(params.length === 1 && params[0].error) {
     Sentry.captureException(params[0].error)
   } else if(params.length === 1 && params[0].message) {

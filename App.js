@@ -31,7 +31,7 @@ import usePushNotificationsSetup from "./src/hooks/usePushNotificationsSetup"
 import useInstanceValue from "./src/hooks/useInstanceValue"
 import useSetInterval from "./src/hooks/useSetInterval"
 import useUpdates from "./src/hooks/useUpdates"
-import * as Sentry from "./src/utils/sentry"
+import Sentry from "./src/utils/sentry"
 import { logEvent } from "./src/utils/analytics"
 
 import Splash from "./src/components/major/Splash"
