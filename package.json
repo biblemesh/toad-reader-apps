@@ -47,7 +47,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky",
+    "prepare": "npx husky",
     "update-indirect-dependencies": "npx update-browserslist-db@latest"
   },
   "lint-staged": {
