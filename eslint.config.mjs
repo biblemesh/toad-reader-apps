@@ -16,6 +16,7 @@ export default tseslint.config([
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
+        "__DEV__": true,
         ...globals.browser,
         ...globals.node,
       },
@@ -30,6 +31,12 @@ export default tseslint.config([
       'react-native/no-color-literals': 'warn',
       'react-native/no-raw-text': 'warn',
       'react/react-in-jsx-scope': 'off',
+    },
+  },
+  {
+    files: ['*.config.js', 'scripts/*.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
 ]);
