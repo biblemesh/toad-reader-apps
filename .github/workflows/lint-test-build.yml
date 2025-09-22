@@ -5,7 +5,7 @@ on:
 
 
 env:
-  DEFAULT_NODE_VERSION: 16.x
+  DEFAULT_NODE_VERSION: 18.x
 
 permissions:
   contents: read
@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x, 20.x]
         action: [build, lint] # , test]
     steps:
       - uses: actions/checkout@v4
