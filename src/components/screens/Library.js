@@ -1111,6 +1111,7 @@ const Library = ({
                 </View>
                 <View style={styles.exampleP}>
                   {i18n("Frontend", "", "admin")}
+                  {'\n'}
                   <Text style={styles.a} onPress={() => openURL({ url, historyPush })}>
                     {url}
                   </Text>
