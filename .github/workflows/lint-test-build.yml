@@ -22,28 +22,17 @@ jobs:
         node-version: [18.x, 20.x]
         action: [build, lint] # , test]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Cache node modules
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-${{ matrix.node-version }}-
-
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v5
         with:
+          cache: npm
           node-version: ${{ matrix.node-version }}
 
       - run: npm ci
-        if: steps.cache.outputs.cache-hit != 'true'
 
       - name: ci:${{ matrix.action }}
         shell: bash
