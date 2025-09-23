@@ -1,7 +1,7 @@
 import globals from 'globals';
 import pluginJs from '@eslint/js';
-import pluginReact from "eslint-plugin-react";
-import pluginReactNative from "eslint-plugin-react-native";
+import pluginReact from 'eslint-plugin-react';
+import pluginReactNative from 'eslint-plugin-react-native';
 import prettierConfig from 'eslint-config-prettier';
 import tseslint from 'typescript-eslint';
 
@@ -16,7 +16,7 @@ export default tseslint.config([
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
-        "__DEV__": true,
+        __DEV__: true,
         ...globals.browser,
         ...globals.node,
       },
