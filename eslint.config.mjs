@@ -16,7 +16,7 @@ export default tseslint.config([
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
-        __DEV__: true,
+        __DEV__: 'readonly', // __DEV__ comes from Expo, it will always be set in React code
         ...globals.browser,
         ...globals.node,
       },
