@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 3.7.2"
+    "appVersionSource": "remote",
+    "version": ">= 12.0.0"
   },
   "build": {
     "development": {
@@ -18,10 +19,12 @@
     },
     "staging": {
       "android": {
+        "autoIncrement": "versionCode",
         "distribution": "internal"
       },
       "channel": "staging",
       "ios": {
+        "autoIncrement": "buildNumber",
         "distribution": "store",
         "resourceClass": "m-medium"
       },
@@ -40,8 +43,12 @@
       }
     },
     "production": {
+      "android": {
+        "autoIncrement": "versionCode"
+      },
       "channel": "production",
       "ios": {
+        "autoIncrement": "buildNumber",
         "resourceClass": "m-medium"
       },
       "env": {
