@@ -15,9 +15,12 @@
       }
     },
     "staging": {
-      "distribution": "internal",
+      "android": {
+        "distribution": "internal"
+      },
       "channel": "staging",
       "ios": {
+        "distribution": "store",
         "resourceClass": "m-medium"
       },
       "env": {
