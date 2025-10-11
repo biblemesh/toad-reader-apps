@@ -22,6 +22,12 @@
     "splash": {
       "backgroundColor": "#ffffff",
       "resizeMode": "contain"
+    },
+    "android": {
+      "package": "com.biblemesh.dummy"
+    },
+    "ios": {
+      "bundleIdentifier": "com.biblemesh.dummy"
     }
   }
 }
