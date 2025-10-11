@@ -16,6 +16,8 @@
     "build-apps-production": "(node ./scripts/echoActionToPerform.js --action build-apps-production && npm run remind -s && ((npm run pre-push-swap && npx eas-cli build --platform all --profile production) || npm run post-push-restore)) || true",
     "submit-android-production": "echo '\n\nINSTRUCTIONS: Download the latest Android build from Expo and upload it to the Play Store.\n'",
     "submit-ios-production": "(node ./scripts/echoActionToPerform.js --action submit-ios-production && npm run confirm -s && (npx eas-cli submit --platform ios --profile production --latest)) || true",
+    "ci:build": "npm run change-tenant dummy && npx expo prebuild --clean",
+    "ci:lint": "npm run lint",
     "change-tenant": "./scripts/changeTenant.sh",
     "confirm": "read -p 'Are you sure? (y/N) ' -n 1 -r && echo '\n' && [[ $REPLY =~ ^[Yy]$ ]]",
     "ios": "npx expo start --ios",
@@ -45,14 +47,14 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky install",
+    "prepare": "npx husky",
     "update-indirect-dependencies": "npx update-browserslist-db@latest"
   },
   "lint-staged": {
     "*.+(json|css|md|scss)": [
       "prettier --write"
     ],
-    "*.+(js|jsx|ts|tsx)": [
+    "*.+(js|jsx|ts|tsx|mjs)": [
       "eslint --fix",
       "prettier --write"
     ]
@@ -139,15 +141,15 @@
   "devDependencies": {
     "@eslint/js": "^9.23.0",
     "eslint": "^8.0.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-prettier": "^5.2.6",
-    "eslint-plugin-react": "^7.37.4",
+    "eslint-config-prettier": "^10.0.2",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-native": "^5.0.0",
     "globals": "^16.0.0",
     "husky": "^9.1.7",
     "json-sort-cli": "^4.0.9",
     "lint-staged": "^15.5.0",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.38.0"
   },
   "overrides": {
     "react-native-webview": "13.12.5"

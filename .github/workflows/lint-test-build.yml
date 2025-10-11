@@ -1,0 +1,44 @@
+name: Lint / Test / Build
+
+on:
+  pull_request:
+
+
+env:
+  DEFAULT_NODE_VERSION: 18
+
+permissions:
+  contents: read
+
+jobs:
+
+  build:
+    name: ${{ matrix.action }} (${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18, 20]
+        action: [build, lint] # , test]
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v5
+        with:
+          cache: npm
+          node-version: ${{ matrix.node-version }}
+
+      - run: npm ci
+
+      - name: ci:${{ matrix.action }}
+        shell: bash
+        run: npm run ci:${{ matrix.action }}
+        env:
+          GITHASH: ${{ github.sha }}
+          GITHUB_REPO: ${{ github.repository }}
+          BASE_BRANCH: ${{ github.base_ref || 'bm-develop' }}
+          NODE_VERSION: ${{ matrix.node-version }}
