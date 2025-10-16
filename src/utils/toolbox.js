@@ -292,18 +292,12 @@ export const isBeta = () => (
 )
 
 export const getDataOrigin = ({ domain, protocol=`https`, env }={}) => {
-
   if(env ? env === 'dev' : __DEV__) {
     // dev environment
     return `${protocol.replace(/s$/, '')}://${DEV_DATA_ORIGIN_OVERRIDE || `localhost`}:8080`
   }
 
-  if(env ? env === 'staging' : isStaging()) {
-    // staging environment
-    return `${protocol}://data.stg.${domain}`
-  }
-
-  // production or beta environment
+  // staging, production or beta environment
   return `${protocol}://data.${domain}`
 
 }
