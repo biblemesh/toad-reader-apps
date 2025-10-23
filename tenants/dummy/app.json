@@ -4,7 +4,7 @@
       "IDPS": {
         "21": {
           "name": "Toad Reader",
-          "domain": "stg.read.test",
+          "domain": "read.test",
           "authMethod": "SHIBBOLETH",
           "bucketPrefix": "read.test-booklane",
           "env": "staging"
