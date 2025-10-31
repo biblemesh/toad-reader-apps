@@ -16,7 +16,7 @@
       "REQUEST_OPTIONS": {},
       "AMPLITUDE_API_KEY": "",
       "ALLOW_INSECURE_LOCALHOST": true,
-      "QUOTES_DOMAIN": "q.toadreader.com",
+      "QUOTES_DOMAIN": "q.read.test",
       "VERSION_BUCKET": "bucket-versions-booklane"
     },
     "revisionId": "1",
