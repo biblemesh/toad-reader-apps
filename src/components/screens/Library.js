@@ -39,6 +39,7 @@ import Users from "./Users"
 import ErrorMessage from "./ErrorMessage"
 import SideMenu from "react-native-simple-side-menu"
 import AppMenu from "../major/AppMenu"
+import MenuErrorBoundary from "../basic/MenuErrorBoundary"
 import LibraryHeader from "../major/LibraryHeader"
 import LibraryCovers from "../major/LibraryCovers"
 import LibraryList from "../major/LibraryList"
@@ -901,29 +902,30 @@ const Library = ({
   )
 
   return (
-    <SideMenu
-      open={pathname === '/drawer'}
-      onClose={historyGoBackToLibrary}
-      menu={
-        widget
-          ? null
-          : (
-            <AppMenu
-              onImportBooks={openImportBooks}
-              onReplaceExisting={openConfirmReplaceExisting}
-              onCreateAudiobook={openCreateAudiobookDialog}
-              onShowEnvironmentUrls={openEnvironmentUrlsDialog}
-              onOpenAccessCodeDialog={openAccessCodeDialog}
-              onOpenMetadataDialog={openMetadataDialog}
-              onOpenCopyToolsDialog={openCopyToolsDialog}
-              onOpenSubscriptionsDialog={openSubscriptionsDialog}
-              isUpdatePending={isUpdatePending}
-              isUpdateAvailable={isUpdateAvailable}
-              isDownloading={isDownloading}
-            />
-          )
-      }
-    >
+    <MenuErrorBoundary>
+      <SideMenu
+        open={pathname === '/drawer'}
+        onClose={historyGoBackToLibrary}
+        menu={
+          widget
+            ? null
+            : (
+              <AppMenu
+                onImportBooks={openImportBooks}
+                onReplaceExisting={openConfirmReplaceExisting}
+                onCreateAudiobook={openCreateAudiobookDialog}
+                onShowEnvironmentUrls={openEnvironmentUrlsDialog}
+                onOpenAccessCodeDialog={openAccessCodeDialog}
+                onOpenMetadataDialog={openMetadataDialog}
+                onOpenCopyToolsDialog={openCopyToolsDialog}
+                onOpenSubscriptionsDialog={openSubscriptionsDialog}
+                isUpdatePending={isUpdatePending}
+                isUpdateAvailable={isUpdateAvailable}
+                isDownloading={isDownloading}
+              />
+            )
+        }
+      >
 
       <KeyboardAvoidingView>
         <Switch>
@@ -1165,6 +1167,7 @@ const Library = ({
       />
 
     </SideMenu>
+    </MenuErrorBoundary>
   )
 }
 

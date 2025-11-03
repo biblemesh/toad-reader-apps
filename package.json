@@ -10,6 +10,7 @@
   },
   "scripts": {
     "android": "npx expo start --android",
+    "build-android-development": "(node ./scripts/echoActionToPerform.js --action build-android-development && npm run remind -s && ((npm run pre-push-swap && npx eas-cli build --platform android --profile development) || npm run post-push-restore)) || true",
     "build-android-staging": "(node ./scripts/echoActionToPerform.js --action build-android-staging && npm run remind -s && ((npm run pre-push-swap && npx eas-cli build --platform android --profile staging) || npm run post-push-restore)) || true",
     "build-android-beta": "(node ./scripts/echoActionToPerform.js --action build-android-beta && npm run remind -s && ((npm run pre-push-swap && npx eas-cli build --platform android --profile beta) || npm run post-push-restore)) || true",
     "build-android-production": "(node ./scripts/echoActionToPerform.js --action build-android-production && npm run remind -s && ((npm run pre-push-swap && npx eas-cli build --platform android --profile production) || npm run post-push-restore)) || true",
@@ -89,6 +90,7 @@
     "expo-checkbox": "~4.1.4",
     "expo-clipboard": "~7.1.5",
     "expo-constants": "~17.1.7",
+    "expo-dev-client": "~5.2.4",
     "expo-device": "~7.1.4",
     "expo-document-picker": "~13.1.6",
     "expo-font": "~13.3.2",
@@ -141,6 +143,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",
+    "eas-cli": "^16.26.0",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
