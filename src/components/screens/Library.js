@@ -234,7 +234,7 @@ const Library = ({
 
   const getBooks = useInstanceValue(books)
   const getIdps = useInstanceValue(idps)
-  
+
   const previousPathname = usePrevious(pathname)
   const accountIds = Object.keys(accounts).join(',')
   const previousAccountIds = usePrevious(accountIds)
@@ -717,7 +717,7 @@ const Library = ({
         if(books[bookId]) {
           Alert.alert(
             i18n("Note"),
-            i18n("Download “{{title}}” to view your Reading Schedule for this classroom.", "", "enhanced", books[bookId]),    
+            i18n("Download “{{title}}” to view your Reading Schedule for this classroom.", "", "enhanced", books[bookId]),
           )
         }
 
@@ -784,7 +784,7 @@ const Library = ({
           logOutOnLoad()
 
         }
-        
+
       })()
     },
     [ logOutAccountId, redirectCheckComplete ],
@@ -1113,14 +1113,14 @@ const Library = ({
                 </View>
                 <View style={styles.exampleP}>
                   {i18n("Frontend", "", "admin")}
-                  {`\n`}
+                  {'\n'}
                   <Text style={styles.a} onPress={() => openURL({ url, historyPush })}>
                     {url}
                   </Text>
                 </View>
                 <View style={styles.exampleP}>
                   {i18n("Backend", "", "admin")}
-                  {`\n`}
+                  {'\n'}
                   <Text style={styles.a} onPress={() => openURL({ url: dataUrl, historyPush })}>
                     {dataUrl}
                   </Text>

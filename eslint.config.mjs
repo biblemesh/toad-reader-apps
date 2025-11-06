@@ -1,34 +1,42 @@
-import { defineConfig } from "eslint/config";
-import js from "@eslint/js";
-import globals from "globals";
-import pluginReact from "eslint-plugin-react";
-import pluginReactNative from "eslint-plugin-react-native";
-import prettierPlugin from "eslint-plugin-prettier";
-import prettierConfig from "eslint-config-prettier";
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import pluginReact from 'eslint-plugin-react';
+import pluginReactNative from 'eslint-plugin-react-native';
+import prettierConfig from 'eslint-config-prettier';
+import tseslint from 'typescript-eslint';
 
-export default defineConfig([
+export default tseslint.config([
+  pluginJs.configs.recommended, // Apply recommended ESLint rules
+  tseslint.configs.recommended, // Apply recommended TypeScript rules
+  prettierConfig, // Disable rules that conflict with Prettier
+  pluginReact.configs.flat['jsx-runtime'],
   {
-    files: ["**/*.{js,mjs,cjs,jsx}"],
+    files: ['**/*.{js,mjs,cjs,jsx}'],
     languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       globals: {
+        __DEV__: 'readonly', // __DEV__ comes from Expo, it will always be set in React code
         ...globals.browser,
         ...globals.node,
       },
     },
     plugins: {
       react: pluginReact,
-      "react-native": pluginReactNative,
-      prettier: prettierPlugin,
+      'react-native': pluginReactNative,
     },
     rules: {
-      ...js.configs.recommended.rules,
-      ...pluginReact.configs.recommended.rules,
-      ...pluginReactNative.configs.recommended.rules,
-      "react/react-in-jsx-scope": "off",
-      "prettier/prettier": "error",
+      'react-native/no-unused-styles': 'error',
+      'react-native/no-inline-styles': 'warn',
+      'react-native/no-color-literals': 'warn',
+      'react-native/no-raw-text': 'warn',
+      'react/react-in-jsx-scope': 'off',
     },
   },
-  prettierConfig,
+  {
+    files: ['*.config.js', 'scripts/*.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
 ]);
