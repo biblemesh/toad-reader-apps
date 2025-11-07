@@ -295,7 +295,7 @@ export const getDataOrigin = ({ domain, protocol=`https`, env }={}) => {
 
   if(env ? env === 'dev' : __DEV__) {
     // dev environment
-    return `${protocol.replace(/s$/, '')}://${DEV_DATA_ORIGIN_OVERRIDE || `localhost`}:8080`
+    return `${protocol}://${DEV_DATA_ORIGIN_OVERRIDE || `localhost`}`
   }
 
   if(env ? env === 'staging' : isStaging()) {
