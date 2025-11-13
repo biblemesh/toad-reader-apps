@@ -11,6 +11,8 @@ SHELL [ "/bin/bash", "-c" ]
 # Force bash as OCI doesn't contain SHELL, so not in Podman https://docs.podman.io/en/latest/markdown/podman-build.1.html#format
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
+COPY .nvmrc .
+
 RUN \
   # nounset - Treat unset variables as an error when substituting
   # xtrace - Print commands and their arguments as they are executed
@@ -26,21 +28,7 @@ RUN \
   sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
   dpkg-reconfigure --frontend=noninteractive locales && \
   update-locale LANG=en_US.UTF-8 && \
-  # user setup
-  useradd --create-home --user-group --shell /bin/bash developer
-
-# npm < 9 changes user running process to match folder https://github.com/npm/cli/issues/4589
-USER developer
-
-WORKDIR /home/developer
-
-COPY .nvmrc .
-
-RUN \
-  # nounset - Treat unset variables as an error when substituting
-  # xtrace - Print commands and their arguments as they are executed
-  set -o nounset -o xtrace && \
-  # Install nodejs 16
+  # Install nodejs
   bash -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash" && \
   source ~/.bashrc && \
   # "source ~/.nvm/nvm.sh" fails if node isn't installed
