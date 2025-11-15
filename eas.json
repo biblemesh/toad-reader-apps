@@ -8,10 +8,11 @@
       "distribution": "internal",
       "channel": "development",
       "ios": {
-        "resourceClass": "m-medium"
+        "simulator": true
       },
       "env": {
-        "releaseChannel": "development"
+        "channel": "development",
+        "EXPO_UPDATES_ENABLE": "false"
       }
     },
     "staging": {
