@@ -19,8 +19,6 @@ RUN \
   set -o nounset -o xtrace && \
   # Install dependencies for git. ssh enables commit signing
   install_packages ca-certificates ssh && \
-  # Prepare nodejs 16
-  install_packages curl && \
   # Install toad-reader-apps dependencies (part 1)
   install_packages ruby && \
   # Setup vscode https://github.com/microsoft/vscode/issues/189924
@@ -29,6 +27,7 @@ RUN \
   dpkg-reconfigure --frontend=noninteractive locales && \
   update-locale LANG=en_US.UTF-8 && \
   # Install nodejs
+  install_packages curl && \
   bash -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash" && \
   source ~/.bashrc && \
   # "source ~/.nvm/nvm.sh" fails if node isn't installed
