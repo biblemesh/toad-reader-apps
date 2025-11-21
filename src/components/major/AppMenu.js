@@ -159,16 +159,24 @@ const AppMenu = ({
 
   const showAll = useCallback(
     () => {
-      changeLibraryScope({ scope: "all" })
-      historyGoBack()
+      try {
+        changeLibraryScope({ scope: "all" })
+        historyGoBack()
+      } catch (error) {
+        console.error('Error in showAll:', error)
+      }
     },
     [ changeLibraryScope ],
   )
 
   const showDeviceOnly = useCallback(
     () => {
-      changeLibraryScope({ scope: "device" })
-      historyGoBack()
+      try {
+        changeLibraryScope({ scope: "device" })
+        historyGoBack()
+      } catch (error) {
+        console.error('Error in showDeviceOnly:', error)
+      }
     },
     [ changeLibraryScope ],
   )
@@ -525,13 +533,37 @@ const AppMenu = ({
     ]),
   ]
 
-  const onRouteSelect = ({ row: index }) => {
-    const { [index]: route } = drawerData
+  const onRouteSelect = (event) => {
+    try {
+      // Handle different possible event structures from UI Kitten
+      let index;
+      
+      if (typeof event === 'number') {
+        index = event;
+      } else if (event && typeof event.row === 'number') {
+        index = event.row;
+      } else if (event && typeof event.index === 'number') {
+        index = event.index;
+      } else {
+        console.warn('Unexpected onRouteSelect event structure:', event);
+        return;
+      }
 
-    if(route.onSelect) {
-      route.onSelect()
-    } else if(route.path) {
-      historyPush(route.path)
+      const route = drawerData[index];
+      
+      if (!route) {
+        console.warn('No route found for index:', index);
+        return;
+      }
+
+      if (route.onSelect) {
+        route.onSelect();
+      } else if (route.path) {
+        historyPush(route.path);
+      }
+    } catch (error) {
+      console.error('Error in onRouteSelect:', error);
+      // Prevent crash by not re-throwing
     }
   }
 

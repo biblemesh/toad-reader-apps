@@ -1,25 +1,22 @@
-import { useEffect } from "react"
-import { BackHandler } from "react-native"
+import { useEffect } from 'react';
+import { BackHandler } from 'react-native';
 
-const BackFunction = ({
-  func,
-}) => {
+const BackFunction = ({ func }) => {
+  useEffect(() => {
+    const backPressEvent = () => {
+      func();
+      return true;
+    };
 
-  useEffect(
-    () => {
-      const backPressEvent = () => {
-        func()
-        return true
-      }
+    const subscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backPressEvent,
+    );
 
-      BackHandler.addEventListener('hardwareBackPress', backPressEvent)
-  
-      return () => BackHandler.removeEventListener('hardwareBackPress', backPressEvent)
-    },
-    [ func ],
-  )
-  
-  return null
-}
+    return () => subscription.remove();
+  }, [func]);
 
-export default BackFunction
+  return null;
+};
+
+export default BackFunction;
