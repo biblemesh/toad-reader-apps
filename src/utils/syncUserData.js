@@ -57,6 +57,7 @@ const reportResponseError = ({ message, response, error, retry }) => {
 export const setStore = s => { store = s }
 
 export const patch = () => setTimeout(() => {
+  if (!store) return
   // the setTimeout ensures this is async
 
   const { idps, accounts, books, userDataByBookId } = store.getState()
@@ -254,7 +255,7 @@ export const patch = () => setTimeout(() => {
           // save it in redux
           store.dispatch(updateBookAccount({
             bookId,
-            accountId, 
+            accountId,
             accountInfo: {
               lastSuccessfulPatch: patchTime,
             },
@@ -297,13 +298,13 @@ export const patch = () => setTimeout(() => {
 
               if(response.status < 400) {
                 console.log(`Patch successful (bookId: ${bookId}, userId: ${userId}, path: ${path}).`)
-  
+
                 // update lastSuccessfulPatch
                 updateLastSuccessfulPatch()
-  
+
                 // run again in case something has changed since the patch was sent
                 patch()
-  
+
               } else if(response.status === 403) {
                 // they need to login
                 store.dispatch(updateAccount({
@@ -322,13 +323,13 @@ export const patch = () => setTimeout(() => {
 
               } else if(response.status === 412) {
                 console.log(`User data is stale (bookId: ${bookId}, userId: ${userId}, path: ${path}).`)
-  
+
                 // still, the new stuff was saved and so update lastSuccessfulPatch
                 updateLastSuccessfulPatch()
-  
+
                 // update the userData for this book
                 refreshUserData({ accountId, bookId })
-  
+
               } else {
 
                 try {
@@ -388,7 +389,7 @@ export const patch = () => setTimeout(() => {
 
             })
             .catch(error => {
-            
+
               currentlyPatchingBookAccountCombo[`${accountId} ${bookId}`] = false
 
               reportResponseError({
@@ -397,7 +398,7 @@ export const patch = () => setTimeout(() => {
                 retry: patch,
               })
               store.dispatch(setSyncStatus("error"))
-            
+
             })
         }
       })
@@ -410,13 +411,14 @@ export const patch = () => setTimeout(() => {
 
 let xapiAndReadingSessionsOffOnServer = false
 export const reportReadings = () => setTimeout(() => {
+  if (!store) return
   // the setTimeout ensures this is async
 
   const { idps, accounts, readingRecordsByAccountId } = store.getState()
 
   if(xapiAndReadingSessionsOffOnServer) return
   if(Object.values(readingRecordsByAccountId).every(readingRecords => !readingRecords.length)) return
-  
+
   if(!connectionInfo.online) return
 
   Object.keys(readingRecordsByAccountId).forEach(accountId => {
@@ -493,7 +495,7 @@ export const reportReadings = () => setTimeout(() => {
 
       })
       .catch(error => {
-      
+
         currentlyReportingReadingsByAccountId[accountId] = false
 
         reportResponseError({
@@ -501,7 +503,7 @@ export const reportReadings = () => setTimeout(() => {
           error,
           retry: reportReadings,
         })
-      
+
       })
 
   })
@@ -511,7 +513,7 @@ export const refreshUserData = ({ accountId, bookId }) => new Promise(resolve =>
   // the setTimeout ensures this is async
 
   const { idps, accounts, books } = store.getState()
-  
+
   if(!accountId || !bookId || !books[bookId]) return resolve()
   if(currentlyRefreshingBookAccountCombo[`${accountId} ${bookId}`]) return resolve()
   if(!books[bookId].accounts[accountId]) return resolve()
@@ -533,7 +535,7 @@ export const refreshUserData = ({ accountId, bookId }) => new Promise(resolve =>
   const path = `${getDataOrigin(idp)}/users/${userId}/books/${bookId}.json`
 
   currentlyRefreshingBookAccountCombo[`${accountId} ${bookId}`] = true
-  
+
   safeFetch(path, getReqOptionsWithAdditions({
     headers: {
       "x-cookie-override": accounts[accountId].cookie,
@@ -569,14 +571,14 @@ export const refreshUserData = ({ accountId, bookId }) => new Promise(resolve =>
 
             // convert user data updated_at times to local device per server time offset
             adjustAllUpdatedAts(userData, serverTimeOffset * -1);
-            
+
             store.dispatch(setUserData({ bookId, userData, lastSuccessfulPatch }))
 
             console.log(`User data refresh successful (bookId: ${bookId}, userId: ${userId}, path: ${path}).`)
 
             patch()
             resolve({ success: true })
-            
+
           })
           .catch(error => {
             reportResponseError({
@@ -617,7 +619,7 @@ export const refreshUserData = ({ accountId, bookId }) => new Promise(resolve =>
 
     })
     .catch(error => {
-    
+
       currentlyRefreshingBookAccountCombo[`${accountId} ${bookId}`] = false
 
       reportResponseError({
