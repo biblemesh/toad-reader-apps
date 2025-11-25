@@ -85,7 +85,7 @@ const BookHeader = React.memo(({
     const menu = menuRef.current;
   
     const handlePointerDownCapture = (e) => {
-      // React Native Web componentleri dahil tüm tıklamalar buraya düşer
+      // All clicks, including those on React Native Web components, will be captured here
       const path = e.composedPath ? e.composedPath() : [];
   
       const insideMenu = menu && path.includes(menu);
@@ -96,7 +96,7 @@ const BookHeader = React.memo(({
       }
     };
   
-    // capture mode ile en üstte dinle
+    // Listen at the top level using capture mode
     document.addEventListener("pointerdown", handlePointerDownCapture, true);
   
     return () => {
