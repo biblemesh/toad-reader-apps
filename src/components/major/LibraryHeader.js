@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { Platform, Text, StyleSheet } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
 import { i18n } from "inline-i18n"
 import { OverflowMenu, MenuItem, IndexPath } from "@ui-kitten/components"
 import useToggle from 'react-use/lib/useToggle'
+import { createPortal } from "react-dom"
 
 import { getIdsFromAccountId, textToReactNative } from "../../utils/toolbox"
 import { logEvent } from "../../utils/analytics"
@@ -56,6 +57,10 @@ const LibraryHeader = ({
   pushToBookDownloadQueue,
   changeLibraryFilter,
 }) => {
+
+  const anchorRef = useRef(null);
+  const menuRef = useRef(null);
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
 
   const [ showOptions, toggleShowOptions ] = useToggle(false)
   const [ showSearch, toggleShowSearch ] = useToggle(false)
@@ -109,6 +114,38 @@ const LibraryHeader = ({
 
   const { downloadStatus, title: bookTitle } = books[bookIdToDownload] || {}
   const hasGoToInfo = goToInfo && Object.keys(goToInfo).length > 0
+
+  useEffect(() => {
+    if (Platform.OS !== "web") return;
+    if (!showOptions || !anchorRef.current) return;
+  
+    const rect = anchorRef.current.getBoundingClientRect();
+    const menuWidth = 180;
+  
+    let left = rect.right - menuWidth;
+    if (left < 8) left = 8;
+  
+    setMenuPos({
+      top: rect.bottom + 4,
+      left,
+    });
+  }, [showOptions]);
+  
+
+  useEffect(() => {
+    if (Platform.OS !== "web") return;
+    if (!showOptions) return;
+  
+    const handler = (e) => {
+      const path = e.composedPath?.() || [];
+      if (!path.includes(anchorRef.current) && !path.includes(menuRef.current)) {
+        toggleShowOptions(false);
+      }
+    };
+  
+    document.addEventListener("pointerdown", handler, true);
+    return () => document.removeEventListener("pointerdown", handler, true);
+  }, [showOptions]);
 
   useEffect(
     () => {
@@ -227,27 +264,72 @@ const LibraryHeader = ({
             iconPack="materialCommunity"
             onPress={onPressToggleView}
           />,
-          <OverflowMenu
-            visible={showOptions}
-            selectedIndex={new IndexPath(moreKeys.indexOf(library.sort))}
-            onSelect={selectSort}
-            onBackdropPress={toggleShowOptions}
-            placement='bottom end'
-            anchor={() => (
+          Platform.OS !== "web" ? (
+            <OverflowMenu
+              visible={showOptions}
+              selectedIndex={new IndexPath(moreKeys.indexOf(library.sort))}
+              onSelect={selectSort}
+              onBackdropPress={toggleShowOptions}
+              placement="bottom end"
+              anchor={() => (
+                <HeaderIcon
+                  iconName="sort"
+                  iconPack="materialCommunity"
+                  onPress={toggleShowOptions}
+                />
+              )}
+            >
+              {moreOptions.map(({ title }, idx) => (
+                <MenuItem key={idx} title={title} />
+              ))}
+            </OverflowMenu>
+          ) : (
+            <>
               <HeaderIcon
+                ref={anchorRef}
                 iconName="sort"
                 iconPack="materialCommunity"
                 onPress={toggleShowOptions}
               />
-            )}
-          >
-            {moreOptions.map(({ title }, idx) => (
-              <MenuItem
-                key={idx}
-                title={title}
-              />
-            ))}
-          </OverflowMenu>,
+          
+              {showOptions &&
+                createPortal(
+                  <div
+                    ref={menuRef}
+                    style={{
+                      position: "absolute",
+                      top: menuPos.top,
+                      left: menuPos.left,
+                      backgroundColor: "white",
+                      borderRadius: 8,
+                      boxShadow: "0 4px 20px rgba(0,0,0,.25)",
+                      zIndex: 999999,
+                      minWidth: 160,
+                      overflow: "hidden",
+                    }}
+                  >
+                    {moreOptions.map(({ title }, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => {
+                          selectSort({ row: idx });
+                          toggleShowOptions(false);
+                        }}
+                        style={{
+                          padding: "10px 14px",
+                          cursor: "pointer",
+                          borderBottom: "1px solid #eee",
+                          fontSize: 14,
+                        }}
+                      >
+                        {title}
+                      </div>
+                    ))}
+                  </div>,
+                  document.body
+                )}
+            </>
+          )
         ]}
       />
       <HeaderSearch

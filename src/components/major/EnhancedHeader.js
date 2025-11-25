@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import React, { useCallback, useRef, useState, useEffect } from "react"
 import { StyleSheet, Platform, View, Text, TouchableOpacity, Alert } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -6,6 +6,7 @@ import { OverflowMenu, MenuItem, IndexPath, styled } from "@ui-kitten/components
 import { i18n } from "inline-i18n"
 import useToggle from "react-use/lib/useToggle"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { createPortal } from "react-dom"
 
 import useThemedStyleSets from "../../hooks/useThemedStyleSets"
 import useClassroomInfo from "../../hooks/useClassroomInfo"
@@ -81,6 +82,9 @@ const EnhancedHeader = React.memo(({
     style: themedStyle,
   }={},
 }) => {
+  const anchorRef = useRef(null)
+  const menuRef = useRef(null)
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 })
 
   const { classrooms, classroom, enhancedIsOff, isDefaultClassroom, defaultClassroomUid, sortedClassrooms,
           bookVersion, canViewOptions, canViewFrontMatter, viewingDashboard,
@@ -241,6 +245,36 @@ const EnhancedHeader = React.memo(({
     />
   )
 
+  useEffect(() => {
+    if (Platform.OS !== "web") return
+    if (!showOptions || !anchorRef.current) return
+
+    const rect = anchorRef.current.getBoundingClientRect()
+    setMenuPos({
+      top: rect.bottom + 4,
+      left: rect.left,
+    })
+  }, [showOptions])
+
+  useEffect(() => {
+    if (Platform.OS !== "web") return
+    if (!showOptions) return
+
+    const handlePointerDown = (e: PointerEvent | MouseEvent) => {
+      const path = (e.composedPath && e.composedPath()) || []
+      const clickedInsideMenu = menuRef.current && path.includes(menuRef.current)
+      const clickedInsideAnchor = anchorRef.current && path.includes(anchorRef.current)
+
+      if (!clickedInsideMenu && !clickedInsideAnchor) {
+        toggleShowOptions(false)
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown, true)
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown, true)
+    }
+  }, [showOptions])
 
   return (
     <>
@@ -256,43 +290,93 @@ const EnhancedHeader = React.memo(({
       >
         <EnhancedHeaderLine
           label={
-            <OverflowMenu
-              visible={showOptions}
-              selectedIndex={new IndexPath(sortedClassrooms.map(({ uid }) => uid).indexOf((classroom || {}).uid || null))}
-              onSelect={selectOption}
-              onBackdropPress={toggleShowOptions}
-              placement='bottom start'
-              style={{
-                width: 230,
-                maxHeight: height - 80,
-              }}
-              anchor={() => (
-                <TouchableOpacity
-                  onPress={toggleShowOptions}
+            Platform.OS === "web"
+              ? (
+                <View
+                  ref={anchorRef}
+                  onStartShouldSetResponder={() => true}
+                  onResponderRelease={() => toggleShowOptions(!showOptions)}
                 >
-                  <View>
-                    <Text
-                      style={styles.classroom}
-                      numberOfLines={2}
-                    >
-                      {`${classroomName} ▾`}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-            >
-              {moreOptions.map(({ title }, idx) => (
-                <MenuItem
-                  key={idx}
-                  title={title}
-                />
-              ))}
-            </OverflowMenu>
+                  <Text style={styles.classroom} numberOfLines={2}>
+                    {`${classroomName} ▾`}
+                  </Text>
+                </View>
+              )
+              : (
+                <OverflowMenu
+                  visible={showOptions}
+                  selectedIndex={
+                    new IndexPath(
+                      sortedClassrooms
+                        .map(({ uid }) => uid)
+                        .indexOf((classroom || {}).uid || null),
+                    )
+                  }
+                  onSelect={selectOption}
+                  onBackdropPress={toggleShowOptions}
+                  placement="bottom start"
+                  style={{
+                    width: 230,
+                    maxHeight: height - 80,
+                  }}
+                  anchor={() => (
+                    <TouchableOpacity onPress={toggleShowOptions}>
+                      <View>
+                        <Text style={styles.classroom} numberOfLines={2}>
+                          {`${classroomName} ▾`}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                >
+                  {moreOptions.map(({ title }, idx) => (
+                    <MenuItem key={idx} title={title} />
+                  ))}
+                </OverflowMenu>
+              )
           }
           uiStatus={"disabled"}
           status={"published"}
           showLogo={true}
         />
+
+        {/* WEB ONLY dropdown portal */}
+        {Platform.OS === "web" && showOptions && createPortal(
+          <div
+            ref={menuRef}
+            style={{
+              position: "absolute",
+              top: menuPos.top,
+              left: menuPos.left,
+              backgroundColor: "#fff",
+              borderRadius: 8,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+              zIndex: 999999,
+              width: 230,
+              maxHeight: height - 80,
+              overflowY: "auto",
+            }}
+          >
+            {moreOptions.map((item, idx) => (
+              <div
+                key={idx}
+                onClick={() => {
+                  item.onPress?.()
+                  toggleShowOptions(false)
+                }}
+                style={{
+                  padding: "10px 14px",
+                  cursor: "pointer",
+                  borderBottom: "1px solid #eee",
+                }}
+              >                
+                {typeof item.title === "string" ? item.title : item.title}
+              </div>
+            ))}
+          </div>,
+          document.body,
+        )}
+
         {bookVersion !== 'PUBLISHER' && !enhancedIsOff &&
           <EnhancedHeaderLine
             label={i18n("Dashboard", "", "enhanced")}
