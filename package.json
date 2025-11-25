@@ -47,7 +47,7 @@
     "translate": "node node_modules/inline-i18n/scripts/makeTranslationFiles.js --translations-dir='./src/utils/translations' --translation-file-exclude-regex='current.json' && npm run translate-convert-json-to-csv",
     "translate-convert-csv-to-json": "node node_modules/inline-i18n/scripts/convertTranslationCSVtoJSON.js --translations-dir='./src/utils/translations'",
     "translate-convert-json-to-csv": "node node_modules/inline-i18n/scripts/convertTranslationJSONtoCSV.js --translations-dir='./src/utils/translations'",
-    "start": "GENERATE_SOURCEMAP=false npx expo start",
+    "start": "GENERATE_SOURCEMAP=false npx expo start --port 19006",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -146,6 +146,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",
+    "baseline-browser-mapping": "^2.8.31",
     "eas-cli": "^16.26.0",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^10.0.2",
