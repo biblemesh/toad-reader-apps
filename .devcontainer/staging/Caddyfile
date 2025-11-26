@@ -1,0 +1,19 @@
+{
+}
+
+{$EREADER_FRONTEND_HOST} {
+  @s3content {
+    path /enhanced_assets/* /epub_content/*
+  }
+
+  reverse_proxy @s3content {$S3_CONTENT_HOST}
+
+  reverse_proxy http://ereader-frontend:19006 {
+    header_up X-Forwarded-Proto "https"
+    header_up X-Forwarded-Port 443
+    header_down Access-Control-Allow-Origin "http://localhost:19006"
+    header_down -Strict-Transport-Security
+  }
+
+  tls internal
+}

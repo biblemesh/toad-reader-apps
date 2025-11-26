@@ -1,0 +1,32 @@
+networks:
+  ereader:
+
+services:
+  caddy:
+    env_file: .env
+    image: caddy:latest
+    networks:
+      - ereader
+    ports:
+      - '443:443'
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy-data:/data
+      - caddy-config:/config
+
+  ereader-frontend:
+    image: biblemesh/toad-reader-apps:latest
+    build:
+      context: ../../
+      dockerfile: ./.devcontainer/development/Dockerfile
+    command: ["/bin/bash", "-c", "sleep infinity"]
+    networks:
+      - ereader
+    pull_policy: build
+
+volumes:
+  caddy-data:
+    external: true
+  caddy-config:
+    driver: local
