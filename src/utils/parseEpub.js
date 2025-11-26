@@ -1,11 +1,16 @@
 // Should accord with file by same name in toad-reader-server
 // See https://idpf.github.io/a11y-guidelines/content/nav/toc.html
 
+import Constants from 'expo-constants'
 import { Platform } from "react-native"
 import * as FileSystem from 'expo-file-system'
 import { parseString } from "xml2js"
 
 import { getBooksDir, getDataOrigin, getReqOptionsWithAdditions, safeFetch, normalizePath } from "./toolbox"
+
+const {
+  DEV_USE_DEVELOPMENT_BACKEND,
+} = Constants.expoConfig.extra
 
 const getXmlAsObj = async ({ url, account }) => {
   const urlWithoutHash = url.replace(/#.*$/, '')
@@ -74,7 +79,7 @@ const addDirToHref = ({ href, navRelativeUri, opfDir }) => {
 
 export default async ({ bookId, idp, account }) => {
 
-  const dataOriginForDev = __DEV__ ? getDataOrigin(idp) : ``
+  const dataOriginForDev = __DEV__ && DEV_USE_DEVELOPMENT_BACKEND ? getDataOrigin(idp) : ``
   const baseUri = Platform.OS === 'web'
     ? `${dataOriginForDev}/epub_content/book_${bookId}/`
     : `${getBooksDir()}${bookId}/`

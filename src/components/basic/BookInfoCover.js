@@ -1,3 +1,4 @@
+import Constants from 'expo-constants'
 import React from "react"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -11,6 +12,10 @@ import useCoverHref from "../../hooks/useCoverHref"
 import CoverAndSpin from "./CoverAndSpin"
 
 import { getDataOrigin, getIDPOrigin } from '../../utils/toolbox'
+
+const {
+  DEV_USE_DEVELOPMENT_BACKEND,
+} = Constants.expoConfig.extra
 
 const styles = StyleSheet.create({
   container: {
@@ -36,7 +41,7 @@ const BookInfoCover = ({
   const coverHref = useCoverHref({ bookInfo, bookId })
   const idpId = Object.keys(accounts)[0].split(':')[0]
   const downloadProgress = useDownloadProgress({ downloadProgressByBookId, bookInfo, bookId })
-  const downloadOrigin = __DEV__ ? getDataOrigin(idps[idpId]) : getIDPOrigin(idps[idpId])
+  const downloadOrigin = __DEV__ && DEV_USE_DEVELOPMENT_BACKEND ? getDataOrigin(idps[idpId]) : getIDPOrigin(idps[idpId])
 
   const cover = (
     <View style={styles.container}>

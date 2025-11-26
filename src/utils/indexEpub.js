@@ -1,3 +1,4 @@
+import Constants from 'expo-constants'
 import React from "react"
 import { Text, Platform } from "react-native"
 import MiniSearch from "minisearch"
@@ -6,6 +7,10 @@ import * as FileSystem from 'expo-file-system'
 import { getDataOrigin, getIDPOrigin, getReqOptionsWithAdditions, safeFetch } from "./toolbox"
 import downloadAsync from "./downloadAsync"
 import { getBookCookie } from "../hooks/useBookCookies"
+
+const {
+  DEV_USE_DEVELOPMENT_BACKEND,
+} = Constants.expoConfig.extra
 
 const MYSQL_DEFAULT_STOP_WORDS_OVER_THREE_CHARS = [
   'about',
@@ -55,12 +60,12 @@ export const loadIndex = async ({ idp, bookId, cookie, books, accounts, setBookC
 
   currentMiniSearch = currentIndexBookId = undefined
 
-  const downloadOrigin = __DEV__ ? getDataOrigin(idp) : getIDPOrigin(idp)
+  const downloadOrigin = __DEV__ && DEV_USE_DEVELOPMENT_BACKEND ? getDataOrigin(idp) : getIDPOrigin(idp)
   const searchIndexUri = `${downloadOrigin}/epub_content/book_${bookId}/search_index.json`
   const searchIndexLocalUri = `${FileSystem.documentDirectory}search_indexes/${bookId}.json`
 
   const headers = (
-    __DEV__
+    __DEV__ && DEV_USE_DEVELOPMENT_BACKEND
       ? {
         "x-cookie-override": cookie,
       }

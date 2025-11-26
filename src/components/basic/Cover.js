@@ -18,6 +18,7 @@ import CoverCheck from "./CoverCheck"
 
 
 const {
+  DEV_USE_DEVELOPMENT_BACKEND,
   LIBRARY_COVERS_HORIZONTAL_MARGIN = 20,
   LIBRARY_COVERS_VERTICAL_MARGIN = 20,
 } = Constants.expoConfig.extra
@@ -84,7 +85,7 @@ const Cover = ({
   const idpId = Object.keys(accounts)[0].split(':')[0]
   const downloadProgress = useDownloadProgress({ downloadProgressByBookId, bookInfo, bookId })
 
-  const downloadOrigin = __DEV__ ? getDataOrigin(idps[idpId]) : getIDPOrigin(idps[idpId])
+  const downloadOrigin = __DEV__ && DEV_USE_DEVELOPMENT_BACKEND ? getDataOrigin(idps[idpId]) : getIDPOrigin(idps[idpId])
 
   const cover = (
     <View style={styles.cover}>
