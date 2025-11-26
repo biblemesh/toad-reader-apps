@@ -1,3 +1,4 @@
+import Constants from 'expo-constants'
 import React, { useState, useCallback, useEffect, useRef } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { i18n } from "inline-i18n"
@@ -20,6 +21,10 @@ import Icon from "../basic/Icon"
 import Input from "../basic/Input"
 import FileImporter from "./FileImporter"
 import BookCoverEditor from "./BookCoverEditor"
+
+const {
+  DEV_USE_DEVELOPMENT_BACKEND,
+} = Constants.expoConfig.extra
 
 const keyOptionButton = {
   paddingHorizontal: 0,
@@ -148,7 +153,7 @@ const AudiobookDialog = ({
   const { spines=[] } = audiobookInfo
   const coverHref = useCoverHref({ bookInfo: editedBook, bookId })
   const getAudiobookInfo = useInstanceValue(audiobookInfo)
-  const downloadOrigin = __DEV__ ? getDataOrigin(idps[idpId]) : getIDPOrigin(idps[idpId])
+  const downloadOrigin = __DEV__ && DEV_USE_DEVELOPMENT_BACKEND ? getDataOrigin(idps[idpId]) : getIDPOrigin(idps[idpId])
   const bookCookies = useBookCookies({ books, accounts, idp: idps[idpId], setBookCookies, bookId, skip: !open })
 
   useEffect(

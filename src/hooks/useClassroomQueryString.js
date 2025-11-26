@@ -1,9 +1,14 @@
+import Constants from 'expo-constants'
 import { useEffect, useState } from 'react'
 import { StyleSheet } from "react-native"
 
 import useRouterState from "./useRouterState"
 import { safeFetch, getReqOptionsWithAdditions, getDataOrigin } from "../utils/toolbox"
 import useSetTimeout from './useSetTimeout'
+
+const {
+  DEV_USE_DEVELOPMENT_BACKEND,
+} = Constants.expoConfig.extra
 
 const styles = StyleSheet.create({
   hiddenWebViewContainer: {
@@ -42,7 +47,7 @@ const doFetch = async ({ path, cookie }) => {
 
 export const getClassroomQueryString = async ({ userDataByBookId, accounts, idp, setClassroomQueryString, bookId, classroomUid }) => {
 
-  if(__DEV__) return false
+  if(__DEV__ && DEV_USE_DEVELOPMENT_BACKEND) return false
 
   const classroom = getClassroom({ userDataByBookId, bookId, classroomUid })
   const accountId = Object.keys(accounts)[0]  // TODO: get from book if I ever allow multiple accounts
@@ -92,7 +97,7 @@ const useClassroomQueryString = ({ userDataByBookId, accounts, idp, setClassroom
 
   const checkAndGet = () => {
     (async () => {
-      if(__DEV__) return
+      if(__DEV__ && DEV_USE_DEVELOPMENT_BACKEND) return
       if(widget) return
       if(!classroom) return
 
@@ -115,7 +120,7 @@ const useClassroomQueryString = ({ userDataByBookId, accounts, idp, setClassroom
 
   useEffect(
     () => {
-      if(__DEV__) return
+      if(__DEV__ && DEV_USE_DEVELOPMENT_BACKEND) return
       if(!classroom) return
       if(!queryString) return
 

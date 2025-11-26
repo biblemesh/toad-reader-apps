@@ -1,3 +1,4 @@
+import Constants from 'expo-constants'
 import { useState, useEffect } from "react"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -14,6 +15,10 @@ import downloadAsync from "../../utils/downloadAsync"
 
 import { setBookCookies, removeFromBookDownloadQueue, setDownloadProgress,
          setDownloadStatus, setTocAndSpines, updateAccount } from "../../redux/actions"
+
+const {
+  DEV_USE_DEVELOPMENT_BACKEND,
+} = Constants.expoConfig.extra
 
 const BookDownloader = ({
   downloadPaused,
@@ -83,9 +88,9 @@ const BookDownloader = ({
         let throttleLastRan = 0
         const { idpId } = getIdsFromAccountId(accountId)
         const idp = idps[idpId]
-        const downloadOrigin = __DEV__ ? getDataOrigin(idp) : getIDPOrigin(idp)
+        const downloadOrigin = __DEV__ && DEV_USE_DEVELOPMENT_BACKEND ? getDataOrigin(idp) : getIDPOrigin(idp)
         const cookie = (
-          __DEV__
+          __DEV__ && DEV_USE_DEVELOPMENT_BACKEND
             ? accounts[accountId].cookie
             : await getBookCookie({
               books: getBooks(),
@@ -111,7 +116,7 @@ const BookDownloader = ({
               `${getBooksDir()}${bookId}/${spine.filename}`,
               {
                 headers: {
-                  [__DEV__ ? "x-cookie-override" : "cookie"]: cookie,
+                  [__DEV__ && DEV_USE_DEVELOPMENT_BACKEND ? "x-cookie-override" : "cookie"]: cookie,
                 },
               },
             )

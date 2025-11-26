@@ -1,3 +1,4 @@
+import Constants from 'expo-constants'
 import React, { useCallback } from "react"
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native"
 import { i18n } from "inline-i18n"
@@ -8,6 +9,10 @@ import { getDataOrigin, getIDPOrigin, getIdsFromAccountId } from '../../utils/to
 
 import Icon from "../basic/Icon"
 import FileImporter from "./FileImporter"
+
+const {
+  DEV_USE_DEVELOPMENT_BACKEND,
+} = Constants.expoConfig.extra
 
 const coverFileTypes = [
   'image/png',
@@ -64,7 +69,7 @@ const BookCoverEditor = ({
 
   const accountId = Object.keys(accounts)[0]
   const { idpId } = getIdsFromAccountId(accountId)
-  const downloadOrigin = __DEV__ ? getDataOrigin(idps[idpId]) : getIDPOrigin(idps[idpId])
+  const downloadOrigin = __DEV__ && DEV_USE_DEVELOPMENT_BACKEND ? getDataOrigin(idps[idpId]) : getIDPOrigin(idps[idpId])
 
   const [ uploadCover, toggleUploadCover ] = useToggle()
 
