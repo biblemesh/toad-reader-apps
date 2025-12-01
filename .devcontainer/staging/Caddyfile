@@ -1,6 +1,44 @@
 {
 }
 
+# Proxy Auto-configuration file
+localhost:3128/proxy.pac {
+  header {
+    Content-Type application/x-ns-proxy-autoconfig
+    #Content-Type text/plain  # uncomment this for testing
+    Content-Disposition inline
+  }
+
+  respond <<PROXY_PAC
+    var proxy = "HTTPS {http.request.host}:3128";
+
+    var proxied = [
+      "{$EREADER_FRONTEND_HOST}"
+    ];
+
+    function FindProxyForURL(url, host) {
+      if (proxied.indexOf(host) > -1) {
+        return proxy;
+      } else {
+        return 'DIRECT';
+      }
+    }
+    PROXY_PAC 200
+
+  tls internal
+}
+
+# Proxy traffic
+:3128 {
+  forward_proxy {
+    basic_auth caddy Admin123
+    acl {
+      allow all
+    }
+  }
+  tls internal
+}
+
 {$EREADER_FRONTEND_HOST} {
   @s3content {
     path /enhanced_assets/* /epub_content/*

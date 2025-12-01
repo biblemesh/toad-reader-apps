@@ -3,12 +3,26 @@ networks:
 
 services:
   caddy:
+    build:
+      context: .
+      dockerfile_inline:
+        FROM caddy:2-builder-alpine AS builder
+
+        RUN xcaddy build --with github.com/caddyserver/forwardproxy
+
+        FROM caddy:2-alpine
+
+        COPY --from=builder /usr/bin/caddy /usr/bin/caddy
     env_file: .env
-    image: caddy:latest
+    image: biblemesh/caddy-ereader-frontend:latest
     networks:
-      - ereader
+      ereader:
+        aliases:
+          - ${EREADER_FRONTEND_HOST}
     ports:
       - '443:443'
+      - '3128:3128'
+    pull_policy: build
     restart: unless-stopped
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
