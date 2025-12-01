@@ -19,8 +19,8 @@ services:
         aliases:
           - ${EREADER_FRONTEND_HOST}
     ports:
-      - '443:443'
-      - '3128:3128'
+      - "443:443"
+      - "3128:3128"
     pull_policy: build
     restart: unless-stopped
     volumes:
@@ -33,7 +33,7 @@ services:
     build:
       context: ../../
       dockerfile: ./.devcontainer/development/Dockerfile
-    command: ['/bin/bash', '-c', 'sleep infinity']
+    command: ["/bin/bash", "-c", "sleep infinity"]
     networks:
       - ereader
     pull_policy: build
