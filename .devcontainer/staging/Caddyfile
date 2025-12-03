@@ -55,3 +55,15 @@ localhost:3128/proxy.pac {
 
   tls internal
 }
+
+# web socket wss://EREADER_FRONTEND_HOST:19006/_expo/ws
+{$EREADER_FRONTEND_HOST}:19006 {
+  reverse_proxy http://ereader-frontend:19006 {
+    header_up X-Forwarded-Proto "https"
+    header_up X-Forwarded-Port 443
+    header_down Access-Control-Allow-Origin "http://localhost:19006"
+    header_down -Strict-Transport-Security
+  }
+
+  tls internal
+}
