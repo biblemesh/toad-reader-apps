@@ -187,12 +187,16 @@ const AppMenu = ({
 
       const doLogOut = () => {
         logEvent({ eventName: `Log out` })
-        historyGoBack()
-        setTimeout(() => {
-          historyReplace("/", {
-            logOutAccountId: accountId,
-          })
-        }, 100)
+        // Use requestAnimationFrame to ensure state updates are properly batched
+        requestAnimationFrame(() => {
+          historyGoBack()
+          // Increase timeout to allow for proper cleanup
+          setTimeout(() => {
+            historyReplace("/", {
+              logOutAccountId: accountId,
+            })
+          }, 200)
+        })
       }
 
       if(Platform.OS === 'web') {
@@ -214,20 +218,29 @@ const AppMenu = ({
               
               setLoading(true)  // timeout needed after this to allow it to show
 
-              setTimeout(async () => {
-                await removeAccountEPubs(
-                  {
-                    books,
-                    removeFromBookDownloadQueue,
-                    setDownloadStatus,
-                    clearTocAndSpines,
-                    clearUserDataExceptProgress,
-                  },
-                )
+              // Use requestAnimationFrame to ensure proper batching of state updates
+              requestAnimationFrame(() => {
+                setTimeout(async () => {
+                  try {
+                    await removeAccountEPubs(
+                      {
+                        books,
+                        removeFromBookDownloadQueue,
+                        setDownloadStatus,
+                        clearTocAndSpines,
+                        clearUserDataExceptProgress,
+                      },
+                    )
 
-                setLoading(false)
+                    setLoading(false)
 
-                doLogOut()
+                    doLogOut()
+                  } catch (error) {
+                    console.error('Error during logout:', error)
+                    setLoading(false)
+                    doLogOut()
+                  }
+                }, 50)
               })
 
             },
