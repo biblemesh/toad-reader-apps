@@ -223,6 +223,7 @@ const Dialog = React.memo(
     }
 
     return (
+      // Temporary UI Kitten fix. This will be removed once UI Kitten is fully replaced. 
       <Modal
         visible={!!open}
         allowBackdrop={true}
