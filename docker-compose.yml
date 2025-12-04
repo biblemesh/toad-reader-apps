@@ -1,0 +1,8 @@
+services:
+  ereader-frontend:
+    command: ["bash", "-c", "source /root/.nvm/nvm.sh; npm run start"]
+    ports:
+      - "19006:19006"
+    volumes:
+      - ../../:/app
+    working_dir: /app
