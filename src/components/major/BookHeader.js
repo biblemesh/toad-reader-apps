@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState, useEffect } from "react"
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { StyleSheet, Platform, Alert } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -315,6 +321,7 @@ const BookHeader = React.memo(({
         uiStatus={wideMode ? "faded" : null}
       />
 
+      {/* Temporary UI Kitten fix. This will be removed once UI Kitten is fully replaced.  */}
       {Platform.OS === "web" && showOptions &&
         createPortal(
           <div
