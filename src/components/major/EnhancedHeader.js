@@ -6,7 +6,7 @@ import { OverflowMenu, MenuItem, IndexPath, styled } from "@ui-kitten/components
 import { i18n } from "inline-i18n"
 import useToggle from "react-use/lib/useToggle"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { createPortal } from "react-dom"
+import { createPortal } from 'react-dom';
 
 import useThemedStyleSets from "../../hooks/useThemedStyleSets"
 import useClassroomInfo from "../../hooks/useClassroomInfo"
@@ -256,6 +256,7 @@ const EnhancedHeader = React.memo(({
     })
   }, [showOptions])
 
+  // Temporary UI Kitten fix. This will be removed once UI Kitten is fully replaced. 
   useEffect(() => {
     if (Platform.OS !== "web") return
     if (!showOptions) return
