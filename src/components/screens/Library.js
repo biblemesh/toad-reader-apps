@@ -494,23 +494,39 @@ const Library = ({
 
   const logOutOnLoad = useCallback(
     async ({ accountId = logOutAccountId } = {}) => {
-      const { idpId } = getIdsFromAccountId(accountId);
-      const idp = idps[idpId];
-      const dataOrigin = getDataOrigin(idp);
+      try {
+        const { idpId } = getIdsFromAccountId(accountId);
+        const idp = idps[idpId];
+        const dataOrigin = getDataOrigin(idp);
 
-      // make sure the logout callback gets called (safari wasn't doing so; might be a race condition)
-      const logOutCallbackUrl = `${dataOrigin}/logout/callback?noredirect=1`;
-      await safeFetch(
-        logOutCallbackUrl,
-        getReqOptionsWithAdditions({
-          headers: {
-            'x-cookie-override': accounts[accountId].cookie,
-          },
-        }),
-      );
+        // make sure the logout callback gets called (safari wasn't doing so; might be a race condition)
+        const logOutCallbackUrl = `${dataOrigin}/logout/callback?noredirect=1`;
+        await safeFetch(
+          logOutCallbackUrl,
+          getReqOptionsWithAdditions({
+            headers: {
+              'x-cookie-override': accounts[accountId].cookie,
+            },
+          }),
+        );
 
-      removeAccount({ accountId });
-      historyReplace();
+        // Use requestAnimationFrame to batch state updates and prevent React warnings
+        requestAnimationFrame(() => {
+          removeAccount({ accountId });
+          setTimeout(() => {
+            historyReplace();
+          }, 50);
+        });
+      } catch (error) {
+        console.error('Error during logout:', error);
+        // Still perform cleanup even if network call fails
+        requestAnimationFrame(() => {
+          removeAccount({ accountId });
+          setTimeout(() => {
+            historyReplace();
+          }, 50);
+        });
+      }
     },
     [idps, accounts, logOutAccountId],
   );
@@ -529,10 +545,21 @@ const Library = ({
           setShowLoading(true);
           try {
             await logOutOnLoad({ accountId });
-            historyGoBackToLibrary();
-          } catch (err) {}
-          setShowLogin(true);
-          setShowLoading(false);
+            // Use requestAnimationFrame to batch state updates
+            requestAnimationFrame(() => {
+              historyGoBackToLibrary();
+              setTimeout(() => {
+                setShowLogin(true);
+                setShowLoading(false);
+              }, 50);
+            });
+          } catch (err) {
+            console.error('Error during auto-logout:', err);
+            requestAnimationFrame(() => {
+              setShowLogin(true);
+              setShowLoading(false);
+            });
+          }
         })();
         return;
       }
