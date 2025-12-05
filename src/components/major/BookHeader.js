@@ -1,10 +1,17 @@
-import React, { useCallback, useMemo } from "react"
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { StyleSheet, Platform, Alert } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
 import { OverflowMenu, MenuItem } from "@ui-kitten/components"
 import { i18n } from "inline-i18n"
 import useToggle from "react-use/lib/useToggle"
+import { createPortal } from "react-dom"
 
 import useNetwork from "../../hooks/useNetwork"
 import useWideMode from "../../hooks/useWideMode"
@@ -60,7 +67,50 @@ const BookHeader = React.memo(({
 
   const bookLinkInfo = getFirstBookLinkInfo(book)
 
-  const { historyGo, historyPush, historyReplace, getRouterState } = useRouterState()
+  const { historyGo, historyPush, getRouterState } = useRouterState()
+
+  const anchorRef = useRef(null)
+  const menuRef = useRef(null)
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 })
+
+  useEffect(() => {
+    if (Platform.OS === "web" && showOptions && anchorRef.current) {
+      const rect = anchorRef.current.getBoundingClientRect()
+      setMenuPos({
+        top: rect.bottom + 8,
+        left: rect.right - 220,
+      })
+    }
+  }, [showOptions])
+
+  useEffect(() => {
+    if (Platform.OS !== "web") return;
+    if (!showOptions) return;
+  
+    const anchor = anchorRef.current;
+    const menu = menuRef.current;
+  
+    const handlePointerDownCapture = (e) => {
+      // All clicks, including those on React Native Web components, will be captured here
+      const path = e.composedPath ? e.composedPath() : [];
+  
+      const insideMenu = menu && path.includes(menu);
+      const insideAnchor = anchor && path.includes(anchor);
+  
+      if (!insideMenu && !insideAnchor) {
+        toggleShowOptions(false);
+      }
+    };
+  
+    // Listen at the top level using capture mode
+    document.addEventListener("pointerdown", handlePointerDownCapture, true);
+  
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDownCapture, true);
+    };
+  }, [showOptions]);
+    
+  
 
   const goToBookLink = useCallback(
     () => {
@@ -175,45 +225,58 @@ const BookHeader = React.memo(({
   )
 
   const rightControls = [
-    <SaveStateHeaderIcon />,
-    ...(!(wideMode) ? [] : [
+    <SaveStateHeaderIcon key="save" />,
+
+    ...(wideMode ? [
       <HeaderIcon
+        key="search"
         iconName="search-sharp"
         onPress={toggleShowSearch}
         disabled={searchUnavailable}
-        uiStatus={searchUnavailable ? "disabled" : (wideMode ? "faded" : null)}
+        uiStatus={searchUnavailable ? "disabled" : "faded"}
       />,
-    ]),
+    ] : []),
+
     <HeaderIcon
+      key="display"
       iconName="format-size"
       iconPack="materialCommunity"
       onPress={showDisplaySettings}
       uiStatus={wideMode ? "faded" : null}
     />,
-    ...(moreOptions.length === 0 ? [] : [
-      <OverflowMenu
-        visible={showOptions}
-        onSelect={selectOption}
-        onBackdropPress={toggleShowOptions}
-        placement='bottom end'
-        style={styles.optionsMenu}
-        anchor={() => (
+
+    ...(Platform.OS === "web"
+      ? [
           <HeaderIcon
+            key="more-web"
+            ref={anchorRef}
             iconName="dots-vertical"
             iconPack="materialCommunity"
             onPress={toggleShowOptions}
             uiStatus={wideMode ? "faded" : null}
-          />
-        )}
-      >
-        {moreOptions.map(({ title }, idx) => (
-          <MenuItem
-            key={idx}
-            title={title}
-          />
-        ))}
-      </OverflowMenu>,
-    ]),
+          />,
+        ]
+      : [
+          <OverflowMenu
+            key="more-native"
+            visible={showOptions}
+            onSelect={selectOption}
+            onBackdropPress={toggleShowOptions}
+            placement="bottom end"
+            style={styles.optionsMenu}
+            anchor={() => (
+              <HeaderIcon
+                iconName="dots-vertical"
+                iconPack="materialCommunity"
+                onPress={toggleShowOptions}
+                uiStatus={wideMode ? "faded" : null}
+              />
+            )}
+          >
+            {moreOptions.map(({ title }, idx) => (
+              <MenuItem key={idx} title={title} />
+            ))}
+          </OverflowMenu>
     // ...(!(wideMode && Platform.OS !== 'web') ? [] : [
     //   <HeaderIcon
     //     iconName="apps"
@@ -221,13 +284,16 @@ const BookHeader = React.memo(({
     //     uiStatus="faded"
     //   />
     // ]),
-    ...(!(wideMode) ? [] : [
+        ]),
+
+    ...(wideMode ? [
       <HeaderIcon
+        key="sidepanel"
         iconName="reader-sharp"
         onPress={toggleSidePanelOpen}
         uiStatus={sidePanelSettings.open ? null : "faded"}
       />
-    ]),
+    ] : []),
   ]
 
   const leftControl = useMemo(
@@ -237,10 +303,10 @@ const BookHeader = React.memo(({
         iconStyle={styles.libraryIcon}
         onPress={onLibraryPress}
         uiStatus={wideMode ? "faded" : null}
-        iconName={require('../../../assets/library.png')}
+        iconName={require("../../../assets/library.png")}
       />
     ),
-    [ wideMode ],
+    [wideMode]
   )
 
   return (
@@ -249,11 +315,47 @@ const BookHeader = React.memo(({
         hide={mode === 'page' && !wideMode}
         title={title}
         subtitle={subtitle}
-        titleCentered={true}
+        titleCentered
         leftControl={leftControl}
         rightControls={rightControls}
         uiStatus={wideMode ? "faded" : null}
       />
+
+      {/* Temporary UI Kitten fix. This will be removed once UI Kitten is fully replaced.  */}
+      {Platform.OS === "web" && showOptions &&
+        createPortal(
+          <div
+            ref={menuRef}
+            style={{
+              position: "absolute",
+              top: menuPos.top,
+              left: menuPos.left,
+              backgroundColor: "#fff",
+              borderRadius: 8,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+              zIndex: 999999,
+              width: 220,
+            }}
+          >
+            {moreOptions.map((item, idx) => (
+              <div
+                key={idx}
+                onClick={() => {
+                  item.onPress?.()
+                  toggleShowOptions(false)
+                }}
+                style={{
+                  padding: "12px 16px",
+                  cursor: "pointer",
+                  borderBottom: "1px solid #eee",
+                }}
+              >
+                {item.title}
+              </div>
+            ))}
+          </div>,
+          document.body
+        )}
     </>
   )
 })
