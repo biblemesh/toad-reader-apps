@@ -50,23 +50,7 @@ const styles = StyleSheet.create({
   classroom: {
     fontWeight: 'bold',
     marginVertical: 5,
-  },
-  optionsIconContainer: {
-    position: 'relative',
-    width: 25,
-    alignSelf: 'stretch',
-  },
-  optionsIcon: {
-    position: 'absolute',
-    top: -13,
-    bottom: -13,
-    right: 0,
-    left: 0,
-    height: 'auto',
-    paddingHorizontal: 8,
-  },
-  off: {
-    fontStyle: 'italic',
+    cursor: 'pointer',
   },
   optionsEmphasis: {
     // fontWeight: '300',
@@ -153,7 +137,7 @@ const EnhancedHeader = React.memo(
         getRouterState,
         historyPush,
       });
-      setModeToPage && setTimeout(setModeToPage);
+      if (setModeToPage) setTimeout(setModeToPage, 0);
       goMarkGuideComplete();
     }, [bookId]);
 
@@ -164,7 +148,7 @@ const EnhancedHeader = React.memo(
         getRouterState,
         historyPush,
       });
-      setModeToPage && setTimeout(setModeToPage);
+      if (setModeToPage) setTimeout(setModeToPage, 0);
       goMarkGuideComplete();
     }, [bookId]);
 
@@ -175,7 +159,7 @@ const EnhancedHeader = React.memo(
         getRouterState,
         historyPush,
       });
-      setModeToPage && setTimeout(setModeToPage);
+      if (setModeToPage) setTimeout(setModeToPage, 0);
       goMarkGuideComplete();
     }, [bookId]);
 
@@ -346,9 +330,12 @@ const EnhancedHeader = React.memo(
                   ref={anchorRef}
                   onStartShouldSetResponder={() => true}
                   onResponderRelease={() => toggleShowOptions(!showOptions)}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer !important' }}
                 >
-                  <Text style={styles.classroom} numberOfLines={2}>
+                  <Text
+                    style={[styles.classroom, { cursor: 'pointer' }]}
+                    numberOfLines={2}
+                  >
                     {`${classroomName} ▾`}
                   </Text>
                 </View>
@@ -407,24 +394,74 @@ const EnhancedHeader = React.memo(
                   width: 230,
                   maxHeight: height - 80,
                   overflowY: 'auto',
+                  cursor: 'pointer !important',
+                  pointerEvents: 'auto',
                 }}
               >
-                {moreOptions.map((item, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => {
-                      item.onPress?.();
-                      toggleShowOptions(false);
-                    }}
-                    style={{
-                      padding: '10px 14px',
-                      cursor: 'pointer',
-                      borderBottom: '1px solid #eee',
-                    }}
-                  >
-                    {typeof item.title === 'string' ? item.title : item.title}
-                  </div>
-                ))}
+                {moreOptions.map((item, idx) => {
+                  const isSelected =
+                    item.title?.props?.children === classroomName ||
+                    item.title === classroomName;
+
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => {
+                        item.onPress?.();
+                        toggleShowOptions(false);
+                      }}
+                      style={{
+                        padding: '10px 14px',
+                        cursor: 'pointer !important',
+                        WebkitUserSelect: 'none',
+                        MozUserSelect: 'none',
+                        userSelect: 'none',
+                        borderBottom: '1px solid #eee',
+                        fontSize: 15,
+                        fontStyle: 'normal',
+                        transition: 'all 0.15s ease',
+                        backgroundColor: isSelected ? '#eef2ff' : '#fff',
+                        color: isSelected ? '#3366FF' : '#000',
+                        boxShadow: isSelected
+                          ? 'inset 3px 0 0 #3366FF'
+                          : 'none',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#eef2ff';
+                        e.currentTarget.style.color = '#3366FF';
+                        e.currentTarget.style.boxShadow =
+                          'inset 3px 0 0 #3366FF';
+                        e.currentTarget.style.cursor = 'pointer';
+                      }}
+                      onMouseLeave={(e) => {
+                        if (isSelected) {
+                          e.currentTarget.style.backgroundColor = '#eef2ff';
+                          e.currentTarget.style.color = '#3366FF';
+                          e.currentTarget.style.boxShadow =
+                            'inset 3px 0 0 #3366FF';
+                        } else {
+                          e.currentTarget.style.backgroundColor = '#fff';
+                          e.currentTarget.style.color = '#000';
+                          e.currentTarget.style.boxShadow = 'none';
+                        }
+                        e.currentTarget.style.cursor = 'pointer';
+                      }}
+                    >
+                      <span
+                        style={{
+                          userSelect: 'none',
+                          cursor: 'pointer !important',
+                          display: 'block',
+                          pointerEvents: 'none',
+                        }}
+                      >
+                        {typeof item.title === 'string'
+                          ? item.title
+                          : item.title.props?.children}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>,
               document.body,
             )}
@@ -504,7 +541,7 @@ const mapStateToProps = ({ books, userDataByBookId }) => ({
   userDataByBookId,
 });
 
-const matchDispatchToProps = (dispatch, x) =>
+const matchDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setSelectedToolUid,
