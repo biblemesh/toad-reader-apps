@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
-import { StyleSheet, View } from "react-native"
+import { StyleSheet, View, Platform } from "react-native"
 import { IndexPath, Select, SelectItem } from "@ui-kitten/components"
 import { v4 as uuidv4 } from 'uuid'
 import { i18n } from "inline-i18n"
@@ -9,6 +9,7 @@ import { i18n } from "inline-i18n"
 import Dialog from "./Dialog"
 import DialogInput from "../basic/DialogInput"
 import BackFunction from '../basic/BackFunction'
+import SelectWebPortalWrapper from "../basic/SelectWebPortalWrapper"
 
 import { getIdsFromAccountId } from "../../utils/toolbox"
 
@@ -25,6 +26,31 @@ const styles = StyleSheet.create({
   select: {
     marginTop: 10,
   },
+  webBox: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: "#D5D9DE",
+    borderRadius: 6,
+    padding: 14,
+    backgroundColor: "white",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  panel: {
+    position: "absolute",
+    top: 54,
+    left: 0,
+    width: "100%",
+    backgroundColor: "white",
+    borderRadius: 6,
+    boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
+    zIndex: 9999,
+  },
+  option: {
+    padding: 14,
+    borderBottomWidth: 1,
+    borderColor: "#EEE",
+  }
 })
 
 const CreateClassroom = React.memo(({
@@ -128,7 +154,7 @@ const CreateClassroom = React.memo(({
         open={!!open}
         type="confirm"
         title={i18n("Create a new classroom", "", "enhanced")}
-        message={(
+        message={
           <View style={styles.container}>
             <DialogInput
               value={name}
@@ -136,22 +162,29 @@ const CreateClassroom = React.memo(({
               label={i18n("Classroom name", "", "enhanced")}
               placeholder={i18n("Eg. Fall 2020", "", "enhanced")}
             />
-            <Select
-              label={i18n("Based off...", "", "enhanced")}
-              style={styles.select}
-              value={selectedOption.title}
-              selectedIndex={new IndexPath(basedOffOptions.indexOf(selectedOption))}
-              onSelect={onSelect}
-            >
-              {basedOffOptions.map(({ title }, idx) => (
-                <SelectItem
-                  key={idx}
-                  title={title}
-                />
-              ))}
-            </Select>
+
+            {Platform.OS === "web" ? (
+              <SelectWebPortalWrapper
+                label={i18n("Based off...", "", "enhanced")}
+                value={selectedOption.title}
+                options={basedOffOptions}
+                onSelect={(opt) => setBasedOffUid(opt.uid)}
+              />
+            ) : (
+              <Select
+                label={i18n("Based off...", "", "enhanced")}
+                style={styles.select}
+                value={selectedOption.title}
+                selectedIndex={new IndexPath(basedOffOptions.indexOf(selectedOption))}
+                onSelect={onSelect}
+              >
+                {basedOffOptions.map(({ title }, idx) => (
+                  <SelectItem key={idx} title={title} />
+                ))}
+              </Select>
+            )}
           </View>
-        )}
+        }
         confirmButtonText={i18n("Create", "", "enhanced")}
         confirmButtonStatus="primary"
         onCancel={requestHide}
