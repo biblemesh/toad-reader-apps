@@ -297,6 +297,7 @@ const EnhancedHeader = React.memo(({
                   ref={anchorRef}
                   onStartShouldSetResponder={() => true}
                   onResponderRelease={() => toggleShowOptions(!showOptions)}
+                  style={{ cursor: 'pointer' }}
                 >
                   <Text style={styles.classroom} numberOfLines={2}>
                     {`${classroomName} ▾`}
