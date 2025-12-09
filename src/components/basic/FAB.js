@@ -1,11 +1,11 @@
-import { useCallback } from "react"
-import { StyleSheet, Platform } from "react-native"
-import { Button, styled } from '@ui-kitten/components'
+import { useCallback } from 'react';
+import { StyleSheet, Platform } from 'react-native';
+import { Button, styled } from '@ui-kitten/components';
 
-import useThemedStyleSets from "../../hooks/useThemedStyleSets"
-import FABWeb from "./FAB.web"
+import useThemedStyleSets from '../../hooks/useThemedStyleSets';
+import FABWeb from './FAB.web';
 
-import Icon from "./Icon"
+import Icon from './Icon';
 
 const styles = StyleSheet.create({
   icon: {
@@ -20,13 +20,13 @@ const styles = StyleSheet.create({
     height: 50,
     elevation: 4,
     shadowOffset: { width: 1, height: 1 },
-    shadowColor: "black",
+    shadowColor: 'black',
     shadowOpacity: 0.3,
     shadowRadius: 15,
     paddingVertical: 0,
     paddingHorizontal: 0,
   },
-})
+});
 
 const FAB = ({
   style,
@@ -36,11 +36,8 @@ const FAB = ({
   status,
   onPress,
 
-  eva: {
-    style: themedStyle,
-  }={},
+  eva: { style: themedStyle } = {},
 }) => {
-
   // Use web-specific FAB on web platform
   if (Platform.OS === 'web') {
     return (
@@ -50,39 +47,30 @@ const FAB = ({
         onPress={onPress}
         style={style}
       />
-    )
+    );
   }
 
-  const { baseThemedStyle, iconThemedStyle } = useThemedStyleSets(themedStyle)
+  const { baseThemedStyle, iconThemedStyle } = useThemedStyleSets(themedStyle);
 
   const ButtonIcon = useCallback(
     ({ style }) => (
       <Icon
         name={iconName}
         pack={iconPack}
-        style={[
-          style,
-          styles.icon,
-          iconThemedStyle,
-          iconStyle,
-        ]}
+        style={[style, styles.icon, iconThemedStyle, iconStyle]}
       />
     ),
-    [ iconName, iconPack, iconThemedStyle, iconStyle ],
-  )
+    [iconName, iconPack, iconThemedStyle, iconStyle],
+  );
 
   return (
     <Button
-      style={[
-        styles.button,
-        baseThemedStyle,
-        style,
-      ]}
+      style={[styles.button, baseThemedStyle, style]}
       accessoryLeft={ButtonIcon}
       status={status}
       onPress={onPress}
     />
-  )
-}
+  );
+};
 
-export default styled('FAB')(FAB)
+export default styled('FAB')(FAB);

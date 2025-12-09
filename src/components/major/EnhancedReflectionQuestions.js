@@ -1,41 +1,41 @@
-import React, { useState, useMemo, useCallback } from "react"
-import { StyleSheet, View, Text, ScrollView, Platform } from "react-native"
-import { bindActionCreators } from "redux"
-import { connect } from "react-redux"
-import { i18n } from "inline-i18n"
-import { CSVLink } from "react-csv"
-import { Select, SelectItem, IndexPath } from "@ui-kitten/components"
+import React, { useState, useMemo, useCallback } from 'react';
+import { StyleSheet, View, Text, ScrollView, Platform } from 'react-native';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { i18n } from 'inline-i18n';
+import { CSVLink } from 'react-csv';
+import { Select, SelectItem, IndexPath } from '@ui-kitten/components';
 
-import WebReflectionDropdown from '../basic/WebReflectionDropdown'
+import WebReflectionDropdown from '../basic/WebReflectionDropdown';
 
-import { orderSpineIdRefKeyedObj, orderCfiKeyedObj } from '../../utils/toolbox'
-import useClassroomInfo from '../../hooks/useClassroomInfo'
-import useDashboardData from '../../hooks/useDashboardData'
-import useWideMode from "../../hooks/useWideMode"
-import dummyReflectionQuestions from '../../utils/dummyReflectionQuestions'
-import dummyStudents from '../../utils/dummyStudents'
+import { orderSpineIdRefKeyedObj, orderCfiKeyedObj } from '../../utils/toolbox';
+import useClassroomInfo from '../../hooks/useClassroomInfo';
+import useDashboardData from '../../hooks/useDashboardData';
+import useWideMode from '../../hooks/useWideMode';
+import dummyReflectionQuestions from '../../utils/dummyReflectionQuestions';
+import dummyStudents from '../../utils/dummyStudents';
 
-import CoverAndSpin from '../basic/CoverAndSpin'
-import FAB from '../basic/FAB'
-import NoStudentsBox from '../basic/NoStudentsBox'
+import CoverAndSpin from '../basic/CoverAndSpin';
+import FAB from '../basic/FAB';
+import NoStudentsBox from '../basic/NoStudentsBox';
 
-const width = 130
+const width = 130;
 
 const container = {
   marginTop: 20,
   marginLeft: 20,
   flex: 1,
-}
+};
 
 const scrollViewContent = {
   paddingBottom: 20,
   paddingRight: 20,
-}
+};
 
 const selectContainer = {
   maxWidth: 400,
   marginRight: 20,
-}
+};
 
 const question = {
   fontWeight: '600',
@@ -43,7 +43,7 @@ const question = {
   marginTop: 25,
   marginBottom: 15,
   marginRight: 20,
-}
+};
 
 const styles = StyleSheet.create({
   error: {
@@ -110,197 +110,218 @@ const styles = StyleSheet.create({
     marginRight: 15,
     fontWeight: '200',
   },
-})
+});
 
-const EnhancedReflectionQuestions = React.memo(({
-  bookId,
+const EnhancedReflectionQuestions = React.memo(
+  ({
+    bookId,
 
-  idps,
-  accounts,
-  books,
-  userDataByBookId,
-}) => {
-
-  const { classroomUid, idpId, isDefaultClassroom, classroom, students, spines } = useClassroomInfo({ books, bookId, userDataByBookId })
-
-  const wideMode = useWideMode()
-
-  const { data, error } = useDashboardData({
-    classroomUid,
-    idp: idps[idpId],
+    idps,
     accounts,
-    query: "getreflectionquestions",
-  })
+    books,
+    userDataByBookId,
+  }) => {
+    const {
+      classroomUid,
+      idpId,
+      isDefaultClassroom,
+      classroom,
+      students,
+      spines,
+    } = useClassroomInfo({ books, bookId, userDataByBookId });
 
-  const [ currentQuestionUid, setCurrentQuestionUid ] = useState()
+    const wideMode = useWideMode();
 
-  const { orderedQuestions, answers, csvData, isDummy=false } = useMemo(
-    () => {
-      const orderedQuestions = []
-      const studentIndexes = {}
-      const studentInfo = {}
-      let studentIndex = 0
-      let answers = {}
-      let csvData = []
+    const { data, error } = useDashboardData({
+      classroomUid,
+      idp: idps[idpId],
+      accounts,
+      query: 'getreflectionquestions',
+    });
 
-      if((data || {}).questionsByLoc) {
+    const [currentQuestionUid, setCurrentQuestionUid] = useState();
 
-        orderSpineIdRefKeyedObj({ obj: data.questionsByLoc, spines }).forEach(questionssByCfi => {
-          orderCfiKeyedObj({ obj: questionssByCfi }).forEach(questions => {
-            questions.forEach(question => {
-              orderedQuestions.push({
-                ...question,
-                title: question.name || i18n("Question", "", "enhanced"),
-              })
-            })
-          })
-        })
+    const {
+      orderedQuestions,
+      answers,
+      csvData,
+      isDummy = false,
+    } = useMemo(() => {
+      const orderedQuestions = [];
+      const studentIndexes = {};
+      const studentInfo = {};
+      let studentIndex = 0;
+      let answers = {};
+      let csvData = [];
 
-        students.forEach(info => {
-          studentIndexes[info.user_id] = studentIndex++
-          studentInfo[info.user_id] = info
-        })
+      if ((data || {}).questionsByLoc) {
+        orderSpineIdRefKeyedObj({ obj: data.questionsByLoc, spines }).forEach(
+          (questionssByCfi) => {
+            orderCfiKeyedObj({ obj: questionssByCfi }).forEach((questions) => {
+              questions.forEach((question) => {
+                orderedQuestions.push({
+                  ...question,
+                  title: question.name || i18n('Question', '', 'enhanced'),
+                });
+              });
+            });
+          },
+        );
 
-        orderedQuestions.forEach(question => {
-          answers[question.uid] = question.answers
-        })
+        students.forEach((info) => {
+          studentIndexes[info.user_id] = studentIndex++;
+          studentInfo[info.user_id] = info;
+        });
+
+        orderedQuestions.forEach((question) => {
+          answers[question.uid] = question.answers;
+        });
 
         csvData = [
           [
-            i18n("Student", "", "enhanced"),
-            i18n("Email", "", "enhanced"),
-            ...orderedQuestions.map(({ title, question }) => `${title}\n${question}`),
+            i18n('Student', '', 'enhanced'),
+            i18n('Email', '', 'enhanced'),
+            ...orderedQuestions.map(
+              ({ title, question }) => `${title}\n${question}`,
+            ),
           ],
-          ...students.map(({ user_id, fullname, email }, idx) => ([
+          ...students.map(({ user_id, fullname, email }, idx) => [
             fullname,
             email,
-            ...orderedQuestions.map(({ uid }) => ((answers[uid] || {})[user_id] || "")),
-          ]))
-        ]
-
+            ...orderedQuestions.map(
+              ({ uid }) => (answers[uid] || {})[user_id] || '',
+            ),
+          ]),
+        ];
       }
 
-      if(students.length === 0 || orderedQuestions.length === 0) return dummyReflectionQuestions
+      if (students.length === 0 || orderedQuestions.length === 0)
+        return dummyReflectionQuestions;
 
-      return { orderedQuestions, answers, csvData }
-    },
-    [ students, data, spines ],
-  )
+      return { orderedQuestions, answers, csvData };
+    }, [students, data, spines]);
 
-  const onSelect = useCallback(
-    ({ row: index }) => setCurrentQuestionUid(orderedQuestions[index].uid),
-    [ orderedQuestions ],
-  )
+    const onSelect = useCallback(
+      ({ row: index }) => setCurrentQuestionUid(orderedQuestions[index].uid),
+      [orderedQuestions],
+    );
 
-  if(!classroomUid) return null
+    if (!classroomUid) return null;
 
-  if(error && !classroom.isNew) {
+    if (error && !classroom.isNew) {
+      return <Text style={styles.error}>Error: {error}</Text>;
+    }
+
+    if (!data && !(error && classroom.isNew)) {
+      return (
+        <View style={styles.genericContainer}>
+          <CoverAndSpin />
+        </View>
+      );
+    }
+
+    const currentQuestion =
+      orderedQuestions.filter(({ uid }) => uid === currentQuestionUid)[0] ||
+      orderedQuestions[0];
+
     return (
-      <Text style={styles.error}>
-        Error: {error}
-      </Text>
-    )
-  }
-
-  if(!data && !(error && classroom.isNew)) {
-    return (
-      <View style={styles.genericContainer}>
-        <CoverAndSpin />
-      </View>
-    )
-  }
-
-  const currentQuestion = orderedQuestions.filter(({ uid }) => uid === currentQuestionUid)[0] || orderedQuestions[0]
-
-  return (
-    <View style={wideMode ? styles.containerWideMode : styles.container}>
-
-      {isDummy &&
-        <NoStudentsBox
-          message={
-            students.length !== 0
-            && i18n("This classroom does not contain any reflection questions.", "", "enhanced")
-          }
-        />
-      }
-
-      <View style={wideMode ? styles.selectContainerWideMode : styles.selectContainer}>
-        {Platform.OS === "web" ? (
-          <WebReflectionDropdown
-            label={i18n("Question name", "", "enhanced")}
-            orderedQuestions={orderedQuestions}
-            currentQuestion={currentQuestion}
-            onSelect={onSelect}
+      <View style={wideMode ? styles.containerWideMode : styles.container}>
+        {isDummy && (
+          <NoStudentsBox
+            message={
+              students.length !== 0 &&
+              i18n(
+                'This classroom does not contain any reflection questions.',
+                '',
+                'enhanced',
+              )
+            }
           />
-        ) : (
-          <Select
-            label={i18n("Question name", "", "enhanced")}
-            style={styles.select}
-            value={currentQuestion.title}
-            selectedIndex={new IndexPath(orderedQuestions.indexOf(currentQuestion))}
-            onSelect={onSelect}
+        )}
+
+        <View
+          style={
+            wideMode ? styles.selectContainerWideMode : styles.selectContainer
+          }
+        >
+          {Platform.OS === 'web' ? (
+            <WebReflectionDropdown
+              label={i18n('Question name', '', 'enhanced')}
+              orderedQuestions={orderedQuestions}
+              currentQuestion={currentQuestion}
+              onSelect={onSelect}
+            />
+          ) : (
+            <Select
+              label={i18n('Question name', '', 'enhanced')}
+              style={styles.select}
+              value={currentQuestion.title}
+              selectedIndex={
+                new IndexPath(orderedQuestions.indexOf(currentQuestion))
+              }
+              onSelect={onSelect}
+            >
+              {orderedQuestions.map(({ title }, idx) => (
+                <SelectItem key={idx} title={title} />
+              ))}
+            </Select>
+          )}
+        </View>
+        <Text style={wideMode ? styles.questionWideMode : styles.question}>
+          {currentQuestion.question}
+        </Text>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={
+            wideMode
+              ? styles.scrollViewContentWideMode
+              : styles.scrollViewContent
+          }
+        >
+          {(isDummy ? dummyStudents : students).map(
+            ({ user_id, fullname, email }) => (
+              <View style={styles.row} key={user_id}>
+                <Text style={styles.student}>{fullname || email}</Text>
+                <Text style={styles.answer}>
+                  {(answers[currentQuestion.uid] || {})[user_id] || ''}
+                </Text>
+              </View>
+            ),
+          )}
+        </ScrollView>
+        {Platform.OS === 'web' && !!csvData && (
+          <CSVLink
+            data={csvData}
+            filename={
+              i18n('Reflection question answers', '', 'enhanced') +
+              ' - ' +
+              (isDefaultClassroom
+                ? i18n('Interactive book', '', 'enhanced')
+                : (classroom || '').name) +
+              ' - ' +
+              new Date().toDateString() +
+              '.csv'
+            }
+            target="_blank"
           >
-            {orderedQuestions.map(({ title }, idx) => (
-              <SelectItem
-                key={idx}
-                title={title}
-              />
-            ))}
-          </Select>
+            <FAB iconName="cloud-download" status="primary" />
+          </CSVLink>
         )}
       </View>
-      <Text style={wideMode ? styles.questionWideMode : styles.question}>
-        {currentQuestion.question}
-      </Text>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={wideMode ? styles.scrollViewContentWideMode : styles.scrollViewContent}
-      >
-        {(isDummy ? dummyStudents : students).map(({ user_id, fullname, email }) => (
-          <View style={styles.row} key={user_id}>
-            <Text style={styles.student}>
-              {fullname || email}
-            </Text>
-            <Text style={styles.answer}>
-              {(answers[currentQuestion.uid] || {})[user_id] || ""}
-            </Text>
-          </View>
-        ))}
-      </ScrollView>
-      {Platform.OS === 'web' && !!csvData &&
-        <CSVLink
-          data={csvData}
-          filename={
-            i18n("Reflection question answers", "", "enhanced")
-            + " - "
-            + (isDefaultClassroom
-              ? i18n("Interactive book", "", "enhanced")
-              : (classroom || "").name
-            )
-            + " - "
-            + new Date().toDateString()
-            + ".csv"
-          }
-          target="_blank"
-        >
-          <FAB
-            iconName="cloud-download"
-            status="primary"
-          />
-        </CSVLink>
-      }
-    </View>
-  )
-})
+    );
+  },
+);
 
 const mapStateToProps = ({ idps, accounts, books, userDataByBookId }) => ({
   idps,
   accounts,
   books,
   userDataByBookId,
-})
+});
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
-}, dispatch)
+const matchDispatchToProps = (dispatch, x) => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, matchDispatchToProps)(EnhancedReflectionQuestions)
+export default connect(
+  mapStateToProps,
+  matchDispatchToProps,
+)(EnhancedReflectionQuestions);
