@@ -171,16 +171,22 @@ const DiscussionQuestionTool = React.memo(({
 
   const safeAreaInsets = useSafeAreaInsets()
 
-  const { scrolledToEnd, contentSizeHeight, y, onScroll, onContentSizeChange } = useScroll({ scrolledToEndGraceY: 50, handleScrolledToTop })
+  const { scrolledToEnd, contentSizeHeight, y, onScroll, onContentSizeChange } = useScroll({ 
+    scrolledToEndGraceY: 50, 
+    handleScrolledToTop: Platform.OS !== 'web' ? handleScrolledToTop : () => {} // Disable on web to prevent crashes
+  })
   const scrollViewRef = useRef()
 
   useKeyboardSize({
     handleChange: ({ changeInHeight }) => {
-      scrollViewRef.current.scrollTo({
-        x: 0,
-        y: y.current + changeInHeight,
-        animated: false,
-      })
+      // Prevent scroll operations on web during Expo 53 to avoid crashes
+      if (Platform.OS !== 'web' && scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({
+          x: 0,
+          y: y.current + changeInHeight,
+          animated: false,
+        })
+      }
     },
   })
 
@@ -220,10 +226,16 @@ const DiscussionQuestionTool = React.memo(({
           || (responses[0] || {}).user_id === userId
         )
       ) {
-        const doScroll = () => scrollViewRef.current.scrollToEnd({ animated: existingResponses.length > 0 })
+        const doScroll = () => {
+          // Prevent auto-scroll on web in Expo 53 to avoid crashes
+          if (Platform.OS !== 'web' && scrollViewRef.current) {
+            scrollViewRef.current.scrollToEnd({ animated: existingResponses.length > 0 })
+          }
+        }
 
         if(Platform.OS === 'web') {
-          doScroll()
+          // Skip auto-scroll entirely on web to prevent Expo 53 crashes
+          // doScroll()
         } else {
           setTimeout(doScroll)
         }
@@ -272,6 +284,11 @@ const DiscussionQuestionTool = React.memo(({
 
   const handleScrolledToTop = useCallback(
     async () => {
+      // Disable scroll-to-top pagination on web to prevent Expo 53 crashes
+      if (Platform.OS === 'web') {
+        return
+      }
+
       const existingResponses = getResponses()
 
       if(existingResponses.length >= PAGE_SIZE) {
@@ -288,7 +305,8 @@ const DiscussionQuestionTool = React.memo(({
     (contentWidth, contentHeight) => {
       onContentSizeChange(contentWidth, contentHeight)
 
-      if(prevContentSizeHeight.current) {
+      // Prevent scroll operations during content size changes on web (Expo 53 crash prevention)
+      if(Platform.OS !== 'web' && prevContentSizeHeight.current && scrollViewRef.current) {
         scrollViewRef.current.scrollTo({
           x: 0,
           y: y.current + (contentSizeHeight.current - prevContentSizeHeight.current),
@@ -297,7 +315,7 @@ const DiscussionQuestionTool = React.memo(({
         prevContentSizeHeight.current = null
       }
     },
-    [],
+    [onContentSizeChange, y, contentSizeHeight],
   )
 
   const handleInputKeyPress = useCallback(
@@ -427,10 +445,10 @@ const DiscussionQuestionTool = React.memo(({
       </Text>
       <ScrollView
         style={styles.discussionContainer}
-        onScroll={onScroll}
-        onContentSizeChange={handleScrollViewHeightChange}
+        onScroll={Platform.OS !== 'web' ? onScroll : undefined} // Disable scroll tracking on web
+        onContentSizeChange={Platform.OS !== 'web' ? handleScrollViewHeightChange : undefined} // Disable content size tracking on web
         ref={scrollViewRef}
-        scrollEventThrottle={100}
+        scrollEventThrottle={Platform.OS !== 'web' ? 100 : undefined} // Disable scroll throttling on web
       >
         <View style={styles.discussion}>
           {gettingResponses &&
