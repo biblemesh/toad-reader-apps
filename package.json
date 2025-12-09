@@ -9,6 +9,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
+    "start-staging": "NODE_VERSION=$(cat .nvmrc) docker compose -f .devcontainer/staging/docker-compose.yml -f docker-compose.yml up",
     "android": "npx expo start --android",
     "build-android-development": "(node ./scripts/echoActionToPerform.js --action build-android-development && npm run remind -s && ((npm run pre-push-swap && npx eas-cli build --platform android --profile development) || npm run post-push-restore)) || true",
     "build-android-staging": "(node ./scripts/echoActionToPerform.js --action build-android-staging && npm run remind -s && ((npm run pre-push-swap && npx eas-cli build --platform android --profile staging) || npm run post-push-restore)) || true",

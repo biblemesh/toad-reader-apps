@@ -33,7 +33,13 @@ services:
     image: biblemesh/toad-reader-apps:latest
     build:
       context: ../../
-      dockerfile: ./.devcontainer/development/Dockerfile
+      dockerfile_inline:
+        FROM node:${NODE_VERSION:-20}-alpine
+
+        RUN
+          set -o nounset -o xtrace &&
+          apk add bash &&
+          npm config set script-shell bash
     command: ["/bin/bash", "-c", "sleep infinity"]
     networks:
       - ereader

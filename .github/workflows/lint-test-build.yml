@@ -5,7 +5,7 @@ on:
 
 
 env:
-  DEFAULT_NODE_VERSION: 18
+  DEFAULT_NODE_VERSION: 20  # FIXME use nvmrc instead
 
 permissions:
   contents: read
