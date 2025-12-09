@@ -10,6 +10,7 @@ import useClassroomInfo from '../../hooks/useClassroomInfo'
 import { setSelectedToolUid } from "../../redux/actions"
 import useWideMode from "../../hooks/useWideMode"
 import useRouterState from "../../hooks/useRouterState"
+import WebHighlightsDropdown from "../basic/WebHighlightsDropdown"
 
 import Icon from "../basic/Icon"
 import Button from "../basic/Button"
@@ -325,7 +326,25 @@ const Highlights = React.memo(({
     [],
   )
 
-  const ReadIcon = useCallback(({ style }) => <Icon name="book-open-variant" pack="materialCommunity" style={style} />, [])
+  const ReadIcon = useCallback(
+    Platform.OS === 'web'
+      ? (props) => (
+          <Icon
+            {...props}
+            name="book-open-variant"
+            pack="materialCommunity"
+            style={[ props?.style, { width: 15, height: 15 } ]}
+          />
+        )
+      : ({ style }) => (
+          <Icon
+            name="book-open-variant"
+            pack="materialCommunity"
+            style={style}
+          />
+        ),
+    []
+  )
   // const DrawIcon = useCallback(({ style }) => <Icon name="draw" pack="materialCommunity" style={style} />, [])
   // const ShareIcon = useCallback(style => <Icon name="share" style={style} />, [])
 
@@ -354,20 +373,33 @@ const Highlights = React.memo(({
   return (
     <View style={wideMode ? styles.containerWideMode : styles.container}>
       {selectOptions.length > 1 &&
-        <Select
-          style={wideMode ? styles.selectWideMode : styles.select}
-          multiSelect={true}
-          selectedIndex={selectedIndexes}
-          value={combineItems(...selectedIndexes.map(({ row }) => selectOptions[row].title))}
-          onSelect={setSelectedIndexes}
-        >
-          {selectOptions.map(({ title }, idx) => (
-            <SelectItem
-              key={idx}
-              title={title}
+          <>
+          {Platform.OS === "web" ? (
+            <div style={wideMode ? styles.selectWideMode : styles.select}>
+            <WebHighlightsDropdown
+              selectOptions={selectOptions}
+              selectedIndexes={selectedIndexes}
+              displayValue={combineItems(...selectedIndexes.map(({ row }) => selectOptions[row].title))}
+              onSelect={setSelectedIndexes}
             />
-          ))}
-        </Select>
+            </div>
+          ) : (
+            <Select
+              style={wideMode ? styles.selectWideMode : styles.select}
+              multiSelect={true}
+              selectedIndex={selectedIndexes}
+              value={combineItems(...selectedIndexes.map(({ row }) => selectOptions[row].title))}
+              onSelect={setSelectedIndexes}
+            >
+              {selectOptions.map(({ title }, idx) => (
+                <SelectItem
+                  key={idx}
+                  title={title}
+                />
+              ))}
+            </Select>
+          )}
+        </>
       }
       {highlightGroupsToShow.length === 0 &&
         <Text style={styles.none}>
@@ -402,18 +434,18 @@ const Highlights = React.memo(({
                       </Text>
                     ))}
                     <View style={styles.buttons}>
-                      <Button
-                        style={styles.button}
-                        size="small"
-                        status="basic"
-                        accessoryLeft={ReadIcon}
-                        appearance="ghost"
-                        onPress={goRead}
-                        info={{
-                          spineIdRef,
-                          cfi,
-                        }}
-                      />
+                    <Button
+                      style={styles.button}
+                      size="small"
+                      status="basic"
+                      accessoryLeft={ReadIcon}
+                      appearance="ghost"
+                      onPress={goRead}
+                      info={{
+                        spineIdRef,
+                        cfi,
+                      }}
+                    />
                       {/* <Button
                         style={styles.button}
                         size="small"

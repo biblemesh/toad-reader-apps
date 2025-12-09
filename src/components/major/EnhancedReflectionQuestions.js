@@ -6,6 +6,8 @@ import { i18n } from "inline-i18n"
 import { CSVLink } from "react-csv"
 import { Select, SelectItem, IndexPath } from "@ui-kitten/components"
 
+import WebReflectionDropdown from '../basic/WebReflectionDropdown'
+
 import { orderSpineIdRefKeyedObj, orderCfiKeyedObj } from '../../utils/toolbox'
 import useClassroomInfo from '../../hooks/useClassroomInfo'
 import useDashboardData from '../../hooks/useDashboardData'
@@ -223,20 +225,29 @@ const EnhancedReflectionQuestions = React.memo(({
       }
 
       <View style={wideMode ? styles.selectContainerWideMode : styles.selectContainer}>
-        <Select
-          label={i18n("Question name", "", "enhanced")}
-          style={styles.select}
-          value={currentQuestion.title}
-          selectedIndex={new IndexPath(orderedQuestions.indexOf(currentQuestion))}
-          onSelect={onSelect}
-        >
-          {orderedQuestions.map(({ title }, idx) => (
-            <SelectItem
-              key={idx}
-              title={title}
-            />
-          ))}
-        </Select>
+        {Platform.OS === "web" ? (
+          <WebReflectionDropdown
+            label={i18n("Question name", "", "enhanced")}
+            orderedQuestions={orderedQuestions}
+            currentQuestion={currentQuestion}
+            onSelect={onSelect}
+          />
+        ) : (
+          <Select
+            label={i18n("Question name", "", "enhanced")}
+            style={styles.select}
+            value={currentQuestion.title}
+            selectedIndex={new IndexPath(orderedQuestions.indexOf(currentQuestion))}
+            onSelect={onSelect}
+          >
+            {orderedQuestions.map(({ title }, idx) => (
+              <SelectItem
+                key={idx}
+                title={title}
+              />
+            ))}
+          </Select>
+        )}
       </View>
       <Text style={wideMode ? styles.questionWideMode : styles.question}>
         {currentQuestion.question}

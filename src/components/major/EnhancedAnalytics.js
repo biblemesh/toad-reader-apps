@@ -1,9 +1,11 @@
 import React, { useMemo, useState, useCallback } from "react"
-import { StyleSheet, View, Text, ScrollView } from "react-native"
+import { StyleSheet, View, Text, ScrollView, Platform } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
 import { i18n } from "inline-i18n"
 import { Select, SelectItem, IndexPath } from "@ui-kitten/components"
+
+import WebAnalyticsDropdown from '../basic/WebAnalyticsDropdown'
 
 import { getDateLine, getTimeLine, orderSpineIdRefKeyedObj, orderCfiKeyedObj, roundFractionToTwoDecimals } from '../../utils/toolbox'
 import dummyStudents from '../../utils/dummyStudents'
@@ -198,35 +200,44 @@ const EnhancedAnalytics = React.memo(({
 
       {!isDummy &&
         <View style={wideMode ? styles.selectContainerWideMode : styles.selectContainer}>
-          <Select
-            label={i18n("Show data for...", "", "enhanced")}
-            style={styles.select}
-            value={
-              currentStudentIdx === -1
-                ? i18n("Entire classroom", "", "enhanced")
-                : (
-                  i18n("{{fullname}} ({{email}})", "", "enhanced", {
-                    fullname: studentsToUse[currentStudentIdx].fullname || "—",
-                    email: studentsToUse[currentStudentIdx].email,
-                  })
-                )
-            }
-            selectedIndex={new IndexPath(currentStudentIdx + 1)}
-            onSelect={onSelect}
-          >
-            <SelectItem
-              title={i18n("Entire classroom", "", "enhanced")}
+          {Platform.OS === "web" ? (
+            <WebAnalyticsDropdown
+              label={i18n("Show data for...", "", "enhanced")}
+              currentStudentIdx={currentStudentIdx}
+              students={studentsToUse}
+              onSelect={onSelect}
             />
-            {studentsToUse.map(({ fullname, email, user_id }) => (
+          ) : (
+            <Select
+              label={i18n("Show data for...", "", "enhanced")}
+              style={styles.select}
+              value={
+                currentStudentIdx === -1
+                  ? i18n("Entire classroom", "", "enhanced")
+                  : (
+                    i18n("{{fullname}} ({{email}})", "", "enhanced", {
+                      fullname: studentsToUse[currentStudentIdx].fullname || "—",
+                      email: studentsToUse[currentStudentIdx].email,
+                    })
+                  )
+              }
+              selectedIndex={new IndexPath(currentStudentIdx + 1)}
+              onSelect={onSelect}
+            >
               <SelectItem
-                key={user_id}
-                title={i18n("{{fullname}} ({{email}})", "", "enhanced", {
-                  fullname: fullname || "—",
-                  email,
-                })}
+                title={i18n("Entire classroom", "", "enhanced")}
               />
-            ))}
-          </Select>
+              {studentsToUse.map(({ fullname, email, user_id }) => (
+                <SelectItem
+                  key={user_id}
+                  title={i18n("{{fullname}} ({{email}})", "", "enhanced", {
+                    fullname: fullname || "—",
+                    email,
+                  })}
+                />
+              ))}
+            </Select>
+          )}
         </View>
       }
 

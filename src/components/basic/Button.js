@@ -1,5 +1,7 @@
 import React, { useCallback } from "react"
+import { Platform } from "react-native"
 import { Button as UIKittenButton } from "@ui-kitten/components"
+import ButtonWeb from "./Button.web"
 
 const Button = React.memo(({
   id,
@@ -10,10 +12,22 @@ const Button = React.memo(({
 
   const customOnPress = useCallback(
     () => {
-      onPress && onPress({ id, info })
+      if (onPress) {
+        onPress({ id, info })
+      }
     },
     [ id, info, onPress ],
   )
+
+  // Use web-specific Button on web platform
+  if (Platform.OS === 'web') {
+    return (
+      <ButtonWeb
+        {...otherProps}
+        onPress={customOnPress}
+      />
+    )
+  }
 
   return (
     <UIKittenButton
