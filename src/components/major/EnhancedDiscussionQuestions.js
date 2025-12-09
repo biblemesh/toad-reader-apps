@@ -1,24 +1,27 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react"
-import { Platform, StyleSheet, View } from "react-native";
-import { connect } from "react-redux"
-import { i18n } from "inline-i18n"
-import { Select, SelectItem, IndexPath } from "@ui-kitten/components"
-import usePrevious from "react-use/lib/usePrevious"
-import WebDropdown from "../basic/WebDropdown";
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
+import { connect } from 'react-redux';
+import { i18n } from 'inline-i18n';
+import { Select, SelectItem, IndexPath } from '@ui-kitten/components';
+import usePrevious from 'react-use/lib/usePrevious';
+import WebDropdown from '../basic/WebDropdown';
 
-import getDummyDiscussionQuestions from '../../utils/getDummyDiscussionQuestions'
-import { orderSpineIdRefKeyedObj, orderCfiKeyedObj, combineItems } from '../../utils/toolbox'
-import useClassroomInfo from '../../hooks/useClassroomInfo'
-import useWideMode from "../../hooks/useWideMode"
+import getDummyDiscussionQuestions from '../../utils/getDummyDiscussionQuestions';
+import {
+  orderSpineIdRefKeyedObj,
+  orderCfiKeyedObj,
+  combineItems,
+} from '../../utils/toolbox';
+import useClassroomInfo from '../../hooks/useClassroomInfo';
+import useWideMode from '../../hooks/useWideMode';
 
-import DiscussionQuestionTool from "./DiscussionQuestionTool"
+import DiscussionQuestionTool from './DiscussionQuestionTool';
 
 const selectContainer = {
   width: 800,
   maxWidth: '100%',
   paddingHorizontal: 20,
-}
-
+};
 
 const styles = StyleSheet.create({
   none: {
@@ -77,15 +80,15 @@ const EnhancedDiscussionQuestions = React.memo(
         const { uid, spineIdRef, cfi, name, data } = tool;
         if (!data.isDiscussion) return;
 
-        const key = cfi || "NULL";
+        const key = cfi || 'NULL';
         byLoc[spineIdRef] ??= {};
         byLoc[spineIdRef][key] ??= [];
 
         byLoc[spineIdRef][key].push({
           uid,
           name,
-          question: data.question || "",
-          title: name || i18n("Question", "", "enhanced"),
+          question: data.question || '',
+          title: name || i18n('Question', '', 'enhanced'),
         });
       });
 
@@ -102,7 +105,7 @@ const EnhancedDiscussionQuestions = React.memo(
     const [uids, setUids] = useState([]);
     const prevUids = usePrevious(uids);
     const selectedObjects = orderedQuestions.filter((q) =>
-      uids.includes(q.uid)
+      uids.includes(q.uid),
     );
 
     const handleSelectNative = useCallback(
@@ -114,49 +117,51 @@ const EnhancedDiscussionQuestions = React.memo(
           setUids([orderedQuestions[info.row].uid]);
         }
       },
-      [orderedQuestions, wideMode]
+      [orderedQuestions, wideMode],
     );
 
     const handleSelectWeb = useCallback(
       (row) => {
         const uid = orderedQuestions[row].uid;
-    
+
         setUids((prev) => {
           const exists = prev.includes(uid);
-    
+
           if (wideMode) {
             const next = exists
               ? prev.filter((id) => id !== uid)
               : [...prev, uid];
-    
+
             return next.slice(-3); // max 3 item
           }
-    
+
           return [uid]; // mobile/web-narrow: single select
         });
       },
-      [orderedQuestions, wideMode]
+      [orderedQuestions, wideMode],
     );
-    
-    
+
     useEffect(() => {
       if (!uids || uids.length === 0) return;
       if (!prevUids) return;
-    
+
       uids.forEach((id) => {
         if (!prevUids.includes(id)) {
-          logToolUsageEvent({ toolUid: id, eventName: "View tool" });
+          logToolUsageEvent({ toolUid: id, eventName: 'View tool' });
         }
       });
     }, [uids, prevUids, logToolUsageEvent]);
-    
 
     if (!classroomUid) return null;
 
-    const shownQuestions =
-  wideMode ? selectedObjects : selectedObjects.slice(0, 1);
-  
-  const memoQuestions = useMemo(() => orderedQuestions, [orderedQuestions.length]);
+    const shownQuestions = wideMode
+      ? selectedObjects
+      : selectedObjects.slice(0, 1);
+
+    const memoQuestions = useMemo(
+      () => orderedQuestions,
+      [orderedQuestions.length],
+    );
 
     return (
       <View style={styles.container}>
@@ -165,17 +170,17 @@ const EnhancedDiscussionQuestions = React.memo(
             wideMode ? styles.selectContainerWideMode : styles.selectContainer
           }
         >
-          {Platform.OS === "web" ? (
+          {Platform.OS === 'web' ? (
             <WebDropdown
               label={
                 wideMode
-                  ? i18n("Questions to display", "", "enhanced")
-                  : i18n("Question", "", "enhanced")
+                  ? i18n('Questions to display', '', 'enhanced')
+                  : i18n('Question', '', 'enhanced')
               }
               placeholder={
                 wideMode
-                  ? i18n("Select up to three", "", "enhanced")
-                  : i18n("Select a question", "", "enhanced")
+                  ? i18n('Select up to three', '', 'enhanced')
+                  : i18n('Select a question', '', 'enhanced')
               }
               orderedQuestions={memoQuestions}
               selectedObjects={selectedObjects}
@@ -185,13 +190,13 @@ const EnhancedDiscussionQuestions = React.memo(
             <Select
               label={
                 wideMode
-                  ? i18n("Questions to display", "", "enhanced")
-                  : i18n("Question", "", "enhanced")
+                  ? i18n('Questions to display', '', 'enhanced')
+                  : i18n('Question', '', 'enhanced')
               }
               placeholder={
                 wideMode
-                  ? i18n("Select up to three", "", "enhanced")
-                  : i18n("Select a question", "", "enhanced")
+                  ? i18n('Select up to three', '', 'enhanced')
+                  : i18n('Select a question', '', 'enhanced')
               }
               multiSelect={wideMode}
               value={
@@ -202,11 +207,13 @@ const EnhancedDiscussionQuestions = React.memo(
               selectedIndex={
                 wideMode
                   ? selectedObjects.map(
-                      (x) => new IndexPath(orderedQuestions.indexOf(x))
+                      (x) => new IndexPath(orderedQuestions.indexOf(x)),
                     )
                   : selectedObjects[0]
-                  ? new IndexPath(orderedQuestions.indexOf(selectedObjects[0]))
-                  : undefined
+                    ? new IndexPath(
+                        orderedQuestions.indexOf(selectedObjects[0]),
+                      )
+                    : undefined
               }
               onSelect={handleSelectNative}
             >
@@ -239,7 +246,7 @@ const EnhancedDiscussionQuestions = React.memo(
         </View>
       </View>
     );
-  }
+  },
 );
 
 const mapStateToProps = ({ books, userDataByBookId }) => ({
