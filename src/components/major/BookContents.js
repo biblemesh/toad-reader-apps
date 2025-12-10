@@ -29,6 +29,17 @@ const styles = StyleSheet.create({
   list: {
     backgroundColor: 'rgb(238, 241, 245)',
   },
+  fabWrapperWeb: {
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    zIndex: 9999,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },  
 })
 
 const BookContents = React.memo(({
@@ -341,13 +352,23 @@ const BookContents = React.memo(({
         maxToRenderPerBatch={Platform.OS === 'web' ? 9999 : undefined}  // I need this value to work with reportSpots
         style={styles.list}
       />
-      {showAddToolButton && inEditMode && !viewingFrontMatter && !viewingOptions && !hideFABs &&
-        <FAB
-          iconName="add"
-          status="primary"
-          onPress={createNewTool}
-        />
-      }
+      {showAddToolButton && inEditMode && !viewingFrontMatter && !viewingOptions && !hideFABs && (
+        Platform.OS === 'web' ? (
+          <View style={styles.fabWrapperWeb}>
+            <FAB
+              iconName="add"
+              status="primary"
+              onPress={createNewTool}
+            />
+          </View>
+        ) : (
+          <FAB
+            iconName="add"
+            status="primary"
+            onPress={createNewTool}
+          />
+        )
+      )}
     </>
   )
 })
