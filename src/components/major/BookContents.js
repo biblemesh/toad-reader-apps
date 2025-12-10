@@ -1,26 +1,26 @@
-import React, { useMemo, useCallback } from "react"
-import { StyleSheet, View, Platform } from "react-native"
-import { List } from "@ui-kitten/components"
-import { bindActionCreators } from "redux"
-import { connect } from "react-redux"
-import { v4 as uuidv4 } from 'uuid'
-import { useLayout } from '@react-native-community/hooks'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import React, { useMemo, useCallback } from 'react';
+import { StyleSheet, View, Platform } from 'react-native';
+import { List } from '@ui-kitten/components';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
+import { useLayout } from '@react-native-community/hooks';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { getSpineIdRefsInToc } from '../../utils/toolbox'
-import useSetTimeout from '../../hooks/useSetTimeout'
-import useInstanceValue from '../../hooks/useInstanceValue'
-import useClassroomInfo from '../../hooks/useClassroomInfo'
-import useWideMode from "../../hooks/useWideMode"
-import useSpineIdRefAndCfi from "../../hooks/useSpineIdRefAndCfi"
-import useRouterState from "../../hooks/useRouterState"
-import { createTool } from "../../redux/actions"
+import { getSpineIdRefsInToc } from '../../utils/toolbox';
+import useSetTimeout from '../../hooks/useSetTimeout';
+import useInstanceValue from '../../hooks/useInstanceValue';
+import useClassroomInfo from '../../hooks/useClassroomInfo';
+import useWideMode from '../../hooks/useWideMode';
+import useSpineIdRefAndCfi from '../../hooks/useSpineIdRefAndCfi';
+import useRouterState from '../../hooks/useRouterState';
+import { createTool } from '../../redux/actions';
 
-import BookContentsLine from "../basic/BookContentsLine"
-import EnhancedHeader from "./EnhancedHeader"
-import FAB from "../basic/FAB"
+import BookContentsLine from '../basic/BookContentsLine';
+import EnhancedHeader from './EnhancedHeader';
+import FAB from '../basic/FAB';
 
-const paddingTop = 12
+const paddingTop = 12;
 
 const styles = StyleSheet.create({
   listHeader: {
@@ -39,251 +39,277 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-  },  
-})
+  },
+});
 
-const BookContents = React.memo(({
-  goTo,
-  bookId,
-  reportSpots,
-  onToolMove,
-  onToolRelease,
-  onScroll,
-  inEditMode,
-  toggleInEditMode,
-  setModeToPage,
-  hideFABs,
+const BookContents = React.memo(
+  ({
+    goTo,
+    bookId,
+    reportSpots,
+    onToolMove,
+    onToolRelease,
+    onScroll,
+    inEditMode,
+    toggleInEditMode,
+    setModeToPage,
+    hideFABs,
 
-  books,
-  userDataByBookId,
+    books,
+    userDataByBookId,
 
-  createTool,
-}) => {
+    createTool,
+  }) => {
+    const {
+      toc,
+      classroomUid,
+      visibleTools,
+      selectedTool,
+      bookVersion,
+      isDefaultClassroom,
+      myRole,
+      viewingFrontMatter,
+      viewingOptions,
+      selectedToolUid,
+    } = useClassroomInfo({ books, bookId, userDataByBookId, inEditMode });
 
-  const { toc, classroomUid, visibleTools, selectedTool, bookVersion, isDefaultClassroom,
-          myRole, viewingFrontMatter, viewingOptions, selectedToolUid } = useClassroomInfo({ books, bookId, userDataByBookId, inEditMode })
+    const { latest_location } = userDataByBookId[bookId] || {};
+    const currentSpineIdRef = useSpineIdRefAndCfi(latest_location).spineIdRef;
+    const { getRouterState, historyPush } = useRouterState();
 
-  const { latest_location } = userDataByBookId[bookId] || {}
-  const currentSpineIdRef = useSpineIdRefAndCfi(latest_location).spineIdRef
-  const { getRouterState, historyPush } = useRouterState()
+    const wideMode = useWideMode();
 
-  const wideMode = useWideMode()
-        
-  const showAddToolButton = (
-    (
-      bookVersion === 'INSTRUCTOR'
-      && myRole === 'INSTRUCTOR'
-    )
-    || bookVersion === 'PUBLISHER'
-  )
+    const showAddToolButton =
+      (bookVersion === 'INSTRUCTOR' && myRole === 'INSTRUCTOR') ||
+      bookVersion === 'PUBLISHER';
 
-  const toolsInfoWithinBySpineIdRef = useMemo(
-    () => {
-      const infoBySpineIdRef = {}
+    const toolsInfoWithinBySpineIdRef = useMemo(() => {
+      const infoBySpineIdRef = {};
 
       visibleTools.forEach(({ spineIdRef, cfi, published_at }) => {
-        if(!cfi) return
+        if (!cfi) return;
 
-        if(!infoBySpineIdRef[spineIdRef]) {
+        if (!infoBySpineIdRef[spineIdRef]) {
           infoBySpineIdRef[spineIdRef] = {
             count: 0,
             isDraft: false,
-          }
+          };
         }
 
-        infoBySpineIdRef[spineIdRef].count++
-        infoBySpineIdRef[spineIdRef].isDraft = infoBySpineIdRef[spineIdRef].isDraft || !published_at
-      })
+        infoBySpineIdRef[spineIdRef].count++;
+        infoBySpineIdRef[spineIdRef].isDraft =
+          infoBySpineIdRef[spineIdRef].isDraft || !published_at;
+      });
 
-      return infoBySpineIdRef
-    },
-    [ JSON.stringify(visibleTools), inEditMode ],
-  )
+      return infoBySpineIdRef;
+    }, [JSON.stringify(visibleTools), inEditMode]);
 
-  const getListItems = (toc, indentLevel=0, insertedToolUidObj={}, insertedNumSpineIdRefObj={}) => {
-    let listItems = []
+    const getListItems = (
+      toc,
+      indentLevel = 0,
+      insertedToolUidObj = {},
+      insertedNumSpineIdRefObj = {},
+    ) => {
+      let listItems = [];
 
-    const findToolsToInsert = spineIdRefToFind => {
-      const toolsToInsert = visibleTools
-        .filter(({ uid, spineIdRef, cfi }) => (
-          spineIdRef === spineIdRefToFind
-          && !cfi
-          && !insertedToolUidObj[uid]
-        ))
+      const findToolsToInsert = (spineIdRefToFind) => {
+        const toolsToInsert = visibleTools.filter(
+          ({ uid, spineIdRef, cfi }) =>
+            spineIdRef === spineIdRefToFind && !cfi && !insertedToolUidObj[uid],
+        );
 
-      toolsToInsert.forEach(({ uid }) => {
-        insertedToolUidObj[uid] = true
-      })
+        toolsToInsert.forEach(({ uid }) => {
+          insertedToolUidObj[uid] = true;
+        });
 
-      return toolsToInsert.map(({ uid, name, toolType, data, published_at, spineIdRef, ordering }) => ({
-        key: uid,
-        uid,
-        indentLevel,
-        label: name,
-        toolType,
-        data,
-        isDraft: !published_at,
-        spineIdRef,
-        ordering,
-        isTool: true,
-        lineHeight: 34,  // default for fallback
-      }))
-    }
+        return toolsToInsert.map(
+          ({
+            uid,
+            name,
+            toolType,
+            data,
+            published_at,
+            spineIdRef,
+            ordering,
+          }) => ({
+            key: uid,
+            uid,
+            indentLevel,
+            label: name,
+            toolType,
+            data,
+            isDraft: !published_at,
+            spineIdRef,
+            ordering,
+            isTool: true,
+            lineHeight: 34, // default for fallback
+          }),
+        );
+      };
 
-    ;(toc || []).forEach(tocItem => {
-      const toolInfoWithin = (!insertedNumSpineIdRefObj[tocItem.spineIdRef] && toolsInfoWithinBySpineIdRef[tocItem.spineIdRef]) || 0
-      insertedNumSpineIdRefObj[tocItem.spineIdRef] = true
-      listItems = [
-        ...listItems,
-        ...findToolsToInsert(tocItem.spineIdRef),
-        {
-          ...tocItem,
-          indentLevel,
-          key: `${tocItem.label}-${tocItem.href}`,
-          numToolsWithin: toolInfoWithin.count,
-          isDraft: toolInfoWithin.isDraft,
-          lineHeight: 34,  // default for fallback
-        },
-        ...getListItems(tocItem.subNav, indentLevel+1, insertedToolUidObj, insertedNumSpineIdRefObj),
-      ]
-    })
-
-    if(indentLevel === 0) {
-      listItems = [
-        ...listItems,
-        ...findToolsToInsert('AFTER LAST SPINE'),
-      ]
-    }
-
-    return listItems
-  }
-
-  const data = useMemo(
-    () => getListItems(toc),
-    [ toc, JSON.stringify(visibleTools), inEditMode ],
-  )
-
-//   Following code not used because it was inconsistent. Turned maxToRenderPerBatch up instead.
-
-//   const prevData = usePrevious(data)
-
-//   useMemo(
-//     () => {
-//       if(!prevData) return
-
-//       // keep lineHeight values from previous data
-//       const prevTocData = prevData.filter(({ isTool }) => !isTool)
-
-//       let tocIndex = 0
-//       data.forEach(item => {
-//         if(!item.isTool) {
-//           item.lineHeight = (prevTocData[tocIndex] || {}).lineHeight
-//         }
-//       })
-
-//     },
-//     [ data ],
-//   )
-
-  const { onLayout, width, y: offsetY } = useLayout()
-
-  const getWidth = useInstanceValue(width)
-  const getOffsetY = useInstanceValue(offsetY)
-
-  const [ setReportSpotsTimeout ] = useSetTimeout()
-
-  const reportLineHeight = useCallback(
-    ({ index, height }) => {
-      if(height === 0) return
-
-      data[index].lineHeight = height
-
-      setReportSpotsTimeout(() => {
-        let accumulatedHeight = getOffsetY() + paddingTop
-        let accumulatedOrdering = 0
-        const usedSpineIdRefsObj = {}
-        reportSpots({
-          type: 'BookContents',
-          styles: {
-            width: getWidth(),
-            right: 0,
+      (toc || []).forEach((tocItem) => {
+        const toolInfoWithin =
+          (!insertedNumSpineIdRefObj[tocItem.spineIdRef] &&
+            toolsInfoWithinBySpineIdRef[tocItem.spineIdRef]) ||
+          0;
+        insertedNumSpineIdRefObj[tocItem.spineIdRef] = true;
+        listItems = [
+          ...listItems,
+          ...findToolsToInsert(tocItem.spineIdRef),
+          {
+            ...tocItem,
+            indentLevel,
+            key: `${tocItem.label}-${tocItem.href}`,
+            numToolsWithin: toolInfoWithin.count,
+            isDraft: toolInfoWithin.isDraft,
+            lineHeight: 34, // default for fallback
           },
-          spots: [
-            ...data.map(({ lineHeight=0, spineIdRef, isTool, ordering }) => {
-              const info = {
-                y: accumulatedHeight,
-                spineIdRef,
-                cfi: null,
-                ordering: isTool ? ordering : accumulatedOrdering,
-              }
+          ...getListItems(
+            tocItem.subNav,
+            indentLevel + 1,
+            insertedToolUidObj,
+            insertedNumSpineIdRefObj,
+          ),
+        ];
+      });
 
-              accumulatedHeight += lineHeight
-              accumulatedOrdering = isTool ? ordering + 1 : 0
+      if (indentLevel === 0) {
+        listItems = [...listItems, ...findToolsToInsert('AFTER LAST SPINE')];
+      }
 
-              if(!isTool) {
-                if(usedSpineIdRefsObj[spineIdRef]) {
-                  return false
-                }
-                usedSpineIdRefsObj[spineIdRef] = true
-              }
+      return listItems;
+    };
 
-              return info
-            }).filter(Boolean),
-            {
-              y: accumulatedHeight,
-              spineIdRef: 'AFTER LAST SPINE',
-              cfi: null,
-              ordering: accumulatedOrdering,
+    const data = useMemo(
+      () => getListItems(toc),
+      [toc, JSON.stringify(visibleTools), inEditMode],
+    );
+
+    //   Following code not used because it was inconsistent. Turned maxToRenderPerBatch up instead.
+
+    //   const prevData = usePrevious(data)
+
+    //   useMemo(
+    //     () => {
+    //       if(!prevData) return
+
+    //       // keep lineHeight values from previous data
+    //       const prevTocData = prevData.filter(({ isTool }) => !isTool)
+
+    //       let tocIndex = 0
+    //       data.forEach(item => {
+    //         if(!item.isTool) {
+    //           item.lineHeight = (prevTocData[tocIndex] || {}).lineHeight
+    //         }
+    //       })
+
+    //     },
+    //     [ data ],
+    //   )
+
+    const { onLayout, width, y: offsetY } = useLayout();
+
+    const getWidth = useInstanceValue(width);
+    const getOffsetY = useInstanceValue(offsetY);
+
+    const [setReportSpotsTimeout] = useSetTimeout();
+
+    const reportLineHeight = useCallback(
+      ({ index, height }) => {
+        if (height === 0) return;
+
+        data[index].lineHeight = height;
+
+        setReportSpotsTimeout(() => {
+          let accumulatedHeight = getOffsetY() + paddingTop;
+          let accumulatedOrdering = 0;
+          const usedSpineIdRefsObj = {};
+          reportSpots({
+            type: 'BookContents',
+            styles: {
+              width: getWidth(),
+              right: 0,
             },
-          ],
-        })
-      })
-    },
-    [ data, reportSpots ],
-  )
+            spots: [
+              ...data
+                .map(({ lineHeight = 0, spineIdRef, isTool, ordering }) => {
+                  const info = {
+                    y: accumulatedHeight,
+                    spineIdRef,
+                    cfi: null,
+                    ordering: isTool ? ordering : accumulatedOrdering,
+                  };
 
-  const renderItem = useCallback(
-    ({ item, index }) => {
+                  accumulatedHeight += lineHeight;
+                  accumulatedOrdering = isTool ? ordering + 1 : 0;
 
-      const selected = item.toolType
-        ? (item.uid === selectedToolUid)
-        : (!selectedToolUid && item.spineIdRef === currentSpineIdRef)
+                  if (!isTool) {
+                    if (usedSpineIdRefsObj[spineIdRef]) {
+                      return false;
+                    }
+                    usedSpineIdRefsObj[spineIdRef] = true;
+                  }
 
-      return (
-        <BookContentsLine
-          {...item}
-          bookId={bookId}
-          goTo={goTo}
-          reportLineHeight={reportLineHeight}
-          index={index}
-          onToolMove={onToolMove}
-          onToolRelease={onToolRelease}
-          uiStatus={selected ? "selected" : "unselected"}
-          setModeToPage={setModeToPage}
-          inEditMode={inEditMode}
-        />
-      )
-    },
-    [ selectedToolUid, currentSpineIdRef, bookId, goTo, reportLineHeight, inEditMode ],
-  )
+                  return info;
+                })
+                .filter(Boolean),
+              {
+                y: accumulatedHeight,
+                spineIdRef: 'AFTER LAST SPINE',
+                cfi: null,
+                ordering: accumulatedOrdering,
+              },
+            ],
+          });
+        });
+      },
+      [data, reportSpots],
+    );
 
-  const createNewTool = useCallback(
-    () => {
+    const renderItem = useCallback(
+      ({ item, index }) => {
+        const selected = item.toolType
+          ? item.uid === selectedToolUid
+          : !selectedToolUid && item.spineIdRef === currentSpineIdRef;
 
-      const uid = uuidv4()
-      let spineIdRef
-      let ordering = 0
+        return (
+          <BookContentsLine
+            {...item}
+            bookId={bookId}
+            goTo={goTo}
+            reportLineHeight={reportLineHeight}
+            index={index}
+            onToolMove={onToolMove}
+            onToolRelease={onToolRelease}
+            uiStatus={selected ? 'selected' : 'unselected'}
+            setModeToPage={setModeToPage}
+            inEditMode={inEditMode}
+          />
+        );
+      },
+      [
+        selectedToolUid,
+        currentSpineIdRef,
+        bookId,
+        goTo,
+        reportLineHeight,
+        inEditMode,
+      ],
+    );
 
-      if(selectedTool) {
+    const createNewTool = useCallback(() => {
+      const uid = uuidv4();
+      let spineIdRef;
+      let ordering = 0;
 
-        spineIdRef = selectedTool.spineIdRef
-        ordering = selectedTool.ordering + 1
-
+      if (selectedTool) {
+        spineIdRef = selectedTool.spineIdRef;
+        ordering = selectedTool.ordering + 1;
       } else {
-
-        const spineIdRefsInToc = getSpineIdRefsInToc(toc)
-        spineIdRef = spineIdRefsInToc[spineIdRefsInToc.indexOf(currentSpineIdRef) + 1] || 'AFTER LAST SPINE'
-
+        const spineIdRefsInToc = getSpineIdRefsInToc(toc);
+        spineIdRef =
+          spineIdRefsInToc[spineIdRefsInToc.indexOf(currentSpineIdRef) + 1] ||
+          'AFTER LAST SPINE';
       }
 
       createTool({
@@ -293,93 +319,94 @@ const BookContents = React.memo(({
         spineIdRef,
         // cfi,
         ordering,
-        name: "",
+        name: '',
         // toolType,
         creatorType: isDefaultClassroom ? 'PUBLISHER' : 'INSTRUCTOR',
         getRouterState,
         historyPush,
-      })
-    },
-    [ bookId, classroomUid, currentSpineIdRef, JSON.stringify(visibleTools), selectedTool ],
-  )
+      });
+    }, [
+      bookId,
+      classroomUid,
+      currentSpineIdRef,
+      JSON.stringify(visibleTools),
+      selectedTool,
+    ]);
 
-  const safeAreaInsets = useSafeAreaInsets()
-  const ListHeader = useMemo(
-    () => (
-      <View
-        style={
-          (
-            wideMode
-            && bookVersion === 'BASE'
-          )
-            ? { paddingTop: paddingTop + safeAreaInsets.top }
-            : styles.listHeader
-        }
-      />
-    ),
-    [ wideMode, safeAreaInsets.top ],
-  )
+    const safeAreaInsets = useSafeAreaInsets();
+    const ListHeader = useMemo(
+      () => (
+        <View
+          style={
+            wideMode && bookVersion === 'BASE'
+              ? { paddingTop: paddingTop + safeAreaInsets.top }
+              : styles.listHeader
+          }
+        />
+      ),
+      [wideMode, safeAreaInsets.top],
+    );
 
-  const ListFooter = useMemo(
-    () => (
-      <View
-        style={{
-          paddingTop: 70 + safeAreaInsets.bottom,
-        }}
-      />
-    ),
-    [ safeAreaInsets.bottom ],
-  )
+    const ListFooter = useMemo(
+      () => (
+        <View
+          style={{
+            paddingTop: 70 + safeAreaInsets.bottom,
+          }}
+        />
+      ),
+      [safeAreaInsets.bottom],
+    );
 
-  if(!toc) return null
+    if (!toc) return null;
 
-  return (
-    <>
-      <EnhancedHeader
-        bookId={bookId}
-        inEditMode={inEditMode}
-        toggleInEditMode={toggleInEditMode}
-        setModeToPage={setModeToPage}
-      />
-      <List
-        ListHeaderComponent={ListHeader}
-        ListFooterComponent={ListFooter}
-        data={data}
-        renderItem={renderItem}
-        onLayout={onLayout}
-        onScroll={onScroll}
-        initialNumToRender={25}
-        maxToRenderPerBatch={Platform.OS === 'web' ? 9999 : undefined}  // I need this value to work with reportSpots
-        style={styles.list}
-      />
-      {showAddToolButton && inEditMode && !viewingFrontMatter && !viewingOptions && !hideFABs && (
-        Platform.OS === 'web' ? (
-          <View style={styles.fabWrapperWeb}>
-            <FAB
-              iconName="add"
-              status="primary"
-              onPress={createNewTool}
-            />
-          </View>
-        ) : (
-          <FAB
-            iconName="add"
-            status="primary"
-            onPress={createNewTool}
-          />
-        )
-      )}
-    </>
-  )
-})
+    return (
+      <>
+        <EnhancedHeader
+          bookId={bookId}
+          inEditMode={inEditMode}
+          toggleInEditMode={toggleInEditMode}
+          setModeToPage={setModeToPage}
+        />
+        <List
+          ListHeaderComponent={ListHeader}
+          ListFooterComponent={ListFooter}
+          data={data}
+          renderItem={renderItem}
+          onLayout={onLayout}
+          onScroll={onScroll}
+          initialNumToRender={25}
+          maxToRenderPerBatch={Platform.OS === 'web' ? 9999 : undefined} // I need this value to work with reportSpots
+          style={styles.list}
+        />
+        {showAddToolButton &&
+          inEditMode &&
+          !viewingFrontMatter &&
+          !viewingOptions &&
+          !hideFABs &&
+          (Platform.OS === 'web' ? (
+            <View style={styles.fabWrapperWeb}>
+              <FAB iconName="add" status="primary" onPress={createNewTool} />
+            </View>
+          ) : (
+            <FAB iconName="add" status="primary" onPress={createNewTool} />
+          ))}
+      </>
+    );
+  },
+);
 
 const mapStateToProps = ({ books, userDataByBookId }) => ({
   books,
   userDataByBookId,
-})
+});
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
-  createTool,
-}, dispatch)
+const matchDispatchToProps = (dispatch, x) =>
+  bindActionCreators(
+    {
+      createTool,
+    },
+    dispatch,
+  );
 
-export default connect(mapStateToProps, matchDispatchToProps)(BookContents)
+export default connect(mapStateToProps, matchDispatchToProps)(BookContents);
