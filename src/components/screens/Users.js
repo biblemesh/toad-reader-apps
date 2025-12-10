@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react"
-import { StyleSheet, View, Text, ScrollView, Alert } from "react-native"
+import { StyleSheet, View, Text, ScrollView, Platform } from "react-native"
 import Constants from 'expo-constants'
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
 import { Autocomplete, AutocompleteItem, Button, Input } from '@ui-kitten/components'
 import { i18n } from "inline-i18n"
 import copy from 'copy-to-clipboard'
+
+// Web-only components
+import WebAutocomplete, { WebAutocompleteItem } from "../basic/WebAutocomplete"
+import WebInput from "../basic/WebInput"
+import WebButton from "../basic/WebButton"
 
 import { safeFetch, getDataOrigin, getIdsFromAccountId, getReqOptionsWithAdditions, getDateLine, getTimeLine, getVersionString } from "../../utils/toolbox"
 import useRouterState from "../../hooks/useRouterState"
@@ -225,7 +230,7 @@ const Users = ({
   const [ userInfo, setUserInfo ] = useState({})
   const getUserInfo = useInstanceValue(userInfo)
   const [ limit, setLimit ] = useState(DEFAULT_ACTIVITY_LIMIT)
-  const [ copied, setCopied ] = useState(copied)
+  const [ copied, setCopied ] = useState(false)
   const [ setCopiedTimeout ] = useSetTimeout()
   const [ loading, setLoading ] = useState(false)
   const [ error, setError ] = useState()
@@ -457,41 +462,79 @@ const Users = ({
         <View style={styles.container}>
 
           <View style={styles.inputContainer}>
-            <Autocomplete
-              placeholder={i18n("Search by email, name, or id", "", "admin")}
-              value={searchStr}
-              onSelect={onSelect}
-              onChangeText={onChangeText}
-            >
-              {searchResults.map((user, index) => (
-                <AutocompleteItem
-                  key={index}
-                  title={
-                    <Text>
-                      {getUserSearchLabel(user)}
-                      {user.adminLevel !== 'NONE' &&
-                        <Text style={styles.adminLevel}>
-                          {` `}
-                          {user.adminLevel}
-                        </Text>
-                      }
-                    </Text>
-                  }
-                />
-              ))}
-              {loading &&
-                <AutocompleteItem
-                  title={
-                    <Text>
-                      <Text style={styles.loadingItem}>
-                        {i18n("Loading more...")}
+            {Platform.OS === 'web' ? (
+              <WebAutocomplete
+                placeholder={i18n("Search by email, name, or id", "", "admin")}
+                value={searchStr}
+                onSelect={onSelect}
+                onChangeText={onChangeText}
+              >
+                {searchResults.map((user, index) => (
+                  <WebAutocompleteItem
+                    key={index}
+                    title={
+                      <Text>
+                        {getUserSearchLabel(user)}
+                        {user.adminLevel !== 'NONE' &&
+                          <Text style={styles.adminLevel}>
+                            {` `}
+                            {user.adminLevel}
+                          </Text>
+                        }
                       </Text>
-                    </Text>
-                  }
-                  disabled
-                />
-              }
-            </Autocomplete>
+                    }
+                  />
+                ))}
+                {loading &&
+                  <WebAutocompleteItem
+                    title={
+                      <Text>
+                        <Text style={styles.loadingItem}>
+                          {i18n("Loading more...")}
+                        </Text>
+                      </Text>
+                    }
+                    disabled
+                  />
+                }
+              </WebAutocomplete>
+            ) : (
+              <Autocomplete
+                placeholder={i18n("Search by email, name, or id", "", "admin")}
+                value={searchStr}
+                onSelect={onSelect}
+                onChangeText={onChangeText}
+              >
+                {searchResults.map((user, index) => (
+                  <AutocompleteItem
+                    key={index}
+                    title={
+                      <Text>
+                        {getUserSearchLabel(user)}
+                        {user.adminLevel !== 'NONE' &&
+                          <Text style={styles.adminLevel}>
+                            {` `}
+                            {user.adminLevel}
+                          </Text>
+                        }
+                      </Text>
+                    }
+                  />
+                ))}
+                {loading &&
+                  <AutocompleteItem
+                    title={
+                      <Text>
+                        <Text style={styles.loadingItem}>
+                          {i18n("Loading more...")}
+                        </Text>
+                      </Text>
+                    }
+                    disabled
+                  />
+                }
+              </Autocomplete>
+            )}
           </View>
 
           <View style={styles.results}>
@@ -569,8 +612,8 @@ const Users = ({
                         <Text style={styles.userInfoHeading}>{i18n("Recent Interactive Activity", "", "enhanced")}</Text>
                         {userInfo.interactiveActivity.map(({
                           uid, text, updated_at, submitted_at, score,  // tool_engagement
-                          name, toolType, isDiscussion, creatorType, spineIdRef, cfi, currently_published_tool_uid,  // tool
-                          classroom_name, classroom_deleted_at,  // classroom
+                          name, toolType, isDiscussion,  // tool
+                          classroom_name,  // classroom
                           book_id, title, author,  // book
                         }) => {
 
@@ -659,14 +702,25 @@ const Users = ({
                           </Text>
                         }
                         {userInfo.interactiveActivity.length === limit &&
-                          <Button
-                            onPress={getMoreActivity}
-                            size="tiny"
-                            style={styles.moreButton}
-                            status="basic"
-                          >
-                            {i18n("Load more activity", "", "admin")}
-                          </Button>
+                          (Platform.OS === 'web' ? (
+                            <WebButton
+                              onPress={getMoreActivity}
+                              size="tiny"
+                              style={styles.moreButton}
+                              status="basic"
+                            >
+                              {i18n("Load more activity", "", "admin")}
+                            </WebButton>
+                          ) : (
+                            <Button
+                              onPress={getMoreActivity}
+                              size="tiny"
+                              style={styles.moreButton}
+                              status="basic"
+                            >
+                              {i18n("Load more activity", "", "admin")}
+                            </Button>
+                          ))
                         }
                       </>
                     }
@@ -716,7 +770,9 @@ const Users = ({
                       try {
                         const { idref: spineIdRef, elementCfi: cfi } = JSON.parse(llCfi)
                         link += `#{"latestLocation":${JSON.stringify({ spineIdRef, cfi })}}`
-                      } catch(err) {}
+                      } catch {
+                        // Invalid JSON in llCfi, use default link
+                      }
                       
                       return (
                         <View key={id} style={styles.userInfoBook}>
@@ -788,24 +844,46 @@ const Users = ({
                     }
 
                     <View style={styles.deleteInputContainer}>
-                      <Input
-                        style={styles.deleteInput}
-                        value={confirmDeleteEmail}
-                        onChangeText={setConfirmDeleteEmail}
-                        placeholder={userInfo.email}
-                        label={i18n("To delete this user, enter their email here", "", "admin")}
-                      />
+                      {Platform.OS === 'web' ? (
+                        <WebInput
+                          style={styles.deleteInput}
+                          value={confirmDeleteEmail}
+                          onChangeText={setConfirmDeleteEmail}
+                          placeholder={userInfo.email}
+                          label={i18n("To delete this user, enter their email here", "", "admin")}
+                        />
+                      ) : (
+                        <Input
+                          style={styles.deleteInput}
+                          value={confirmDeleteEmail}
+                          onChangeText={setConfirmDeleteEmail}
+                          placeholder={userInfo.email}
+                          label={i18n("To delete this user, enter their email here", "", "admin")}
+                        />
+                      )}
                     </View>
                     <View style={styles.deleteButtonContainer}>
-                      <Button
-                        style={styles.confirmButton}
-                        onPress={confirmAccountDeletion}
-                        status="danger"
-                        appearance="filled"
-                        disabled={confirmDeleteEmail !== userInfo.email}
-                      >
-                        {i18n("Permanently delete this account", "", "admin")}
-                      </Button>
+                      {Platform.OS === 'web' ? (
+                        <WebButton
+                          style={styles.confirmButton}
+                          onPress={confirmAccountDeletion}
+                          status="danger"
+                          appearance="filled"
+                          disabled={confirmDeleteEmail !== userInfo.email}
+                        >
+                          {i18n("Permanently delete this account", "", "admin")}
+                        </WebButton>
+                      ) : (
+                        <Button
+                          style={styles.confirmButton}
+                          onPress={confirmAccountDeletion}
+                          status="danger"
+                          appearance="filled"
+                          disabled={confirmDeleteEmail !== userInfo.email}
+                        >
+                          {i18n("Permanently delete this account", "", "admin")}
+                        </Button>
+                      )}
                     </View>
 
                   </>
@@ -828,7 +906,8 @@ const mapStateToProps = ({ idps, accounts }) => ({
   accounts,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(Users)
+
