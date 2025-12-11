@@ -20,6 +20,27 @@ import useToggle from 'react-use/lib/useToggle';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createPortal } from 'react-dom';
 
+// Add CSS for focus styles
+if (typeof document !== 'undefined') {
+  const focusStyles = `
+    .dropdown-trigger-button:focus-visible {
+      outline: 2px solid #007AFF !important;
+      outline-offset: 2px !important;
+      border-radius: 6px !important;
+    }
+    .dropdown-trigger-button:focus:not(:focus-visible) {
+      outline: none !important;
+    }
+  `;
+
+  if (!document.getElementById('dropdown-focus-styles')) {
+    const styleSheet = document.createElement('style');
+    styleSheet.id = 'dropdown-focus-styles';
+    styleSheet.textContent = focusStyles;
+    document.head.appendChild(styleSheet);
+  }
+}
+
 import useThemedStyleSets from '../../hooks/useThemedStyleSets';
 import useClassroomInfo from '../../hooks/useClassroomInfo';
 import useWideMode from '../../hooks/useWideMode';
@@ -326,19 +347,41 @@ const EnhancedHeader = React.memo(
           <EnhancedHeaderLine
             label={
               Platform.OS === 'web' ? (
-                <View
+                <div
                   ref={anchorRef}
-                  onStartShouldSetResponder={() => true}
-                  onResponderRelease={() => toggleShowOptions(!showOptions)}
-                  style={{ cursor: 'pointer !important' }}
+                  className="dropdown-trigger-button"
+                  tabIndex={0}
+                  role="button"
+                  aria-expanded={showOptions}
+                  aria-haspopup="menu"
+                  onClick={() => toggleShowOptions(!showOptions)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      toggleShowOptions(!showOptions);
+                    }
+                  }}
+                  style={{
+                    cursor: 'pointer',
+                    outline: 'none',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    background: 'transparent',
+                    fontWeight: 'bold',
+                    fontSize: '16px',
+                    color: 'inherit',
+                    fontFamily: 'inherit',
+                    lineHeight: '1.2',
+                    display: 'block',
+                    width: '100%',
+                    textAlign: 'left',
+                    transition: 'all 0.15s ease',
+                    marginVertical: 5,
+                  }}
                 >
-                  <Text
-                    style={[styles.classroom, { cursor: 'pointer' }]}
-                    numberOfLines={2}
-                  >
-                    {`${classroomName} ▾`}
-                  </Text>
-                </View>
+                  {`${classroomName} ▾`}
+                </div>
               ) : (
                 <OverflowMenu
                   visible={showOptions}
@@ -383,6 +426,7 @@ const EnhancedHeader = React.memo(
             createPortal(
               <div
                 ref={menuRef}
+                role="menu"
                 style={{
                   position: 'absolute',
                   top: menuPos.top,
@@ -406,9 +450,18 @@ const EnhancedHeader = React.memo(
                   return (
                     <div
                       key={idx}
+                      tabIndex={0}
+                      role="menuitem"
                       onClick={() => {
                         item.onPress?.();
                         toggleShowOptions(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          item.onPress?.();
+                          toggleShowOptions(false);
+                        }
                       }}
                       style={{
                         padding: '10px 14px',
@@ -425,25 +478,25 @@ const EnhancedHeader = React.memo(
                         boxShadow: isSelected
                           ? 'inset 3px 0 0 #3366FF'
                           : 'none',
+                        outline: 'none',
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#eef2ff';
                         e.currentTarget.style.color = '#3366FF';
-                        e.currentTarget.style.boxShadow =
-                          'inset 3px 0 0 #3366FF';
                         e.currentTarget.style.cursor = 'pointer';
                       }}
                       onMouseLeave={(e) => {
-                        if (isSelected) {
-                          e.currentTarget.style.backgroundColor = '#eef2ff';
-                          e.currentTarget.style.color = '#3366FF';
-                          e.currentTarget.style.boxShadow =
-                            'inset 3px 0 0 #3366FF';
-                        } else {
-                          e.currentTarget.style.backgroundColor = '#fff';
-                          e.currentTarget.style.color = '#000';
-                          e.currentTarget.style.boxShadow = 'none';
-                        }
+                        e.currentTarget.style.color = isSelected
+                          ? '#3366FF'
+                          : '#000';
+                        e.currentTarget.style.cursor = 'pointer';
+                      }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.outline = '2px solid #007AFF';
+                        e.currentTarget.style.outlineOffset = '2px';
+                        e.currentTarget.style.cursor = 'pointer';
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.outline = 'none';
                         e.currentTarget.style.cursor = 'pointer';
                       }}
                     >
