@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     outline: 'none',
     fontFamily: 'inherit',
     transition: 'all 0.2s ease',
-  },  
+  },
   // Disabled state
   disabled: {
     opacity: 0.6,
