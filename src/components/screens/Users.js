@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, View, Text, ScrollView, Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { bindActionCreators } from 'redux';
@@ -249,6 +249,14 @@ const Users = ({ idps, accounts }) => {
 
   const { historyGoBackToLibrary } = useRouterState();
 
+  const Components = {
+    AutoComplete: Platform.OS === 'web' ? WebAutocomplete : Autocomplete,
+    AutoCompleteItem:
+      Platform.OS === 'web' ? WebAutocompleteItem : AutocompleteItem,
+    Input: Platform.OS === 'web' ? WebInput : Input,
+    Button: Platform.OS === 'web' ? WebButton : Button,
+  };
+
   const confirmAccountDeletion = useCallback(async () => {
     setError();
     setLoading(true);
@@ -454,79 +462,41 @@ const Users = ({ idps, accounts }) => {
       {!error && (
         <View style={styles.container}>
           <View style={styles.inputContainer}>
-            {Platform.OS === 'web' ? (
-              <WebAutocomplete
-                placeholder={i18n('Search by email, name, or id', '', 'admin')}
-                value={searchStr}
-                onSelect={onSelect}
-                onChangeText={onChangeText}
-              >
-                {searchResults.map((user, index) => (
-                  <WebAutocompleteItem
-                    key={index}
-                    title={
-                      <Text>
-                        {getUserSearchLabel(user)}
-                        {user.adminLevel !== 'NONE' && (
-                          <Text style={styles.adminLevel}>
-                            {` `}
-                            {user.adminLevel}
-                          </Text>
-                        )}
-                      </Text>
-                    }
-                  />
-                ))}
-                {loading && (
-                  <WebAutocompleteItem
-                    title={
-                      <Text>
-                        <Text style={styles.loadingItem}>
-                          {i18n('Loading more...')}
+            <Components.Autocomplete
+              placeholder={i18n('Search by email, name, or id', '', 'admin')}
+              value={searchStr}
+              onSelect={onSelect}
+              onChangeText={onChangeText}
+            >
+              {searchResults.map((user, index) => (
+                <Components.AutocompleteItem
+                  key={index}
+                  title={
+                    <Text>
+                      {getUserSearchLabel(user)}
+                      {user.adminLevel !== 'NONE' && (
+                        <Text style={styles.adminLevel}>
+                          {` `}
+                          {user.adminLevel}
                         </Text>
+                      )}
+                    </Text>
+                  }
+                />
+              ))}
+              {loading && (
+                <Components.AutocompleteItem
+                  title={
+                    <Text>
+                      <Text style={styles.loadingItem}>
+                        {i18n('Loading more...')}
                       </Text>
-                    }
-                    disabled
-                  />
-                )}
-              </WebAutocomplete>
-            ) : (
-              <Autocomplete
-                placeholder={i18n('Search by email, name, or id', '', 'admin')}
-                value={searchStr}
-                onSelect={onSelect}
-                onChangeText={onChangeText}
-              >
-                {searchResults.map((user, index) => (
-                  <AutocompleteItem
-                    key={index}
-                    title={
-                      <Text>
-                        {getUserSearchLabel(user)}
-                        {user.adminLevel !== 'NONE' && (
-                          <Text style={styles.adminLevel}>
-                            {` `}
-                            {user.adminLevel}
-                          </Text>
-                        )}
-                      </Text>
-                    }
-                  />
-                ))}
-                {loading && (
-                  <AutocompleteItem
-                    title={
-                      <Text>
-                        <Text style={styles.loadingItem}>
-                          {i18n('Loading more...')}
-                        </Text>
-                      </Text>
-                    }
-                    disabled
-                  />
-                )}
-              </Autocomplete>
-            )}
+                    </Text>
+                  }
+                  disabled
+                />
+              )}
+            </Components.Autocomplete>
           </View>
 
           <View style={styles.results}>
@@ -764,26 +734,16 @@ const Users = ({ idps, accounts }) => {
                             {i18n('None')}
                           </Text>
                         )}
-                        {userInfo.interactiveActivity.length === limit &&
-                          (Platform.OS === 'web' ? (
-                            <WebButton
-                              onPress={getMoreActivity}
-                              size="tiny"
-                              style={styles.moreButton}
-                              status="basic"
-                            >
-                              {i18n('Load more activity', '', 'admin')}
-                            </WebButton>
-                          ) : (
-                            <Button
-                              onPress={getMoreActivity}
-                              size="tiny"
-                              style={styles.moreButton}
-                              status="basic"
-                            >
-                              {i18n('Load more activity', '', 'admin')}
-                            </Button>
-                          ))}
+                        {userInfo.interactiveActivity.length === limit && (
+                          <Components.Button
+                            onPress={getMoreActivity}
+                            size="tiny"
+                            style={styles.moreButton}
+                            status="basic"
+                          >
+                            {i18n('Load more activity', '', 'admin')}
+                          </Components.Button>
+                        )}
                       </>
                     )}
 
@@ -944,54 +904,28 @@ const Users = ({ idps, accounts }) => {
                     )}
 
                     <View style={styles.deleteInputContainer}>
-                      {Platform.OS === 'web' ? (
-                        <WebInput
-                          style={styles.deleteInput}
-                          value={confirmDeleteEmail}
-                          onChangeText={setConfirmDeleteEmail}
-                          placeholder={userInfo.email}
-                          label={i18n(
-                            'To delete this user, enter their email here',
-                            '',
-                            'admin',
-                          )}
-                        />
-                      ) : (
-                        <Input
-                          style={styles.deleteInput}
-                          value={confirmDeleteEmail}
-                          onChangeText={setConfirmDeleteEmail}
-                          placeholder={userInfo.email}
-                          label={i18n(
-                            'To delete this user, enter their email here',
-                            '',
-                            'admin',
-                          )}
-                        />
-                      )}
+                      <Components.Input
+                        style={styles.deleteInput}
+                        value={confirmDeleteEmail}
+                        onChangeText={setConfirmDeleteEmail}
+                        placeholder={userInfo.email}
+                        label={i18n(
+                          'To delete this user, enter their email here',
+                          '',
+                          'admin',
+                        )}
+                      />
                     </View>
                     <View style={styles.deleteButtonContainer}>
-                      {Platform.OS === 'web' ? (
-                        <WebButton
-                          style={styles.confirmButton}
-                          onPress={confirmAccountDeletion}
-                          status="danger"
-                          appearance="filled"
-                          disabled={confirmDeleteEmail !== userInfo.email}
-                        >
-                          {i18n('Permanently delete this account', '', 'admin')}
-                        </WebButton>
-                      ) : (
-                        <Button
-                          style={styles.confirmButton}
-                          onPress={confirmAccountDeletion}
-                          status="danger"
-                          appearance="filled"
-                          disabled={confirmDeleteEmail !== userInfo.email}
-                        >
-                          {i18n('Permanently delete this account', '', 'admin')}
-                        </Button>
-                      )}
+                      <Components.Button
+                        style={styles.confirmButton}
+                        onPress={confirmAccountDeletion}
+                        status="danger"
+                        appearance="filled"
+                        disabled={confirmDeleteEmail !== userInfo.email}
+                      >
+                        {i18n('Permanently delete this account', '', 'admin')}
+                      </Components.Button>
                     </View>
                   </>
                 )}
