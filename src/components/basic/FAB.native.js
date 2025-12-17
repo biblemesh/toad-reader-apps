@@ -1,9 +1,8 @@
 import { useCallback } from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Button, styled } from '@ui-kitten/components';
 
 import useThemedStyleSets from '../../hooks/useThemedStyleSets';
-import FABWeb from './FAB.web';
 
 import Icon from './Icon';
 
@@ -38,18 +37,6 @@ const FAB = ({
 
   eva: { style: themedStyle } = {},
 }) => {
-  // Use web-specific FAB on web platform
-  if (Platform.OS === 'web') {
-    return (
-      <FABWeb
-        iconName={iconName}
-        status={status}
-        onPress={onPress}
-        style={style}
-      />
-    );
-  }
-
   const { baseThemedStyle, iconThemedStyle } = useThemedStyleSets(themedStyle);
 
   const ButtonIcon = useCallback(

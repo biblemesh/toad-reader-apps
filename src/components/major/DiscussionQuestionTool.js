@@ -436,6 +436,22 @@ const DiscussionQuestionTool = React.memo(
       handleNewResponses,
     ]);
 
+    const handleScroll = useCallback(
+      (...args) => {
+        if (Platform.OS === 'web') return;
+        onScroll(...args);
+      },
+      [onScroll],
+    );
+
+    const handleContentSizeChangeSafe = useCallback(
+      (...args) => {
+        if (Platform.OS === 'web') return;
+        handleScrollViewHeightChange(...args);
+      },
+      [handleScrollViewHeightChange],
+    );
+
     const SendIcon = useCallback(
       ({ style }) => <Icon name="send" style={styles.sendIcon} />,
       [],
@@ -463,10 +479,8 @@ const DiscussionQuestionTool = React.memo(
         <Text style={styles.question}>{question}</Text>
         <ScrollView
           style={styles.discussionContainer}
-          onScroll={Platform.OS !== 'web' ? onScroll : undefined} // Disable scroll tracking on web
-          onContentSizeChange={
-            Platform.OS !== 'web' ? handleScrollViewHeightChange : undefined
-          } // Disable content size tracking on web
+          onScroll={handleScroll}
+          onContentSizeChange={handleContentSizeChangeSafe}
           ref={scrollViewRef}
           scrollEventThrottle={Platform.OS !== 'web' ? 100 : undefined} // Disable scroll throttling on web
         >

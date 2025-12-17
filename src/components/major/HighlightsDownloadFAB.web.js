@@ -6,7 +6,7 @@ import { jsPDF } from 'jspdf';
 import '../../utils/Roboto-Regular-normal';
 
 import { combineItems } from '../../utils/toolbox';
-import FAB from '../basic/FAB';
+import FAB from '../basic/FAB.native';
 
 const MAX_EXPORT_QUOTE_CHARACTER_LENGTH = 100;
 
