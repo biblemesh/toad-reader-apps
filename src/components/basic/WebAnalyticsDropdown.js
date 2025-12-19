@@ -85,6 +85,8 @@ export default function WebAnalyticsDropdown({
           <div
             data-analytics-dropdown="true"
             style={{
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+              fontSize: 13,
               position: 'absolute',
               top: rect.bottom + 4,
               left: rect.left,
@@ -114,6 +116,7 @@ export default function WebAnalyticsDropdown({
                   onMouseEnter={() => setHoveredIndex(idx)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   style={{
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
                     minHeight: 40,
                     padding: '8px 16px',
                     cursor: 'pointer',
@@ -153,6 +156,7 @@ export default function WebAnalyticsDropdown({
       {label && (
         <div
           style={{
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
             fontSize: 15,
             fontWeight: '500',
             color: '#8F9BB3',
@@ -169,6 +173,7 @@ export default function WebAnalyticsDropdown({
         ref={triggerRef}
         onClick={handleToggle}
         style={{
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
           width: '100%',
           height: 48,
           borderRadius: 6,
@@ -180,11 +185,18 @@ export default function WebAnalyticsDropdown({
           padding: '0 12px',
           cursor: 'pointer',
           fontSize: 'inherit',
-          fontFamily: 'inherit',
           textAlign: 'left',
         }}
       >
-        <span>{displayValue}</span>
+        <span style={{
+            flex: 1,
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            marginRight: 8,
+          }}>
+            {displayValue}
+        </span>
         <span style={{ fontSize: 12 }}>{isOpen ? '▲' : '▼'}</span>
       </button>
 

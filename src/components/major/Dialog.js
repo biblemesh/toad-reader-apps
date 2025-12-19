@@ -160,6 +160,7 @@ const Dialog = React.memo(
     const dialogBody = (
       <View
         style={{
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
           position: Platform.OS === 'web' ? 'fixed' : 'absolute',
           top: 0,
           left: 0,

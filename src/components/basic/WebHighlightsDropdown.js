@@ -108,6 +108,11 @@ export default function WebHighlightsDropdown({
                   onMouseLeave={() => setHoveredIndex(null)}
                   style={{
                     minHeight: 40,
+                    fontFamily:
+                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+                    fontSize: 14,
+                    fontWeight: isSelected ? 600 : 400,
+                  
                     padding: '8px 16px',
                     cursor: 'pointer',
                     backgroundColor: isSelected
@@ -119,14 +124,12 @@ export default function WebHighlightsDropdown({
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8,
-                    fontSize: 14,
-                    fontWeight: 'normal',
-                    color: '#333333',
+                    color: 'rgb(34, 43, 69)',                  
                     borderTopLeftRadius: isFirst ? 6 : 0,
                     borderTopRightRadius: isFirst ? 6 : 0,
                     borderBottomLeftRadius: isLast ? 6 : 0,
                     borderBottomRightRadius: isLast ? 6 : 0,
-                    transition: 'background-color 0.15s ease',
+                    transition: 'background-color 0.15s ease, color 0.15s ease',
                   }}
                 >
                   {/* Multi-select checkbox */}

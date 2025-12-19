@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { Platform } from 'react-native';
-import { i18n } from 'inline-i18n';
 import { createPortal } from 'react-dom';
 
 export default function WebReflectionDropdown({
@@ -66,6 +65,7 @@ export default function WebReflectionDropdown({
           <div
             data-reflection-dropdown="true"
             style={{
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
               position: 'absolute',
               top: rect.bottom + 4,
               left: rect.left,
@@ -96,6 +96,7 @@ export default function WebReflectionDropdown({
                   onMouseEnter={() => setHoveredIndex(idx)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   style={{
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
                     minHeight: 40,
                     padding: '8px 16px',
                     cursor: 'pointer',

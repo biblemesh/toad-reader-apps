@@ -289,6 +289,8 @@ const HighlightsDownloadFAB = React.memo(
               <div
                 onClick={downloadCSV}
                 style={{
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+                  fontSize: 13,
                   padding: '12px 16px',
                   cursor: 'pointer',
                   borderBottom: '1px solid #eee',
@@ -300,6 +302,8 @@ const HighlightsDownloadFAB = React.memo(
               <div
                 onClick={downloadPDF}
                 style={{
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+                  fontSize: 13,
                   padding: '12px 16px',
                   cursor: 'pointer',
                 }}

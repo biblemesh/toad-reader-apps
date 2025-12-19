@@ -75,6 +75,7 @@ const LibraryHeader = ({
     bookInfo: books[bookIdToDownload],
     bookId: bookIdToDownload,
   });
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const onPressToggleView = useCallback(toggleView, []);
 
@@ -291,23 +292,63 @@ const LibraryHeader = ({
                       overflow: 'hidden',
                     }}
                   >
-                    {moreOptions.map(({ title }, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => {
-                          selectSort({ row: idx });
-                          toggleShowOptions(false);
-                        }}
-                        style={{
-                          padding: '10px 14px',
-                          cursor: 'pointer',
-                          borderBottom: '1px solid #eee',
-                          fontSize: 14,
-                        }}
-                      >
-                        {title}
-                      </div>
-                    ))}
+                    {moreOptions.map(({ title, key }, idx) => {
+                      const isSelected = library.sort === key;
+                      const isHovered = hoveredIndex === idx;
+
+                      const textColor = isSelected || isHovered
+                        ? 'rgb(51, 102, 255)'
+                        : '#222';
+
+                      const backgroundColor = isSelected
+                        ? 'rgba(51, 102, 255, 0.08)'
+                        : isHovered
+                        ? 'rgba(51, 102, 255, 0.04)'
+                        : 'transparent';
+
+                      return (
+                        <div
+                          key={key}
+                          onClick={() => {
+                            selectSort({ row: idx });
+                            toggleShowOptions(false);
+                          }}
+                          onMouseEnter={() => setHoveredIndex(idx)}
+                          onMouseLeave={() => setHoveredIndex(null)}
+                          style={{
+                            position: 'relative',
+                            display: 'flex',
+                            alignItems: 'center',
+
+                            padding: '10px 14px 10px 14px',
+                            cursor: 'pointer',
+
+                            fontFamily:
+                              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+                            fontSize: 13,
+                            fontWeight: isSelected ? 700 : 500,
+                            color: textColor,
+                            backgroundColor,
+                          }}
+                        >
+                          {isSelected && (
+                            <div
+                              style={{
+                                position: 'absolute',
+                                left: 0,
+                                top: 0,
+                                bottom: 0,
+                                width: 4,
+                                backgroundColor: 'rgb(51, 102, 255)',
+                                borderRadius: '0 2px 2px 0',
+                              }}
+                            />
+                          )}
+
+                          <div style={{ paddingLeft: 8 }}>{title}</div>
+                        </div>
+                      );
+                    })}
                   </div>,
                   document.body,
                 )}
