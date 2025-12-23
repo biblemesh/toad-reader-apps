@@ -2,9 +2,7 @@
 
 set -e
 
-echo ""
-
-TENANT_ITEMS=("app.json" "assets" "translationModifier.js")
+TENANT_ITEMS=("app.json" "assets/images" "assets/icons" "translationModifier.js")
 THIS_SCRIPT=$0
 TENANT_TO_SWITCH_TO=$1
 
@@ -48,24 +46,37 @@ else
     ##### everything checks out, now we make the switch #####
 
     # delete current tenant items
+    INVALID_ITEMS=()
     for TENANT_ITEM in "${TENANT_ITEMS[@]}" ; do
-      rm -Rf "./$TENANT_ITEM" || exit 1;
+      if [[ -L "./$TENANT_ITEM" ]]; then
+        unlink "./$TENANT_ITEM";
+      elif [[ -e "./$TENANT_ITEM" ]]; then
+        INVALID_ITEMS+=("$TENANT_ITEM")
+      fi
     done
+
+    if [[ "${#INVALID_ITEMS[@]}" -gt 0 ]]; then
+      echo "The following items are not symlinks and must be deleted manually:"
+      for INVALID_ITEM in "${INVALID_ITEMS[@]}" ; do
+        echo "  $INVALID_ITEM"
+      done
+      echo ""
+      echo "Run this command to delete them:"
+      echo "  rm -rf $(printf "%q " "${INVALID_ITEMS[@]}")"
+      exit 1
+    fi
 
     # copy tenant items to the base dir
     for TENANT_ITEM in "${TENANT_ITEMS[@]}" ; do
-      cp -R "tenants/$TENANT_TO_SWITCH_TO/$TENANT_ITEM" "./$TENANT_ITEM" || exit 1;
+      ln -s "$PWD/tenants/$TENANT_TO_SWITCH_TO/$TENANT_ITEM" "./$TENANT_ITEM";
     done
 
-    # copy contents of standard-assets to assets
-    cp -R "standard-assets/"* "./assets/" || exit 1;
-
     # update src/utils/translations/current.json with the current language data
-    LANGUAGE_CODE=$(ruby -rjson -e 'j = JSON.parse(File.read("app.json")); puts j["expo"]["extra"]["LANGUAGE_CODE"]')
+    LANGUAGE_CODE=$(jq -r .expo.extra.LANGUAGE_CODE app.json)
     if [[ ! "$(ls -A src/utils/translations/"$LANGUAGE_CODE".json 2>/dev/null)" ]]; then
       LANGUAGE_CODE="en"
     fi
-    cp -R "src/utils/translations/$LANGUAGE_CODE.json" "src/utils/translations/current.json" || exit 1;
+    ln -sf "./$LANGUAGE_CODE.json" "src/utils/translations/current.json";
 
     echo "Changed tenant to $TENANT_TO_SWITCH_TO (language code: $LANGUAGE_CODE)."
   fi
