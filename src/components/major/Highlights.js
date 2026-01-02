@@ -362,25 +362,21 @@ const Highlights = React.memo(
       [],
     );
 
-    const ReadIcon = useCallback(
-      Platform.OS === 'web'
-        ? (props) => (
-            <Icon
-              {...props}
-              name="book-open-variant"
-              pack="materialCommunity"
-              style={[props?.style, { width: 15, height: 15 }]}
-            />
-          )
-        : ({ style }) => (
-            <Icon
-              name="book-open-variant"
-              pack="materialCommunity"
-              style={style}
-            />
-          ),
-      [],
-    );
+    const ReadIcon = useCallback(({ style, ...props }) => {
+      const appliedStyle =
+        Platform.OS === 'web'
+          ? [style, { width: 15, height: 15 }]
+          : style;
+    
+      return (
+        <Icon
+          {...props}
+          name="book-open-variant"
+          pack="materialCommunity"
+          style={appliedStyle}
+        />
+      );
+    }, []);
     // const DrawIcon = useCallback(({ style }) => <Icon name="draw" pack="materialCommunity" style={style} />, [])
     // const ShareIcon = useCallback(style => <Icon name="share" style={style} />, [])
 
