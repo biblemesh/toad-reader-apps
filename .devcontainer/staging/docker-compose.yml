@@ -5,8 +5,7 @@ services:
   caddy:
     build:
       context: .
-      dockerfile_inline:
-        FROM caddy:2-builder-alpine AS builder
+      dockerfile_inline: FROM caddy:2-builder-alpine AS builder
 
         RUN xcaddy build --with github.com/caddyserver/forwardproxy
 
@@ -34,7 +33,7 @@ services:
     build:
       context: ../../
       dockerfile: ./.devcontainer/development/Dockerfile
-    command: ["/bin/bash", "-c", "sleep infinity"]
+    command: ['/bin/bash', '-c', 'sleep infinity']
     networks:
       - ereader
     pull_policy: build
