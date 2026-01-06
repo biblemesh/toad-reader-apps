@@ -1,0 +1,10 @@
+services:
+  ereader-frontend:
+    image: node:${NODE_VERSION:-20}-alpine
+    command: ['npm', 'start']
+    ports:
+      - '19006:19006'
+    volumes:
+      - ../../:/app
+    working_dir: /app
+    pull_policy: always

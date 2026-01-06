@@ -2,6 +2,8 @@
   "expo": {
     "extra": {
       "DEV_DATA_ORIGIN_OVERRIDE": "data.stg.read.test",
+      "DEV_IDP_ORIGIN_OVERRIDE": "stg.read.test",
+      "DEV_USE_DEVELOPMENT_BACKEND": true,
       "IDPS": {
         "21": {
           "name": "Toad Reader",

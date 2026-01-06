@@ -12,6 +12,8 @@ const {
   REQUEST_OPTIONS,
   ANDROID_STATUS_BAR_COLOR,
   DEV_DATA_ORIGIN_OVERRIDE,
+  DEV_IDP_ORIGIN_OVERRIDE,
+  DEV_USE_DEVELOPMENT_BACKEND,
   ENABLE_WIDE_TABLE_BEHAVIOR = false,
 } = Constants.expoConfig.extra
 
@@ -136,7 +138,7 @@ export const fetchWithProgress = (url, { progressCallback, abortFunctionCallback
     xhr.open('GET', url, true)
 
     // set headers
-    if(__DEV__) {
+    if(__DEV__ && DEV_USE_DEVELOPMENT_BACKEND) {
       xhr.setRequestHeader("x-cookie-override", cookie)
     } else {
       xhr.setRequestHeader("cookie", cookie)
@@ -312,7 +314,11 @@ export const getIDPOrigin = ({ domain, protocol=`https`, noBeta, env }) => {
 
   if(env ? env === 'dev' : __DEV__) {
     // dev environment
-    return `http://${DEV_DATA_ORIGIN_OVERRIDE || `localhost`}:19006`
+    if(DEV_USE_DEVELOPMENT_BACKEND) {
+      return `http://${DEV_IDP_ORIGIN_OVERRIDE || `localhost`}:19006`
+    } else {
+      return DEV_IDP_ORIGIN_OVERRIDE ? `https://${DEV_IDP_ORIGIN_OVERRIDE}` : 'http://localhost:19006'
+    }
   }
 
   if(env ? env === 'staging' : isStaging()) {

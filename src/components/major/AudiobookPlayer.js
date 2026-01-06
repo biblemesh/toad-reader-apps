@@ -1,3 +1,4 @@
+import Constants from 'expo-constants'
 import React, { useState, useEffect, useCallback, useRef } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { Audio } from 'expo-av'
@@ -14,6 +15,10 @@ import { getReqOptionsWithAdditions } from "../../utils/toolbox"
 import AudiobookPlayerChapterLine from "./AudiobookPlayerChapterLine"
 import AudiobookPlayerProgressBar from "./AudiobookPlayerProgressBar"
 import AudiobookPlayerButtonRow from "./AudiobookPlayerButtonRow"
+
+const {
+  DEV_USE_DEVELOPMENT_BACKEND,
+} = Constants.expoConfig.extra
 
 const styles = StyleSheet.create({
   container: {
@@ -194,7 +199,7 @@ const AudiobookPlayer = ({
           if(filename !== previousFilename.current) setPositionMS(0)
           setDurationMS(durationMSFromInfo)
 
-          if(!cookie && !__DEV__) return
+          if(!cookie && !(__DEV__ && DEV_USE_DEVELOPMENT_BACKEND)) return
 
           if(soundObj.current) {
             if(getPlaying()) await pause()

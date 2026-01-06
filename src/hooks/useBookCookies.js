@@ -1,3 +1,4 @@
+import Constants from 'expo-constants'
 import { useEffect, useState } from 'react'
 import { Platform } from "react-native"
 
@@ -6,11 +7,15 @@ import { safeFetch, getReqOptionsWithAdditions, getDataOrigin, bookCookiesToCook
 import useSetTimeout from './useSetTimeout'
 import useInstanceValue from './useInstanceValue'
 
+const {
+  DEV_USE_DEVELOPMENT_BACKEND,
+} = Constants.expoConfig.extra
+
 const getNeedsFreshCookies = book => book && (!book.bookCookies || book.bookCookies.expireAt < Date.now() + 1000*60*5)
 
 export const getBookCookie = async ({ books, accounts, idp, setBookCookies, bookId }) => {
 
-  if(__DEV__) return false
+  if(__DEV__ && DEV_USE_DEVELOPMENT_BACKEND) return false
 
   const book = (books || {})[bookId]
   const accountId = Object.keys(book.accounts)[0]
@@ -72,7 +77,7 @@ const useBookCookies = ({ books, accounts, idp, setBookCookies, bookId, skip }) 
 
   const checkAndGet = () => {
     (async () => {
-      if(__DEV__) return
+      if(__DEV__ && DEV_USE_DEVELOPMENT_BACKEND) return
       if(!book) return
       if(getSkip()) return
 
@@ -97,7 +102,7 @@ const useBookCookies = ({ books, accounts, idp, setBookCookies, bookId, skip }) 
 
   useEffect(
     () => {
-      if(__DEV__) return
+      if(__DEV__ && DEV_USE_DEVELOPMENT_BACKEND) return
       if(!book) return
       if(!ready) return
 
@@ -108,7 +113,7 @@ const useBookCookies = ({ books, accounts, idp, setBookCookies, bookId, skip }) 
     [ !!books, bookId, ready ],
   )
 
-  if(__DEV__) return true
+  if(__DEV__ && DEV_USE_DEVELOPMENT_BACKEND) return true
 
   return (
     ready

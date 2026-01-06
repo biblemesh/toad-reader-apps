@@ -14,6 +14,7 @@ import useRouterState from "../../hooks/useRouterState"
 import getReaderCode from '../../../getReaderCode'
 
 const {
+  DEV_USE_DEVELOPMENT_BACKEND,
   ENABLE_WIDE_TABLE_BEHAVIOR=false,
 } = Constants.expoConfig.extra
 
@@ -212,7 +213,7 @@ const PageWebView = ({
 
   const initialCookiePathForWidget = widget ? `/c/${Object.values(accounts)[0].cookie}` : ``
   const baseUrlForDevOrWidget = (
-    (__DEV__ || widget)
+    ((__DEV__ && DEV_USE_DEVELOPMENT_BACKEND) || widget)
       ? `${getDataOrigin(Object.values(idps)[0])}${initialCookiePathForWidget}`
       : ``
   )
@@ -268,7 +269,7 @@ const PageWebView = ({
             window.initialQueryStringParamsFromWebView = ${JSON.stringify(initialQueryStringParams)};
             window.parentOriginForPostMessage = ${JSON.stringify(window.location.origin)};
             window.epubFileFetchHeaders = ${JSON.stringify(
-              __DEV__
+              __DEV__ && DEV_USE_DEVELOPMENT_BACKEND
                 ? {
                   "x-cookie-override": Object.values(accounts)[0].cookie,
                 }

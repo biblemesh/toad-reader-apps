@@ -1,3 +1,4 @@
+import Constants from 'expo-constants'
 import React, { useEffect, useCallback } from "react"
 import { StyleSheet, View, Platform, AppState, Alert } from "react-native"
 import { bindActionCreators } from "redux"
@@ -26,6 +27,9 @@ import CoverAndSpin from '../basic/CoverAndSpin'
 import AudiobookHeader from "../major/AudiobookHeader"
 import AudiobookPlayer from "../major/AudiobookPlayer"
 
+const {
+  DEV_USE_DEVELOPMENT_BACKEND,
+} = Constants.expoConfig.extra
 
 const styles = StyleSheet.create({
   content: {
@@ -70,7 +74,7 @@ const Audiobook = React.memo(({
   const latest_location = (userDataByBookId[bookId] || {}).latest_location
   const wideMode = useWideMode()
   const bookCookies = useBookCookies({ books, accounts, idp: idps[idpId], setBookCookies, bookId })
-  const downloadOrigin = __DEV__ ? getDataOrigin(idps[idpId]) : getIDPOrigin(idps[idpId])
+  const downloadOrigin = __DEV__ && DEV_USE_DEVELOPMENT_BACKEND ? getDataOrigin(idps[idpId]) : getIDPOrigin(idps[idpId])
   const { width, height } = useDimensions().window
   const imageSize = Math.min(400, width - 70, height - 56 - 200)
   const coverHref = useCoverHref({ bookInfo: book, bookId })

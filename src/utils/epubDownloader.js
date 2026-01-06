@@ -1,7 +1,12 @@
+import Constants from 'expo-constants'
 import * as FileSystem from 'expo-file-system'
 import { sentry, getBooksDir } from './toolbox'
 import { i18n } from "inline-i18n"
 import { parseString } from "xml2js"
+
+const {
+  DEV_USE_DEVELOPMENT_BACKEND,
+} = Constants.expoConfig.extra
 
 export const binaryExtensionToMimeTypeMap = {
   aac: 'audio/aac',
@@ -90,7 +95,7 @@ export const fetchEpubAndAssets = async ({ downloadOrigin, bookId, cookie, progr
   const localBaseUri = `${getBooksDir()}${bookId}/`
   const options = {
     headers: {
-      [__DEV__ ? "x-cookie-override" : "cookie"]: cookie,
+      [__DEV__ && DEV_USE_DEVELOPMENT_BACKEND ? "x-cookie-override" : "cookie"]: cookie,
     },
   }
 

@@ -1,0 +1,45 @@
+networks:
+  ereader:
+
+services:
+  caddy:
+    build:
+      context: .
+      dockerfile_inline: FROM caddy:2-builder-alpine AS builder
+
+        RUN xcaddy build --with github.com/caddyserver/forwardproxy
+
+        FROM caddy:2-alpine
+
+        COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+    env_file: .env
+    image: biblemesh/caddy-ereader-frontend:latest
+    networks:
+      ereader:
+        aliases:
+          - ${EREADER_FRONTEND_HOST}
+    ports:
+      - '443:443'
+      - '3128:3128'
+    pull_policy: build
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy-data:/data
+      - caddy-config:/config
+
+  ereader-frontend:
+    image: biblemesh/toad-reader-apps:latest
+    build:
+      context: ../../
+      dockerfile: ./.devcontainer/development/Dockerfile
+    command: ['/bin/bash', '-c', 'sleep infinity']
+    networks:
+      - ereader
+    pull_policy: build
+
+volumes:
+  caddy-data:
+    external: true
+  caddy-config:
+    driver: local

@@ -1,4 +1,5 @@
 /.expo/*
+/.devcontainer/staging/.env
 /assets/*
 /dist/*
 /node_modules/*
