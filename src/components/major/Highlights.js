@@ -364,10 +364,8 @@ const Highlights = React.memo(
 
     const ReadIcon = useCallback(({ style, ...props }) => {
       const appliedStyle =
-        Platform.OS === 'web'
-          ? [style, { width: 15, height: 15 }]
-          : style;
-    
+        Platform.OS === 'web' ? [style, { width: 15, height: 15 }] : style;
+
       return (
         <Icon
           {...props}
@@ -407,38 +405,33 @@ const Highlights = React.memo(
 
     return (
       <View style={wideMode ? styles.containerWideMode : styles.container}>
-        {selectOptions.length > 1 && (
-          <>
-            {Platform.OS === 'web' ? (
-              <div style={wideMode ? styles.selectWideMode : styles.select}>
-                <WebHighlightsDropdown
-                  selectOptions={selectOptions}
-                  selectedIndexes={selectedIndexes}
-                  displayValue={combineItems(
-                    ...selectedIndexes.map(
-                      ({ row }) => selectOptions[row].title,
-                    ),
-                  )}
-                  onSelect={setSelectedIndexes}
-                />
-              </div>
-            ) : (
-              <Select
-                style={wideMode ? styles.selectWideMode : styles.select}
-                multiSelect={true}
-                selectedIndex={selectedIndexes}
-                value={combineItems(
+        {selectOptions.length > 1 &&
+          (Platform.OS === 'web' ? (
+            <div style={wideMode ? styles.selectWideMode : styles.select}>
+              <WebHighlightsDropdown
+                selectOptions={selectOptions}
+                selectedIndexes={selectedIndexes}
+                displayValue={combineItems(
                   ...selectedIndexes.map(({ row }) => selectOptions[row].title),
                 )}
                 onSelect={setSelectedIndexes}
-              >
-                {selectOptions.map(({ title }, idx) => (
-                  <SelectItem key={idx} title={title} />
-                ))}
-              </Select>
-            )}
-          </>
-        )}
+              />
+            </div>
+          ) : (
+            <Select
+              style={wideMode ? styles.selectWideMode : styles.select}
+              multiSelect
+              selectedIndex={selectedIndexes}
+              value={combineItems(
+                ...selectedIndexes.map(({ row }) => selectOptions[row].title),
+              )}
+              onSelect={setSelectedIndexes}
+            >
+              {selectOptions.map(({ title }, idx) => (
+                <SelectItem key={idx} title={title} />
+              ))}
+            </Select>
+          ))}
         {highlightGroupsToShow.length === 0 && (
           <Text style={styles.none}>{i18n('None.', '', 'enhanced')}</Text>
         )}
