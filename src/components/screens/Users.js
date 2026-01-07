@@ -250,8 +250,8 @@ const Users = ({ idps, accounts }) => {
   const { historyGoBackToLibrary } = useRouterState();
 
   const Components = {
-    AutoComplete: Platform.OS === 'web' ? WebAutocomplete : Autocomplete,
-    AutoCompleteItem:
+    Autocomplete: Platform.OS === 'web' ? WebAutocomplete : Autocomplete,
+    AutocompleteItem:
       Platform.OS === 'web' ? WebAutocompleteItem : AutocompleteItem,
     Input: Platform.OS === 'web' ? WebInput : Input,
     Button: Platform.OS === 'web' ? WebButton : Button,
