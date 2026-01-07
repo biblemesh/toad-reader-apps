@@ -1,20 +1,26 @@
-import React, { useState, useMemo, useCallback } from "react"
-import { StyleSheet, View, ScrollView, Text, Platform } from "react-native"
-import { bindActionCreators } from "redux"
-import { connect } from "react-redux"
-import { i18n } from "inline-i18n"
-import { Select, SelectItem, IndexPath } from "@ui-kitten/components"
+import React, { useState, useMemo, useCallback } from 'react';
+import { StyleSheet, View, ScrollView, Text, Platform } from 'react-native';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { i18n } from 'inline-i18n';
+import { Select, SelectItem, IndexPath } from '@ui-kitten/components';
 
-import { orderSpineIdRefKeyedObj, orderCfiKeyedObj, combineItems, getIDPOrigin } from '../../utils/toolbox'
-import useClassroomInfo from '../../hooks/useClassroomInfo'
-import { setSelectedToolUid } from "../../redux/actions"
-import useWideMode from "../../hooks/useWideMode"
-import useRouterState from "../../hooks/useRouterState"
+import {
+  orderSpineIdRefKeyedObj,
+  orderCfiKeyedObj,
+  combineItems,
+  getIDPOrigin,
+} from '../../utils/toolbox';
+import useClassroomInfo from '../../hooks/useClassroomInfo';
+import { setSelectedToolUid } from '../../redux/actions';
+import useWideMode from '../../hooks/useWideMode';
+import useRouterState from '../../hooks/useRouterState';
+import WebHighlightsDropdown from '../basic/WebHighlightsDropdown';
 
-import Icon from "../basic/Icon"
-import Button from "../basic/Button"
-import SketchPad from "../basic/SketchPad"
-import HighlightsDownloadFAB from "./HighlightsDownloadFAB"
+import Icon from '../basic/Icon';
+import Button from '../basic/Button';
+import SketchPad from '../basic/SketchPad';
+import HighlightsDownloadFAB from './HighlightsDownloadFAB';
 
 const owner = {
   paddingVertical: 3,
@@ -22,43 +28,42 @@ const owner = {
   marginRight: 6,
   fontWeight: '600',
   fontSize: 12,
-}
+};
 
 const note = {
   paddingLeft: 10,
   borderLeftWidth: 1,
   marginVertical: 5,
   marginLeft: 35,
-}
+};
 
 const noteAuthor = {
   fontSize: 12,
   fontWeight: '100',
-}
+};
 
 const container = {
   paddingLeft: 20,
   flex: 1,
-}
+};
 
 const select = {
   marginRight: 20,
   maxWidth: 400,
   marginTop: 20,
   marginBottom: 10,
-}
+};
 
 const scrollViewContent = {
   paddingVertical: 5,
   paddingRight: 20,
-}
+};
 
 const text = {
   marginVertical: 10,
   fontSize: 16,
   flex: 1,
-}
-
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -189,73 +194,80 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
-})
+});
 
-const Highlights = React.memo(({
-  bookId,
-  goTo,
+const Highlights = React.memo(
+  ({
+    bookId,
+    goTo,
 
-  idps,
-  books,
-  userDataByBookId,
+    idps,
+    books,
+    userDataByBookId,
 
-  setSelectedToolUid,
-}) => {
+    setSelectedToolUid,
+  }) => {
+    const {
+      book,
+      spines,
+      instructorHighlights,
+      enhancedIsOff,
+      isDefaultClassroom,
+      idpId,
+    } = useClassroomInfo({ books, bookId, userDataByBookId });
+    const { historyReplace } = useRouterState();
+    const [sketchToShow, setSketchToShow] = useState();
 
-  const { book, spines, instructorHighlights, enhancedIsOff, isDefaultClassroom, idpId } = useClassroomInfo({ books, bookId, userDataByBookId })
-  const { historyReplace } = useRouterState()
-  const [ sketchToShow, setSketchToShow ] = useState()
+    const wideMode = useWideMode();
 
-  const wideMode = useWideMode()
+    const selectOptions = useMemo(
+      () => [
+        {
+          id: 'user',
+          title: i18n('My highlights', '', 'enhanced'),
+        },
+        ...(!(!enhancedIsOff && !isDefaultClassroom)
+          ? []
+          : [
+              {
+                id: 'instructor',
+                title: i18n('Instructor’s highlights', '', 'enhanced'),
+              },
+            ]),
+        // {
+        //   id: "classroom",
+        //   title: i18n("Classroom highlights", "", "enhanced"),
+        // },
+      ],
+      [enhancedIsOff, isDefaultClassroom],
+    );
 
-  const selectOptions = useMemo(
-    () => ([
-      {
-        id: "user",
-        title: i18n("My highlights", "", "enhanced"),
-      },
-      ...(!(!enhancedIsOff && !isDefaultClassroom) ? [] : [{
-        id: "instructor",
-        title: i18n("Instructor’s highlights", "", "enhanced"),
-      }]),
-      // {
-      //   id: "classroom",
-      //   title: i18n("Classroom highlights", "", "enhanced"),
-      // },
-    ]),
-    [ enhancedIsOff, isDefaultClassroom ],
-  )
-  
-  const [ selectedIndexes, setSelectedIndexes ] = useState(
-    selectOptions.map((x, idx) => new IndexPath(idx))
-  )
+    const [selectedIndexes, setSelectedIndexes] = useState(
+      selectOptions.map((x, idx) => new IndexPath(idx)),
+    );
 
-  const spineLabelsByIdRef = useMemo(
-    () => {
-      const spineLabelsByIdRef = {}
+    const spineLabelsByIdRef = useMemo(() => {
+      const spineLabelsByIdRef = {};
 
       spines.forEach(({ idref, label }) => {
-        spineLabelsByIdRef[idref] = label
-      })
+        spineLabelsByIdRef[idref] = label;
+      });
 
-      return spineLabelsByIdRef
-    },
-    [ spines ],
-  )
+      return spineLabelsByIdRef;
+    }, [spines]);
 
-  const highlightGroupsToShow = useMemo(
-    () => {
-      const highlightsByLoc = {}
+    const highlightGroupsToShow = useMemo(() => {
+      const highlightsByLoc = {};
 
       // function to make objs
       const addHighlightSpot = ({ spineIdRef, cfi, share_quote, sketch }) => {
-        if(!highlightsByLoc[spineIdRef]) {
+        if (!highlightsByLoc[spineIdRef]) {
           highlightsByLoc[spineIdRef] = {
             spineIdRef,
             highlightsByCfi: {},
-          }
+          };
         }
-        if(!highlightsByLoc[spineIdRef].highlightsByCfi[cfi]) {
+        if (!highlightsByLoc[spineIdRef].highlightsByCfi[cfi]) {
           highlightsByLoc[spineIdRef].highlightsByCfi[cfi] = {
             cfi,
             types: [],
@@ -263,158 +275,213 @@ const Highlights = React.memo(({
             notes: [],
             sketch,
             instructorHighlightersWithoutNotes: [],
-          }
+          };
         }
-        return highlightsByLoc[spineIdRef].highlightsByCfi[cfi]
-      }
+        return highlightsByLoc[spineIdRef].highlightsByCfi[cfi];
+      };
 
-      if(selectedIndexes.some(({ row }) => selectOptions[row].id === 'user')) {
+      if (selectedIndexes.some(({ row }) => selectOptions[row].id === 'user')) {
         // put in user
-        ;((userDataByBookId[bookId] || {}).highlights || [])
+        ((userDataByBookId[bookId] || {}).highlights || [])
           .filter(({ _delete }) => !_delete)
           .forEach(({ spineIdRef, cfi, share_quote, color, note, sketch }) => {
-            const highlightToShow = addHighlightSpot({ spineIdRef, cfi, share_quote, sketch })
-            highlightToShow.color = color
-            if(note) {
+            const highlightToShow = addHighlightSpot({
+              spineIdRef,
+              cfi,
+              share_quote,
+              sketch,
+            });
+            highlightToShow.color = color;
+            if (note) {
               highlightToShow.notes.push({
                 note,
-              })
+              });
             }
-            highlightToShow.types.push('user')
-          })
+            highlightToShow.types.push('user');
+          });
       }
 
-      if(selectedIndexes.some(({ row }) => selectOptions[row].id === 'instructor')) {
+      if (
+        selectedIndexes.some(
+          ({ row }) => selectOptions[row].id === 'instructor',
+        )
+      ) {
         // put in instructor
-        ;(instructorHighlights || [])
-          .forEach(({ spineIdRef, cfi, share_quote, note, author_fullname }) => {
-            const highlightToShow = addHighlightSpot({ spineIdRef, cfi, share_quote })
-            if(note) {
+        (instructorHighlights || []).forEach(
+          ({ spineIdRef, cfi, share_quote, note, author_fullname }) => {
+            const highlightToShow = addHighlightSpot({
+              spineIdRef,
+              cfi,
+              share_quote,
+            });
+            if (note) {
               highlightToShow.notes.push({
                 note,
                 author_fullname,
-              })
-            } else if(author_fullname) {
-              highlightToShow.instructorHighlightersWithoutNotes.push(author_fullname)
+              });
+            } else if (author_fullname) {
+              highlightToShow.instructorHighlightersWithoutNotes.push(
+                author_fullname,
+              );
             }
-            if(!highlightToShow.types.includes('instructor')) {
-              highlightToShow.types.push('instructor')
+            if (!highlightToShow.types.includes('instructor')) {
+              highlightToShow.types.push('instructor');
             }
-          })
+          },
+        );
       }
 
       // put in classroom highlights
       // TODO
 
       // put in order and flatten
-      const highlightGroupsToShow = orderSpineIdRefKeyedObj({ obj: highlightsByLoc, spines })
-      highlightGroupsToShow.forEach(highlightGroupToShow => {
-        highlightGroupToShow.highlights = orderCfiKeyedObj({ obj: highlightGroupToShow.highlightsByCfi })
-      })
+      const highlightGroupsToShow = orderSpineIdRefKeyedObj({
+        obj: highlightsByLoc,
+        spines,
+      });
+      highlightGroupsToShow.forEach((highlightGroupToShow) => {
+        highlightGroupToShow.highlights = orderCfiKeyedObj({
+          obj: highlightGroupToShow.highlightsByCfi,
+        });
+      });
 
-      return highlightGroupsToShow
-    },
-    [ bookId, (userDataByBookId[bookId] || {}).highlights, instructorHighlights, selectedIndexes, spines ],
-  )
+      return highlightGroupsToShow;
+    }, [
+      bookId,
+      (userDataByBookId[bookId] || {}).highlights,
+      instructorHighlights,
+      selectedIndexes,
+      spines,
+    ]);
 
-  const typeStrings = useMemo(
-    () => ({
-      user: i18n("Mine", "", "enhanced"),
-      instructor: i18n("Instructor", "", "enhanced"),
-    }),
-    [],
-  )
+    const typeStrings = useMemo(
+      () => ({
+        user: i18n('Mine', '', 'enhanced'),
+        instructor: i18n('Instructor', '', 'enhanced'),
+      }),
+      [],
+    );
 
-  const ReadIcon = useCallback(({ style }) => <Icon name="book-open-variant" pack="materialCommunity" style={style} />, [])
-  // const DrawIcon = useCallback(({ style }) => <Icon name="draw" pack="materialCommunity" style={style} />, [])
-  // const ShareIcon = useCallback(style => <Icon name="share" style={style} />, [])
+    const ReadIcon = useCallback(({ style, ...props }) => {
+      const appliedStyle =
+        Platform.OS === 'web' ? [style, { width: 15, height: 15 }] : style;
 
-  const showSketch = useCallback(({ info: { sketch } }) => setSketchToShow(sketch), [])
+      return (
+        <Icon
+          {...props}
+          name="book-open-variant"
+          pack="materialCommunity"
+          style={appliedStyle}
+        />
+      );
+    }, []);
+    // const DrawIcon = useCallback(({ style }) => <Icon name="draw" pack="materialCommunity" style={style} />, [])
+    // const ShareIcon = useCallback(style => <Icon name="share" style={style} />, [])
 
-  const goRead = useCallback(
-    ({ info }) => {
-      const newRouterState = goTo(info)
-      setSelectedToolUid({  // unselects any tool
-        bookId,
-        getRouterState: () => newRouterState,
-        historyReplace,
-      })
+    const showSketch = useCallback(
+      ({ info: { sketch } }) => setSketchToShow(sketch),
+      [],
+    );
 
-    },
-    [ bookId ],
-  )
+    const goRead = useCallback(
+      ({ info }) => {
+        const newRouterState = goTo(info);
+        setSelectedToolUid({
+          // unselects any tool
+          bookId,
+          getRouterState: () => newRouterState,
+          historyReplace,
+        });
+      },
+      [bookId],
+    );
 
-  // const goShare = useCallback(
-  //   () => {
+    // const goShare = useCallback(
+    //   () => {
 
-  //   },
-  //   [],
-  // )
+    //   },
+    //   [],
+    // )
 
-  return (
-    <View style={wideMode ? styles.containerWideMode : styles.container}>
-      {selectOptions.length > 1 &&
-        <Select
-          style={wideMode ? styles.selectWideMode : styles.select}
-          multiSelect={true}
-          selectedIndex={selectedIndexes}
-          value={combineItems(...selectedIndexes.map(({ row }) => selectOptions[row].title))}
-          onSelect={setSelectedIndexes}
-        >
-          {selectOptions.map(({ title }, idx) => (
-            <SelectItem
-              key={idx}
-              title={title}
-            />
+    return (
+      <View style={wideMode ? styles.containerWideMode : styles.container}>
+        {selectOptions.length > 1 &&
+          (Platform.OS === 'web' ? (
+            <div style={wideMode ? styles.selectWideMode : styles.select}>
+              <WebHighlightsDropdown
+                selectOptions={selectOptions}
+                selectedIndexes={selectedIndexes}
+                displayValue={combineItems(
+                  ...selectedIndexes.map(({ row }) => selectOptions[row].title),
+                )}
+                onSelect={setSelectedIndexes}
+              />
+            </div>
+          ) : (
+            <Select
+              style={wideMode ? styles.selectWideMode : styles.select}
+              multiSelect
+              selectedIndex={selectedIndexes}
+              value={combineItems(
+                ...selectedIndexes.map(({ row }) => selectOptions[row].title),
+              )}
+              onSelect={setSelectedIndexes}
+            >
+              {selectOptions.map(({ title }, idx) => (
+                <SelectItem key={idx} title={title} />
+              ))}
+            </Select>
           ))}
-        </Select>
-      }
-      {highlightGroupsToShow.length === 0 &&
-        <Text style={styles.none}>
-          {i18n("None.", "", "enhanced")}
-        </Text>
-      }
-      {highlightGroupsToShow.length !== 0 &&
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={wideMode ? styles.scrollViewContentWideMode : styles.scrollViewContent}
-        >
-          {highlightGroupsToShow.map(({ spineIdRef, highlights }, idx) => (
-            <View key={idx}>
-              <View style={styles.spineLine} />
-              <View style={styles.spineTextContainer}>
-                <Text
-                  style={styles.spineText}
-                  numberOfLines={1}
-                >
-                  {spineLabelsByIdRef[spineIdRef]}
-                </Text>
-              </View>
-              {highlights.map(({ cfi, types, text, notes, sketch, instructorHighlightersWithoutNotes }) => (
-                <View style={styles.highlight} key={cfi}>
-                  <View style={styles.types}>
-                    {types.map(type => (
-                      <Text
-                        style={styles[type]}
-                        key={type}
-                      >
-                        {typeStrings[type]}
-                      </Text>
-                    ))}
-                    <View style={styles.buttons}>
-                      <Button
-                        style={styles.button}
-                        size="small"
-                        status="basic"
-                        accessoryLeft={ReadIcon}
-                        appearance="ghost"
-                        onPress={goRead}
-                        info={{
-                          spineIdRef,
-                          cfi,
-                        }}
-                      />
-                      {/* <Button
+        {highlightGroupsToShow.length === 0 && (
+          <Text style={styles.none}>{i18n('None.', '', 'enhanced')}</Text>
+        )}
+        {highlightGroupsToShow.length !== 0 && (
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={
+              wideMode
+                ? styles.scrollViewContentWideMode
+                : styles.scrollViewContent
+            }
+          >
+            {highlightGroupsToShow.map(({ spineIdRef, highlights }, idx) => (
+              <View key={idx}>
+                <View style={styles.spineLine} />
+                <View style={styles.spineTextContainer}>
+                  <Text style={styles.spineText} numberOfLines={1}>
+                    {spineLabelsByIdRef[spineIdRef]}
+                  </Text>
+                </View>
+                {highlights.map(
+                  ({
+                    cfi,
+                    types,
+                    text,
+                    notes,
+                    sketch,
+                    instructorHighlightersWithoutNotes,
+                  }) => (
+                    <View style={styles.highlight} key={cfi}>
+                      <View style={styles.types}>
+                        {types.map((type) => (
+                          <Text style={styles[type]} key={type}>
+                            {typeStrings[type]}
+                          </Text>
+                        ))}
+                        <View style={styles.buttons}>
+                          <Button
+                            style={styles.button}
+                            size="small"
+                            status="basic"
+                            accessoryLeft={ReadIcon}
+                            appearance="ghost"
+                            onPress={goRead}
+                            info={{
+                              spineIdRef,
+                              cfi,
+                            }}
+                          />
+                          {/* <Button
                         style={styles.button}
                         size="small"
                         status="basic"
@@ -426,107 +493,122 @@ const Highlights = React.memo(({
                           cfi,
                         }}
                       /> */}
+                        </View>
+                      </View>
+                      <View style={styles.quote}>
+                        <Icon
+                          name="format-quote-open"
+                          pack="materialCommunity"
+                          style={styles.quoteIcon}
+                        />
+                        <Text style={text ? styles.text : styles.missingText}>
+                          {text ||
+                            i18n(
+                              '(Highlighted text unavailable.)',
+                              '',
+                              'enhanced',
+                            )}
+                        </Text>
+                        {!text && types.includes('user') && (
+                          <Button
+                            style={styles.retrieveButton}
+                            onPress={goRead}
+                            status="basic"
+                            size="tiny"
+                            info={{
+                              spineIdRef,
+                              cfi,
+                              autoSelectHighlight: true,
+                            }}
+                          >
+                            {i18n('Retrieve', '', 'enhanced')}
+                          </Button>
+                        )}
+                      </View>
+                      <View style={styles.notes}>
+                        {notes.map((note, idx) => (
+                          <View
+                            style={
+                              note.author_fullname
+                                ? styles.instructorNote
+                                : styles.myNote
+                            }
+                            key={idx}
+                          >
+                            <Text style={styles.noteText}>{note.note}</Text>
+                            {!!note.author_fullname && (
+                              <Text style={styles.noteAuthor}>
+                                {note.author_fullname}
+                              </Text>
+                            )}
+                          </View>
+                        ))}
+                        {instructorHighlightersWithoutNotes.length > 0 && (
+                          <View style={styles.note}>
+                            <Text style={styles.noteAuthors}>
+                              {combineItems(
+                                ...instructorHighlightersWithoutNotes,
+                              )}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                      {!!sketch && (
+                        <Button
+                          style={styles.sketchButton}
+                          size="small"
+                          status="basic"
+                          onPress={showSketch}
+                          info={{
+                            sketch,
+                          }}
+                        >
+                          {i18n('View sketch')}
+                        </Button>
+                      )}
                     </View>
-                  </View>
-                  <View style={styles.quote}>
-                    <Icon
-                      name="format-quote-open"
-                      pack="materialCommunity"
-                      style={styles.quoteIcon}
-                    />
-                    <Text style={text ? styles.text : styles.missingText}>
-                      {text || i18n("(Highlighted text unavailable.)", "", "enhanced")}
-                    </Text>
-                    {!text && types.includes('user') &&
-                      <Button
-                        style={styles.retrieveButton}
-                        onPress={goRead}
-                        status="basic"
-                        size="tiny"
-                        info={{
-                          spineIdRef,
-                          cfi,
-                          autoSelectHighlight: true,
-                        }}
-                      >
-                        {i18n("Retrieve", "", "enhanced")}
-                      </Button>
-                    }
-                  </View>
-                  <View style={styles.notes}>
-                    {notes.map((note, idx) => (
-                      <View
-                        style={note.author_fullname ? styles.instructorNote : styles.myNote}
-                        key={idx}
-                      >
-                        <Text style={styles.noteText}>
-                          {note.note}
-                        </Text>
-                        {!!note.author_fullname &&
-                          <Text style={styles.noteAuthor}>
-                            {note.author_fullname}
-                          </Text>
-                        }
-                      </View>
-                    ))}
-                    {instructorHighlightersWithoutNotes.length > 0 &&
-                      <View style={styles.note}>
-                        <Text style={styles.noteAuthors}>
-                          {combineItems(...instructorHighlightersWithoutNotes)}
-                        </Text>
-                      </View>
-                    }
-                  </View>
-                  {!!sketch &&
-                    <Button
-                      style={styles.sketchButton}
-                      size="small"
-                      status="basic"
-                      onPress={showSketch}
-                      info={{
-                        sketch,
-                      }}
-                    >
-                      {i18n("View sketch")}
-                    </Button>
-                  }
-                </View>
-              ))}
-            </View>
-          ))}
-        </ScrollView>
-      }
-      {Platform.OS === 'web' && highlightGroupsToShow.length > 0 &&
-        <HighlightsDownloadFAB
-          filename={`${i18n("Highlights")} - ${book.title}`}
-          highlightGroupsToShow={highlightGroupsToShow}
-          spineLabelsByIdRef={spineLabelsByIdRef}
-          bookUrl={`${getIDPOrigin({ ...idps[idpId], noBeta: true })}/#/book/${bookId}`}
-          typeStrings={typeStrings}
-        />
-      }
-      {!!sketchToShow &&
-        <View style={styles.sketchPadContainer}>
-          <SketchPad
-            sketch={sketchToShow}
-            mode="view"
-            onDone={() => setSketchToShow()}
-            doneButtonLabel={i18n("Close")}
+                  ),
+                )}
+              </View>
+            ))}
+          </ScrollView>
+        )}
+        {Platform.OS === 'web' && highlightGroupsToShow.length > 0 && (
+          <HighlightsDownloadFAB
+            filename={`${i18n('Highlights')} - ${book.title}`}
+            highlightGroupsToShow={highlightGroupsToShow}
+            spineLabelsByIdRef={spineLabelsByIdRef}
+            bookUrl={`${getIDPOrigin({ ...idps[idpId], noBeta: true })}/#/book/${bookId}`}
+            typeStrings={typeStrings}
           />
-        </View>
-      }
-    </View>
-  )
-})
+        )}
+        {!!sketchToShow && (
+          <View style={styles.sketchPadContainer}>
+            <SketchPad
+              sketch={sketchToShow}
+              mode="view"
+              onDone={() => setSketchToShow()}
+              doneButtonLabel={i18n('Close')}
+            />
+          </View>
+        )}
+      </View>
+    );
+  },
+);
 
 const mapStateToProps = ({ idps, books, userDataByBookId }) => ({
   idps,
   books,
   userDataByBookId,
-})
+});
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
-  setSelectedToolUid,
-}, dispatch)
+const matchDispatchToProps = (dispatch, x) =>
+  bindActionCreators(
+    {
+      setSelectedToolUid,
+    },
+    dispatch,
+  );
 
-export default connect(mapStateToProps, matchDispatchToProps)(Highlights)
+export default connect(mapStateToProps, matchDispatchToProps)(Highlights);

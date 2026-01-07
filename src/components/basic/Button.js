@@ -1,26 +1,15 @@
-import React, { useCallback } from "react"
-import { Button as UIKittenButton } from "@ui-kitten/components"
+import React, { useCallback } from 'react';
+import { Button as UIKittenButton } from '@ui-kitten/components';
 
-const Button = React.memo(({
-  id,
-  info,
-  onPress,
-  ...otherProps
- }) => {
+const Button = React.memo(({ id, info, onPress, ...otherProps }) => {
+  const customOnPress = useCallback(() => {
+    if (onPress) {
+      onPress({ id, info });
+    }
+  }, [id, info, onPress]);
 
-  const customOnPress = useCallback(
-    () => {
-      onPress && onPress({ id, info })
-    },
-    [ id, info, onPress ],
-  )
 
-  return (
-    <UIKittenButton
-      {...otherProps}
-      onPress={customOnPress}
-    />
-  )
-})
+  return <UIKittenButton {...otherProps} onPress={customOnPress} />;
+});
 
-export default Button
+export default Button;

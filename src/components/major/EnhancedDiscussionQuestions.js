@@ -1,23 +1,27 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react"
-import { StyleSheet, View } from "react-native"
-import { bindActionCreators } from "redux"
-import { connect } from "react-redux"
-import { i18n } from "inline-i18n"
-import { Select, SelectItem, IndexPath } from "@ui-kitten/components"
-import usePrevious from "react-use/lib/usePrevious"
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
+import { connect } from 'react-redux';
+import { i18n } from 'inline-i18n';
+import { Select, SelectItem, IndexPath } from '@ui-kitten/components';
+import usePrevious from 'react-use/lib/usePrevious';
+import WebDropdown from '../basic/WebDropdown';
 
-import getDummyDiscussionQuestions from '../../utils/getDummyDiscussionQuestions'
-import { orderSpineIdRefKeyedObj, orderCfiKeyedObj, combineItems } from '../../utils/toolbox'
-import useClassroomInfo from '../../hooks/useClassroomInfo'
-import useWideMode from "../../hooks/useWideMode"
+import getDummyDiscussionQuestions from '../../utils/getDummyDiscussionQuestions';
+import {
+  orderSpineIdRefKeyedObj,
+  orderCfiKeyedObj,
+  combineItems,
+} from '../../utils/toolbox';
+import useClassroomInfo from '../../hooks/useClassroomInfo';
+import useWideMode from '../../hooks/useWideMode';
 
-import DiscussionQuestionTool from "./DiscussionQuestionTool"
+import DiscussionQuestionTool from './DiscussionQuestionTool';
 
 const selectContainer = {
   width: 800,
   maxWidth: '100%',
   paddingHorizontal: 20,
-}
+};
 
 const styles = StyleSheet.create({
   none: {
@@ -55,154 +59,199 @@ const styles = StyleSheet.create({
   discussionContainerLast: {
     flex: 1,
   },
-})
+});
 
-const EnhancedDiscussionQuestions = React.memo(({
-  bookId,
-  logToolUsageEvent,
+const EnhancedDiscussionQuestions = React.memo(
+  ({ bookId, logToolUsageEvent, books, userDataByBookId }) => {
+    const { classroomUid, visibleTools, spines } = useClassroomInfo({
+      books,
+      bookId,
+      userDataByBookId,
+      inEditMode: false,
+    });
 
-  books,
-  userDataByBookId,
-}) => {
+    const wideMode = useWideMode();
 
-  const { classroomUid, visibleTools, spines } = useClassroomInfo({ books, bookId, userDataByBookId, inEditMode: false })
+    const { orderedQuestions } = useMemo(() => {
+      const out = [];
+      const byLoc = {};
 
-  const wideMode = useWideMode()
+      visibleTools.forEach((tool) => {
+        const { uid, spineIdRef, cfi, name, data } = tool;
+        if (!data.isDiscussion) return;
 
-  const [ currentQuestionUids, setCurrentQuestionUids ] = useState([])
-  const prevCurrentQuestionUids = usePrevious(currentQuestionUids)
+        const key = cfi || 'NULL';
+        byLoc[spineIdRef] ??= {};
+        byLoc[spineIdRef][key] ??= [];
 
-  const { orderedQuestions } = useMemo(
-    () => {
-      const orderedQuestions = []
-      const questionsByLoc = {}
-
-      visibleTools.forEach(tool => {
-        const { uid, spineIdRef, cfi, name, data } = tool
-
-        if(!data.isDiscussion) return
-
-        if(!questionsByLoc[spineIdRef]) {
-          questionsByLoc[spineIdRef] = {}
-        }
-
-        const cfiOrNullStr = cfi || 'NULL'
-
-        if(!questionsByLoc[spineIdRef][cfiOrNullStr]) {
-          questionsByLoc[spineIdRef][cfiOrNullStr] = []
-        }
-
-        questionsByLoc[spineIdRef][cfiOrNullStr].push({
+        byLoc[spineIdRef][key].push({
           uid,
           name,
-          question: data.question || "",
-        })
-      })
+          question: data.question || '',
+          title: name || i18n('Question', '', 'enhanced'),
+        });
+      });
 
-      orderSpineIdRefKeyedObj({ obj: questionsByLoc, spines }).forEach(questionssByCfi => {
-        orderCfiKeyedObj({ obj: questionssByCfi }).forEach(questions => {
-          questions.forEach(question => {
-            orderedQuestions.push({
-              ...question,
-              title: question.name || i18n("Question", "", "enhanced"),
-            })
-          })
-        })
-      })
+      orderSpineIdRefKeyedObj({ obj: byLoc, spines }).forEach((group) => {
+        orderCfiKeyedObj({ obj: group }).forEach((items) => {
+          items.forEach((q) => out.push(q));
+        });
+      });
 
-      if(orderedQuestions.length === 0) return getDummyDiscussionQuestions()
+      if (out.length === 0) return getDummyDiscussionQuestions();
+      return { orderedQuestions: out };
+    }, [visibleTools, spines]);
 
-      return { orderedQuestions }
-    },
-    [ visibleTools, spines ],
-  )
+    const [uids, setUids] = useState([]);
+    const prevUids = usePrevious(uids);
+    const selectedObjects = orderedQuestions.filter((q) =>
+      uids.includes(q.uid),
+    );
 
-  const onSelect = useCallback(
-    selectionInfo => (
-      setCurrentQuestionUids(
-        wideMode
-          ? selectionInfo.map(({ row }) => orderedQuestions[row].uid).slice(-3)
-          : [ orderedQuestions[selectionInfo.row].uid ]
-      )
-    ),
-    [ wideMode, orderedQuestions ],
-  )
-
-  useEffect(
-    () => {
-      currentQuestionUids.forEach(toolUid => {
-        if(!prevCurrentQuestionUids.includes(toolUid)) {
-          logToolUsageEvent({
-            toolUid,
-            eventName: `View tool`,
-          })
+    const handleSelectNative = useCallback(
+      (info) => {
+        if (wideMode) {
+          const rows = info.map((i) => i.row);
+          setUids(rows.map((r) => orderedQuestions[r].uid).slice(-3));
+        } else {
+          setUids([orderedQuestions[info.row].uid]);
         }
-      })
-    },
-    [ currentQuestionUids ],
-  )
+      },
+      [orderedQuestions, wideMode],
+    );
 
-  const currentQuestions = useMemo(
-    () => (
-      orderedQuestions.filter(({ uid }) => currentQuestionUids.includes(uid))
-    ),
-    [ orderedQuestions, JSON.stringify(currentQuestionUids) ],
-  )
+    const handleSelectWeb = useCallback(
+      (row) => {
+        const uid = orderedQuestions[row].uid;
 
-  if(!classroomUid) return null
+        setUids((prev) => {
+          const exists = prev.includes(uid);
 
-  const selectedOptions = wideMode ? currentQuestions : currentQuestions[0]
+          if (wideMode) {
+            const next = exists
+              ? prev.filter((id) => id !== uid)
+              : [...prev, uid];
 
-  return (
-    <View style={styles.container}>
-      <View style={wideMode ? styles.selectContainerWideMode : styles.selectContainer}>
-        <Select
-          label={wideMode ? i18n("Questions to display", "", "enhanced") : i18n("Question", "", "enhanced")}
-          placeholder={wideMode ? i18n("Select up to three", "", "enhanced") : i18n("Select a question", "", "enhanced") }
-          style={styles.select}
-          multiSelect={wideMode}
-          value={wideMode ? combineItems(...selectedOptions.map(({ title }) => title)) : (selectedOptions || {}).title}
-          selectedIndex={
-            wideMode
-              ? selectedOptions.map(selectedOption => new IndexPath(orderedQuestions.indexOf(selectedOption)))
-              : (selectedOptions ? new IndexPath(orderedQuestions.indexOf(selectedOptions)) : undefined)
+            return next.slice(-3); // max 3 item
           }
-          onSelect={onSelect}
+
+          return [uid]; // mobile/web-narrow: single select
+        });
+      },
+      [orderedQuestions, wideMode],
+    );
+
+    useEffect(() => {
+      if (!uids || uids.length === 0) return;
+      if (!prevUids) return;
+
+      uids.forEach((id) => {
+        if (!prevUids.includes(id)) {
+          logToolUsageEvent({ toolUid: id, eventName: 'View tool' });
+        }
+      });
+    }, [uids, prevUids, logToolUsageEvent]);
+
+    if (!classroomUid) return null;
+
+    const shownQuestions = wideMode
+      ? selectedObjects
+      : selectedObjects.slice(0, 1);
+
+    const memoQuestions = useMemo(
+      () => orderedQuestions,
+      [orderedQuestions.length],
+    );
+
+    return (
+      <View style={styles.container}>
+        <View
+          style={
+            wideMode ? styles.selectContainerWideMode : styles.selectContainer
+          }
         >
-          {orderedQuestions.map(({ title }, idx) => (
-            <SelectItem
-              key={idx}
-              title={title}
+          {Platform.OS === 'web' ? (
+            <WebDropdown
+              label={
+                wideMode
+                  ? i18n('Questions to display', '', 'enhanced')
+                  : i18n('Question', '', 'enhanced')
+              }
+              placeholder={
+                wideMode
+                  ? i18n('Select up to three', '', 'enhanced')
+                  : i18n('Select a question', '', 'enhanced')
+              }
+              orderedQuestions={memoQuestions}
+              selectedObjects={selectedObjects}
+              onSelectRow={handleSelectWeb}
             />
+          ) : (
+            <Select
+              label={
+                wideMode
+                  ? i18n('Questions to display', '', 'enhanced')
+                  : i18n('Question', '', 'enhanced')
+              }
+              placeholder={
+                wideMode
+                  ? i18n('Select up to three', '', 'enhanced')
+                  : i18n('Select a question', '', 'enhanced')
+              }
+              multiSelect={wideMode}
+              value={
+                wideMode
+                  ? combineItems(...selectedObjects.map((x) => x.title))
+                  : selectedObjects?.[0]?.title
+              }
+              selectedIndex={
+                wideMode
+                  ? selectedObjects.map(
+                      (x) => new IndexPath(orderedQuestions.indexOf(x)),
+                    )
+                  : selectedObjects[0]
+                    ? new IndexPath(
+                        orderedQuestions.indexOf(selectedObjects[0]),
+                      )
+                    : undefined
+              }
+              onSelect={handleSelectNative}
+            >
+              {orderedQuestions.map(({ title }, idx) => (
+                <SelectItem key={idx} title={title} />
+              ))}
+            </Select>
+          )}
+        </View>
+
+        <View style={styles.discussionsContainer}>
+          {shownQuestions.map(({ uid, question }, idx) => (
+            <View
+              key={uid}
+              style={
+                idx === shownQuestions.length - 1
+                  ? styles.discussionContainerLast
+                  : styles.discussionContainer
+              }
+            >
+              <DiscussionQuestionTool
+                bookId={bookId}
+                toolUid={uid}
+                question={question}
+                extraKeyboardVerticalOffset={92}
+                logUsageEvent={logToolUsageEvent}
+              />
+            </View>
           ))}
-        </Select>
+        </View>
       </View>
-      <View style={styles.discussionsContainer}>
-        {(wideMode ? currentQuestions : currentQuestions.slice(0, 1)).map(({ uid, question }, idx) => (
-          <View
-            key={uid}
-            style={idx === currentQuestions.length-1 ? styles.discussionContainerLast : styles.discussionContainer}
-          >
-            <DiscussionQuestionTool
-              bookId={bookId}
-              toolUid={uid}
-              question={question}
-              extraKeyboardVerticalOffset={92}
-              logUsageEvent={logToolUsageEvent}
-            />
-          </View>
-        ))}
-      </View>
-    </View>
-  )
-})
+    );
+  },
+);
 
 const mapStateToProps = ({ books, userDataByBookId }) => ({
   books,
   userDataByBookId,
-})
+});
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
-}, dispatch)
-
-export default connect(mapStateToProps, matchDispatchToProps)(EnhancedDiscussionQuestions)
+export default connect(mapStateToProps)(EnhancedDiscussionQuestions);
