@@ -19,7 +19,12 @@ if [[ ! -d "tenants/$TENANT_TO_SWITCH_TO" ]]; then
   elif [[ -d "tenants/$CREATE_FROM_THIS_TENANT" ]]; then
     mkdir "tenants/$TENANT_TO_SWITCH_TO" || exit 1;
     for TENANT_ITEM in "${TENANT_ITEMS[@]}" ; do
-      cp -R "tenants/$CREATE_FROM_THIS_TENANT/$TENANT_ITEM" "tenants/$TENANT_TO_SWITCH_TO/$TENANT_ITEM" || exit 1;
+      if [[ -d "tenants/$CREATE_FROM_THIS_TENANT/$TENANT_ITEM" ]]; then
+        mkdir -p "tenants/$TENANT_TO_SWITCH_TO/$TENANT_ITEM";
+        cp -R "tenants/$CREATE_FROM_THIS_TENANT/$TENANT_ITEM/*" "tenants/$TENANT_TO_SWITCH_TO/$TENANT_ITEM";
+      else
+        cp -R "tenants/$CREATE_FROM_THIS_TENANT/$TENANT_ITEM" "tenants/$TENANT_TO_SWITCH_TO/$TENANT_ITEM";
+      fi
     done
 
     echo "The tenant $TENANT_TO_SWITCH_TO has been created."
