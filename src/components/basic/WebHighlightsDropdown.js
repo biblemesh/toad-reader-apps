@@ -86,6 +86,7 @@ export default function WebHighlightsDropdown({
               zIndex: 1000,
               maxHeight: 300,
               overflowY: 'auto',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
             }}
           >
             {/* ITEMS */}
@@ -167,7 +168,7 @@ export default function WebHighlightsDropdown({
                       </svg>
                     )}
                   </div>
-                  <span style={{ flex: 1, lineHeight: '1.4' }}>
+                  <span style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif', flex: 1, lineHeight: '1.4' }}>
                     {item.title}
                   </span>
                 </div>
@@ -196,7 +197,7 @@ export default function WebHighlightsDropdown({
           padding: '0 12px',
           cursor: 'pointer',
           fontSize: 'inherit',
-          fontFamily: 'inherit',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
           textAlign: 'left',
         }}
       >

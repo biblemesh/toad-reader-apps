@@ -141,6 +141,7 @@ export default function WebReflectionDropdown({
             color: '#8F9BB3',
             marginBottom: 8,
             letterSpacing: '0.4px',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
           }}
         >
           {label}
