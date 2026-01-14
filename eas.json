@@ -57,7 +57,17 @@
     }
   },
   "submit": {
-    "production": {},
-    "staging": {}
+    "production": {
+      "android": {
+        "releaseStatus": "draft",
+        "track": "internal"
+      }
+    },
+    "staging": {
+      "android": {
+        "releaseStatus": "draft",
+        "track": "internal"
+      }
+    }
   }
 }
