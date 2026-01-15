@@ -2,7 +2,7 @@
 
 set -e
 
-TENANT_ITEMS=("app.json" "assets/images" "assets/icons" "translationModifier.js")
+TENANT_ITEMS=("app.json" "assets" "translationModifier.js")
 THIS_SCRIPT=$0
 TENANT_TO_SWITCH_TO=$1
 
