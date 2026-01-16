@@ -20,7 +20,7 @@
     "staging": {
       "android": {
         "autoIncrement": "versionCode",
-        "distribution": "internal"
+        "distribution": "store"
       },
       "channel": "staging",
       "ios": {
