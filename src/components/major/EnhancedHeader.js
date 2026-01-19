@@ -371,7 +371,7 @@ const EnhancedHeader = React.memo(
                     fontWeight: 'bold',
                     fontSize: '16px',
                     color: 'inherit',
-                    fontFamily: 'inherit',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
                     lineHeight: '1.2',
                     display: 'block',
                     width: '100%',

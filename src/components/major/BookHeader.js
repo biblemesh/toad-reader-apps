@@ -345,6 +345,7 @@ const BookHeader = React.memo(({
                   toggleShowOptions(false)
                 }}
                 style={{
+                  fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif',
                   padding: "12px 16px",
                   cursor: "pointer",
                   borderBottom: "1px solid #eee",
