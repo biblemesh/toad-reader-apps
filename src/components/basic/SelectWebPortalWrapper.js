@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Platform, View, TouchableOpacity, Text, Animated } from 'react-native';
 import { createPortal } from 'react-dom';
 

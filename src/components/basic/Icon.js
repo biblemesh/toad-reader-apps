@@ -1,4 +1,3 @@
-import React from "react"
 import { StyleSheet, Platform, Image } from "react-native"
 import * as Font from "expo-font"
 import { Ionicons, MaterialIcons, MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons"

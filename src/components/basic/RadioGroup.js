@@ -10,7 +10,7 @@ const RadioGroup = React.memo(({
 
   const customOnChange = useCallback(
     index => {
-      onChange && onChange({ id, index, info })
+      if (onChange) onChange({ id, index, info });
     },
     [ id, info, onChange ],
   )

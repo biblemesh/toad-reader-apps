@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import { useMemo } from "react"
 import { StyleSheet, TouchableWithoutFeedback, ScrollView, View, Text } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -117,7 +117,7 @@ const GroupedToolsChip = ({
                 onPress={() => {
                   setSelectedToolUid({ bookId, uid, getRouterState, historyPush })
                   toggleShowTools()
-                  setModeToPage && setModeToPage({ snapshotZoomed: true })
+                  if (setModeToPage) setModeToPage({ snapshotZoomed: true });
                 }}
                 status={!published_at ? "draft" : "published"}
                 type="button"
@@ -171,7 +171,7 @@ const mapStateToProps = ({ books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setSelectedToolUid,
 }, dispatch)
 

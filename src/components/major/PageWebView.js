@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import Constants from 'expo-constants'
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -68,7 +68,7 @@ const getHighlightsForThisSpine = ({ highlights, location }) => {
   try {
     const spineIdRef = JSON.parse(location).idref
     return highlights.filter(highlight => highlight.spineIdRef === spineIdRef)
-  } catch(e) {
+  } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
     return []
   }
 }
@@ -106,11 +106,12 @@ const PageWebView = ({
   } = initialProps
 
   const [ unloaded, setUnloaded ] = useState(false)
-  
+
+  // DISABLED. TODO if the below issue is no longer valid, please delete.
   // See https://github.com/react-native-community/react-native-webview/issues/656 for an
   // explanation of this hack.
-  const [ renderedOnce, setRenderedOnce ] = useState(Platform.OS !== 'android')
-  const setRenderedOnceTrue = useCallback(() => setRenderedOnce(true), [])
+  //const [ renderedOnce, setRenderedOnce ] = useState(Platform.OS !== 'android')
+  //const setRenderedOnceTrue = useCallback(() => setRenderedOnce(true), [])
 
   const webViewLocalRef = useRef()
   const webView= webViewRef || webViewLocalRef
@@ -120,6 +121,7 @@ const PageWebView = ({
 
   const { truePageWidth: width, truePageHeight: height } = useAdjustedDimensions({ sidePanelSettings, widget })
 
+  /* DISABLED because it does nothing. TODO delete this or fix it.
   useEffect(
     () => {
       () => {
@@ -130,6 +132,7 @@ const PageWebView = ({
     },
     [],
   )
+  */
 
   const prevProps = usePrevious(props)
 
@@ -177,7 +180,7 @@ const PageWebView = ({
           console.log('consoleLog', data.payload.message)
           break;
 
-        case 'getFileAsText':
+        case 'getFileAsText': {
           const { uri } = data.payload
           FileSystem.readAsStringAsync(`${uri.replace(/#.*$/, '')}`)
             .then(async fileText => {
@@ -186,7 +189,7 @@ const PageWebView = ({
                 fileText,
               })
             })
-            .catch(fileText => {
+            .catch(() => {
               console.log('getFileAsText error: ' + uri)
               postMessage(webView.current, 'fileAsText', {
                 uri,
@@ -194,6 +197,7 @@ const PageWebView = ({
               })
             })
           break;
+        }
 
         default:
           console.log(data.identifier, JSON.stringify(data.payload))
@@ -308,7 +312,7 @@ const PageWebView = ({
         source={source}
         onError={onError}
         onMessage={onMessageEvent}
-        onLoad={setRenderedOnceTrue}
+        //onLoad={setRenderedOnceTrue}
         forwardRef={webView}
 
         // The rest of the props are ignored when on web platform
@@ -337,7 +341,7 @@ const mapStateToProps = ({ idps, accounts, books, userDataByBookId, sidePanelSet
   sidePanelSettings,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(PageWebView)

@@ -1,4 +1,3 @@
-import React from "react"
 import { StyleSheet, ActivityIndicator, View, Text } from "react-native"
 import { AnimatedCircularProgress } from "react-native-circular-progress"
 import { i18n } from "inline-i18n"
@@ -24,7 +23,7 @@ const Spin = ({
           fill={percent}
           tintColor="rgb(51, 102, 255)"
           backgroundColor="rgb(231, 236, 246)">
-          {fill => (
+          {() => (
             <Text>
               {i18n("{{percent}}%", { percent })}
             </Text>
@@ -33,7 +32,7 @@ const Spin = ({
       </View>
     )
   }
-  
+
   return (
     <ActivityIndicator
       size={size}

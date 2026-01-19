@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import Constants from 'expo-constants'
 import * as SplashScreen from 'expo-splash-screen'
 import * as Updates from 'expo-updates'
@@ -59,7 +59,7 @@ if(Platform.OS === 'web') {
   }
 }
 
-const patchMiddleware = store => next => action => {
+const patchMiddleware = () => next => action => {
   const result = next(action)
   if(action.doPatch) {
     patch()
@@ -73,12 +73,12 @@ const patchMiddleware = store => next => action => {
   return result
 }
 
-const themes = { lightTheme, darkTheme }
+const themes = { lightTheme, darkTheme };
 
 // const store = compose(autoRehydrate())(createStore)(reducers, applyMiddleware(patchMiddleware))
 
 const persistConfig = {
-  key: "root",    
+  key: "root",
   storage: AsyncStorage,
 }
 
@@ -118,7 +118,7 @@ const App = () => {
           try {
             await Updates.fetchUpdateAsync()
             // State is now managed automatically by Updates.useUpdates()
-          } catch(err) {
+          } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
             setDownloadUpdateRedoTimeout(getUpdate, 100*60)  // try again after a minute
           }
         }
@@ -143,8 +143,10 @@ const App = () => {
           // Updates.checkForUpdateAsync() will automatically update the state via Updates.useUpdates()
           ;(async () => {
             try {
-              await Updates.checkForUpdateAsync()
-            } catch(err) {}
+              await Updates.checkForUpdateAsync();
+            } catch(err) { // eslint-disable-line @typescript-eslint/no-unused-vars
+              return;
+            }
           })()
         }
 
@@ -224,7 +226,9 @@ const App = () => {
                 spineIdRef,
                 cfi,
               }
-            } catch(e) {}
+            } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+              /* empty */
+            }
 
             delete query.goto
 
@@ -252,7 +256,7 @@ const App = () => {
 
         await i18nSetup({
           locales: [ LANGUAGE_CODE ],
-          fetchLocale: async locale => translations,
+          fetchLocale: async () => translations,
           translationModifier,
         })
 
@@ -289,7 +293,7 @@ const App = () => {
           <ApplicationProvider
             mapping={mapping}
             customMapping={customMapping}
-            theme={colorScheme === 'dark' ? darkTheme : lightTheme}
+            theme={colorScheme === 'dark' ? themes.darkTheme : themes.lightTheme}
           >
             <SafeAreaProvider>
               <Provider store={store}>

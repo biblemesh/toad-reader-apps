@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import { useCallback } from "react"
 import { StyleSheet, View, Text, ScrollView } from "react-native"
 // import { i18n } from "inline-i18n"
 import { Modal } from "@ui-kitten/components"
@@ -10,10 +10,10 @@ import Icon from "../basic/Icon"
 import Button from "../basic/Button"
 import AudiobookPlayerChapterChooserLine from "./AudiobookPlayerChapterChooserLine"
 
-const line = {
-  paddingHorizontal: 17,
-  paddingVertical: 10,
-}
+//const line = {
+  //paddingHorizontal: 17,
+  //paddingVertical: 10,
+//}
 
 const styles = StyleSheet.create({
   chapter: {
@@ -48,13 +48,13 @@ const styles = StyleSheet.create({
   spacer: {
     height: 10,
   },
-  line: {
-    ...line,
-  },
-  selectedLine: {
-    ...line,
-    fontWeight: 'bold',
-  },
+  //line: {
+    //...line,
+  //},
+  //selectedLine: {
+    //...line,
+    //fontWeight: 'bold',
+  //},
   chaptersBackdrop: {
     backgroundColor: `transparent`,
   },
@@ -71,7 +71,7 @@ const AudiobookPlayerChapterLine = ({
 
   const { label=`` } = spines[currentSpineIndex] || spines[0] || {}
 
-  const ChaptersIcon = useCallback(({ style }) => <Icon name='text' pack="materialCommunity" style={styles.icon} />, [])
+  const ChaptersIcon = useCallback(({ style }) => <Icon name='text' pack="materialCommunity" style={[style, styles.icon]} />, [])
 
   const selectChapter = useCallback(
     index => {

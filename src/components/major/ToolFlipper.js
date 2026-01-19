@@ -59,7 +59,7 @@ const ToolFlipper = React.memo(({
         spineIdRef === (selectedTool || {}).spineIdRef
         && !cfi
       ))
-    
+
       toolsInSameSet.sort((a, b) => a.ordering - b.ordering)
 
       return toolsInSameSet
@@ -190,12 +190,12 @@ const ToolFlipper = React.memo(({
           logUsageEvent={logUsageEvent}
         />
       </View>
-    )  
+    )
   }
 
   return (
     <>
-      {!!fullscreenInfo && 
+      {!!fullscreenInfo &&
         <View
           style={[
             styles.container,
@@ -281,7 +281,7 @@ const mapStateToProps = ({ books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setSelectedToolUid,
 }, dispatch)
 

@@ -71,7 +71,7 @@ const ToolFlipperButton = React.memo(({
   const themedStateEvents = useThemedStates({ dispatch, states: [ 'hover' ] })
 
   const ButtonIcon = useCallback(
-    ({ style }) => (
+    () => (
       <Icon
         style={[
           styles.icon,

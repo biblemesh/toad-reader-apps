@@ -113,7 +113,7 @@ const ReadingScheduleDate = React.memo(({
     },
     [ spines ],
   )
-  
+
   const spineIdRefsAssignedToOtherDueDates = useMemo(
     () => {
       const spineIdRefs = []
@@ -164,7 +164,7 @@ const ReadingScheduleDate = React.memo(({
       ;(info.items || []).forEach(({ spineIdRef }) => {
         checkedSpines[spineIdRef] = true
       })
-  
+
       setDate(date)
       setTimeInEdit(getTimeLine({ date }))
       setCheckedSpines(checkedSpines)
@@ -190,7 +190,7 @@ const ReadingScheduleDate = React.memo(({
       date.setMinutes(59)
       date.setSeconds(0)
       date.setMilliseconds(0)
-  
+
       setDate(date)
       setTimeInEdit(getTimeLine({ date }))
       setCheckedSpines({})
@@ -234,7 +234,7 @@ const ReadingScheduleDate = React.memo(({
 
   const goSetTime = useCallback(
     () => {
-      let [ all, hours, minutesWithColon, amPm="" ] = getTimeInEdit().trim().match(/^([0-9]{1,2}) *(\:[0-9]{1,2}|) *([amp .]+)$/i) || []
+      let [ , hours, minutesWithColon, amPm="" ] = getTimeInEdit().trim().match(/^([0-9]{1,2}) *(:[0-9]{1,2}|) *([amp .]+)$/i) || []
 
       const isPm = amPm.replace(/[^apm]/gi, '').toUpperCase() === 'PM'
       hours = hours && isPm ? parseInt(hours, 10) + 12 : parseInt(hours, 10)
@@ -286,7 +286,7 @@ const ReadingScheduleDate = React.memo(({
       <Icon
         name="pencil"
         pack="materialCommunity"
-        style={styles.icon}
+        style={[style, styles.icon]}
       />
     ),
     [],
@@ -296,7 +296,7 @@ const ReadingScheduleDate = React.memo(({
     ({ style }) => (
       <Icon
         name="trash"
-        style={styles.icon}
+        style={[style, styles.icon]}
       />
     ),
     [],
@@ -446,7 +446,7 @@ const mapStateToProps = ({ books }) => ({
   books,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setSelectedToolUid,
 }, dispatch)
 

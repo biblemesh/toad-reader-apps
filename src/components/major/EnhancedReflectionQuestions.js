@@ -185,7 +185,7 @@ const EnhancedReflectionQuestions = React.memo(
               ({ title, question }) => `${title}\n${question}`,
             ),
           ],
-          ...students.map(({ user_id, fullname, email }, idx) => [
+          ...students.map(({ user_id, fullname, email }) => [
             fullname,
             email,
             ...orderedQuestions.map(
@@ -319,7 +319,7 @@ const mapStateToProps = ({ idps, accounts, books, userDataByBookId }) => ({
   userDataByBookId,
 });
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({}, dispatch);
+const matchDispatchToProps = (dispatch) => bindActionCreators({}, dispatch);
 
 export default connect(
   mapStateToProps,

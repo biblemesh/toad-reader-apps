@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { StyleSheet, View, Text, ScrollView } from "react-native"
 import Constants from 'expo-constants'
 import { bindActionCreators } from "redux"
@@ -289,7 +289,7 @@ const mapStateToProps = ({ idps, accounts }) => ({
   accounts,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(DeleteMyAccount)

@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-escape, no-irregular-whitespace */
+// TODO destroy this abomination and replace with regular HTML/JS files
 const getReaderCode = () => `
 <!DOCTYPE html>
 <html id="simpleViewer">
@@ -3910,7 +3912,7 @@ epub:i})}})}}),require(["readium_cfi_js/cfi_API","readium_plugin_highlights","re
 
     <script type="text/javascript">
 
-    var path = (window.location && window.location.pathname) ? window.location.pathname : ''; 
+    var path = (window.location && window.location.pathname) ? window.location.pathname : '';
 
     // extracts path to index.html (or more generally: /PATH/TO/*.[x]html)
     path = path.replace(/(.*)\\/.*\\.[x]?html\$/, "\$1");
@@ -3919,7 +3921,7 @@ epub:i})}})}}),require(["readium_cfi_js/cfi_API","readium_plugin_highlights","re
     path = path.charAt(path.length-1) == '/'
             ? path.substr(0, path.length-1)
             : path;
-            
+
     var HTTPServerRootFolder =
     window.location ? (
     window.location.protocol

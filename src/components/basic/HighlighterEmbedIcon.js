@@ -85,7 +85,7 @@ const mapStateToProps = ({ idps, books }) => ({
   books,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(HighlighterEmbedIcon)

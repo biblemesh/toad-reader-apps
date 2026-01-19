@@ -155,7 +155,7 @@ const DiscussionQuestionTool = React.memo(
     bookId,
     toolUid,
     viewingPreview,
-    extraKeyboardVerticalOffset = 0,
+    //extraKeyboardVerticalOffset = 0,
     logUsageEvent,
 
     question,
@@ -453,7 +453,7 @@ const DiscussionQuestionTool = React.memo(
     );
 
     const SendIcon = useCallback(
-      ({ style }) => <Icon name="send" style={styles.sendIcon} />,
+      ({ style }) => <Icon name="send" style={[style, styles.sendIcon]} />,
       [],
     );
 
@@ -590,7 +590,7 @@ const mapStateToProps = ({ idps, accounts, books }) => ({
   books,
 });
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({}, dispatch);
+const matchDispatchToProps = (dispatch) => bindActionCreators({}, dispatch);
 
 export default connect(
   mapStateToProps,

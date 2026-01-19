@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Platform, StyleSheet, KeyboardAvoidingView as RNKeyboardAvoidingView } from "react-native"
 import * as ScreenOrientation from 'expo-screen-orientation'
 import useCounter from 'react-use/lib/useCounter'
@@ -38,7 +38,9 @@ const KeyboardAvoidingView = ({
               setYOffset(pageY - safeAreaInsets.bottom + getStatusBarCurrentHeight())
             }
           )
-        } catch(e) {}
+        } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+          /* empty */
+        }
       })
     },
     [],

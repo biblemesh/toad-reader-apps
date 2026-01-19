@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { i18n } from "inline-i18n"
 import { RadioGroup, Radio } from "@ui-kitten/components"
@@ -9,13 +9,13 @@ import Dialog from "./Dialog"
 import Input from "../basic/Input"
 
 const styles = StyleSheet.create({
-  expl:  {
-    marginBottom: 15,
-  },
-  error:  {
-    marginBottom: 15,
-    color: 'red',
-  },
+  //expl:  {
+    //marginBottom: 15,
+  //},
+  //error:  {
+    //marginBottom: 15,
+    //color: 'red',
+  //},
   typeLabel: {
     color: 'rgb(143, 155, 179)',
     fontSize: 15,
@@ -97,7 +97,7 @@ const MetadataDetailDialog = ({
     && (
       typeIndex === 0
       || [ ...new Set(optionsWithAddlEmpty.filter(option => option.trim())) ].length > 0
-    ) 
+    )
   )
 
   return (

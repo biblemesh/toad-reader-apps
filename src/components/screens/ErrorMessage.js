@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 import * as Updates from 'expo-updates'
 import { StyleSheet, View, Text } from "react-native"
 import SafeLayout from "../basic/SafeLayout"

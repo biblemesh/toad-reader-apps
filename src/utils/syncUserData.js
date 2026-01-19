@@ -51,7 +51,7 @@ const reportResponseError = ({ message, response, error, retry }) => {
     console.log(response.body)
     console.log('Will rerun in 30 seconds.')
   }
-  retry && setTimeout(() => retry(), 30000)
+  if (retry) { setTimeout(() => retry(), 30000); }
 }
 
 export const setStore = s => { store = s }
@@ -377,7 +377,9 @@ export const patch = () => setTimeout(() => {
                     console.log(`User data had used codes. Retrying. (bookId: ${bookId}, userId: ${userId}, path: ${path}).`)
                     return
                   }
-                } catch(e) {}
+                } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+                  /* empty */
+                }
 
                 reportResponseError({
                   message: `Patch error to ${path}`,
@@ -465,7 +467,9 @@ export const reportReadings = () => setTimeout(() => {
               xapiAndReadingSessionsOffOnServer = true
               return
             }
-          } catch(err) {}
+          } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+            /* empty */
+          }
 
           console.log(`reportReading successful (userId: ${userId}, path: ${path}).`)
 
@@ -580,7 +584,7 @@ export const refreshUserData = ({ accountId, bookId }) => new Promise(resolve =>
             resolve({ success: true })
 
           })
-          .catch(error => {
+          .catch(() => {
             reportResponseError({
               message: `Non-JSON response to user data fetch (${path}).`,
               response,

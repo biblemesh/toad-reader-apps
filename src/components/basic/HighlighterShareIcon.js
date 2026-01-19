@@ -43,7 +43,7 @@ const HighlighterShareIcon = React.memo(({
   bookId,
   selectionInfo,
   highlight,
-  
+
   idps,
   books,
   syncStatus,
@@ -131,7 +131,7 @@ const mapStateToProps = ({ idps, accounts, books, syncStatus }) => ({
   syncStatus,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(HighlighterShareIcon)

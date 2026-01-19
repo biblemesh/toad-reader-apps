@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
   },
   close: {
     position: 'absolute',
-    right: -14,
     height: 40,
     top: -20,
     right: -10,
@@ -126,7 +125,7 @@ const HighlightsWrapper = React.memo(({
 const mapStateToProps = () => ({
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setSelectedToolUid,
 }, dispatch)
 

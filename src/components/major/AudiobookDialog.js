@@ -1,5 +1,5 @@
 import Constants from 'expo-constants'
-import React, { useState, useCallback, useEffect, useRef } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { i18n } from "inline-i18n"
 import { bindActionCreators } from "redux"
@@ -74,9 +74,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  key: {
-    flex: 1,
-  },
+  //key: {
+    //flex: 1,
+  //},
   keyOptionButton: {
     ...keyOptionButton,
   },
@@ -96,19 +96,19 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginBottom: 8,
   },
-  image: {
-    backgroundColor: 'rgba(0, 0, 0, .1)',
-    width: 100,
-    height: 100,
-  },
+  //image: {
+    //backgroundColor: 'rgba(0, 0, 0, .1)',
+    //width: 100,
+    //height: 100,
+  //},
   spineLabelInput: {
     flex: 1,
     marginRight: 5,
   },
-  coverEditIcon: {
-    width: 20,
-    height: 20,
-  },
+  //coverEditIcon: {
+    //width: 20,
+    //height: 20,
+  //},
   size: {
     fontSize: 11,
     fontWeight: 'bold',
@@ -224,7 +224,9 @@ const AudiobookDialog = ({
           try {
             const json = await response.json()
             errorMessage = json.errorMessage
-          } catch(err) {}
+          } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+            /* empty */
+          }
 
           setErrorMessage(errorMessage)
           return
@@ -239,7 +241,7 @@ const AudiobookDialog = ({
 
         console.log(`...done submitting update to audiobook for book id: ${bookId}, idpId: ${idpId}...`)
 
-        setAudiobookId && setAudiobookId(newBookId)
+        if (setAudiobookId) setAudiobookId(newBookId);
 
       } catch(err) {
 
@@ -434,7 +436,7 @@ const AudiobookDialog = ({
                 {spines.map(({ filename, label, fileSizeInMB, durationMS }, idx) => {
                   const upDisabled = idx === 0 || submitting
                   const downDisabled = idx === spines.length - 1 || submitting
-                
+
                   return (
                     <View key={idx} style={styles.line}>
                       <View style={styles.keyLine}>
@@ -564,7 +566,7 @@ const mapStateToProps = ({ idps, accounts, books }) => ({
   books,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setBookCookies,
 }, dispatch)
 

@@ -1,4 +1,3 @@
-import React from "react"
 import { StyleSheet, Text, Platform } from "react-native"
 import { Link } from "../../hooks/useRouterState"
 

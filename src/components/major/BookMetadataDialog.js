@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react"
+import { useState, useCallback, useEffect, useMemo } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { i18n } from "inline-i18n"
 import { bindActionCreators } from "redux"
@@ -176,7 +176,9 @@ const BookMetadataDialog = ({
           try {
             const json = await response.json()
             errorMessage = json.errorMessage
-          } catch(err) {}
+          } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+            /* empty */
+          }
 
           setErrorMessage(errorMessage)
           return
@@ -252,7 +254,7 @@ const BookMetadataDialog = ({
                 options
                   ? (
                     <View key={id}>
-    
+
                       <Select
                         id={id}
                         label={name}
@@ -270,7 +272,7 @@ const BookMetadataDialog = ({
                           />
                         ))}
                       </Select>
-    
+
                     </View>
                   )
                   : (
@@ -309,7 +311,7 @@ const mapStateToProps = ({ idps, accounts, metadataKeys }) => ({
   metadataKeys,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(BookMetadataDialog)

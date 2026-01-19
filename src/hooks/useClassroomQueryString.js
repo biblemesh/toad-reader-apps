@@ -1,6 +1,5 @@
 import Constants from 'expo-constants'
 import { useEffect, useState } from 'react'
-import { StyleSheet } from "react-native"
 
 import useRouterState from "./useRouterState"
 import { safeFetch, getReqOptionsWithAdditions, getDataOrigin } from "../utils/toolbox"
@@ -9,15 +8,6 @@ import useSetTimeout from './useSetTimeout'
 const {
   DEV_USE_DEVELOPMENT_BACKEND,
 } = Constants.expoConfig.extra
-
-const styles = StyleSheet.create({
-  hiddenWebViewContainer: {
-    position: 'absolute',
-    maxWidth: 0,
-    maxHeight: 0,
-    overflow: 'hidden',
-  },
-})
 
 const getClassroom = ({ userDataByBookId, bookId, classroomUid }) => {
   const { classrooms=[] } = (userDataByBookId || {})[bookId] || {}
@@ -53,9 +43,9 @@ export const getClassroomQueryString = async ({ userDataByBookId, accounts, idp,
   const accountId = Object.keys(accounts)[0]  // TODO: get from book if I ever allow multiple accounts
   const { cookie } = accounts[accountId]
   const dataOrigin = getDataOrigin(idp)
-  
+
   try {
-    
+
     let needsFreshQueryString = getNeedsFreshQueryString(classroom)
     let { classroomQueryString } = classroom || {}
 
@@ -80,7 +70,9 @@ export const getClassroomQueryString = async ({ userDataByBookId, accounts, idp,
 
     if(classroomQueryString) return classroomQueryString
 
-  } catch(e) {}
+  } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+    /* empty */
+  }
 
   return false
 }

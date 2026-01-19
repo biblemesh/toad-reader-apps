@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import { useCallback } from "react"
 import { Platform } from "react-native"
 import { useHistory, useLocation } from "react-router-dom"
 import { Link as RouterLink } from "../components/routers/react-router"
@@ -32,7 +32,9 @@ const useRouterState = () => {
 
   try {
     routerState = JSON.parse(decodeURIComponent(location.hash).slice(1))
-  } catch(e) {}
+  } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+    /* empty */
+  }
 
   const getLocation = useInstanceValue(location)
   const getRouterState = useInstanceValue(routerState)

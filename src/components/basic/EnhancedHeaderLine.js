@@ -88,7 +88,7 @@ const EnhancedHeaderLine = React.memo(({
       {buttons}
       {showLogo &&
         <Image
-          source={require("../../../assets/icons/enhanced-logo.png")}
+          source={require("../../../assets/icons/enhanced-logo.png")}  // eslint-disable-line @typescript-eslint/no-require-imports
           style={styles.image}
         />
       }

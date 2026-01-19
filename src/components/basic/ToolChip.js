@@ -59,7 +59,6 @@ const ToolChip = React.memo(({
   style,
   iconStyle,
   labelStyle,
-  type,
 
   eva: {
     style: themedStyle,

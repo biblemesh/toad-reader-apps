@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { StyleSheet, View, Text, TouchableOpacity, FlatList, Platform, ScrollView } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -32,10 +32,10 @@ const styles = StyleSheet.create({
   suggestionScrollView: {
     flex: 1,
   },
-  suggestion: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
+  //suggestion: {
+    //paddingHorizontal: 20,
+    //paddingVertical: 10,
+  //},
   bookSuggestion: {
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -470,7 +470,7 @@ const mapStateToProps = ({ idps, accounts, books, recentSearchesByBookId }) => (
   recentSearchesByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setBookCookies,
   addRecentSearch,
 }, dispatch)

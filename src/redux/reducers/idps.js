@@ -25,8 +25,8 @@ export default function(state = initialState, action) {
 
     case "UPDATE_IDPS":
       return action.idps
-      
-    case "AUTO_UPDATE_CORE_IDPS":
+
+    case "AUTO_UPDATE_CORE_IDPS": {
       let idpWasUpdated = false
 
       for(let idpId in initialState) {
@@ -44,8 +44,9 @@ export default function(state = initialState, action) {
           idpWasUpdated = true
         }
       }
-      
+
       return idpWasUpdated ? newState : state
+    }
 
     case "SET_CONSENT_SHOWN":
       for(let idpId in state) {

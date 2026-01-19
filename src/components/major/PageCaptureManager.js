@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from "react"
+import { useEffect, useRef, useCallback } from "react"
 import Constants from 'expo-constants'
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -21,7 +21,7 @@ const {
 } = Constants.expoConfig.extra
 
 const bookIsDownloaded = ({ books, uriAsKey }) => {
-  const bookIdFromUri = (uriAsKey.match(/\/([0-9]+)\/[^\/]+$/) || [])[1]
+  const bookIdFromUri = (uriAsKey.match(/\/([0-9]+)\/[^/]+$/) || [])[1]
   return books[bookIdFromUri] && books[bookIdFromUri].downloadStatus === 2
 }
 
@@ -137,9 +137,9 @@ const PageCaptureManager = ({
       if(!pageCaptureProps.current) return
       if(getProcessingPaused()) return
       if(getSnapshotURI(pageCaptureProps.current) !== uriAsKey) return
-  
+
       const timeout = Math.min(((skipList.current[uriAsKey] && skipList.current[uriAsKey].timeout) || INITIAL_SPINE_CAPTURE_TIMEOUT) * 2, MAX_SPINE_CAPTURE_TIMEOUT)
-  
+
       if(bookIsDownloaded({ books, uriAsKey })) {
         console.log('skip spine', uriAsKey)
         skipList.current[uriAsKey] = {
@@ -148,12 +148,12 @@ const PageCaptureManager = ({
         }
         forceUpdate()
       }
-  
+
       setTryAgainTimeout(() => {
         if(skipList.current[uriAsKey]) {  // make sure the book has not been remove
           skipList.current[uriAsKey].skip = false
         }
-        
+
         if(!pageCaptureProps.current) {  // at rest
           forceUpdate()
         }
@@ -222,7 +222,7 @@ const mapStateToProps = ({ books, userDataByBookId, displaySettings, sidePanelSe
   readerStatus,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(PageCaptureManager)

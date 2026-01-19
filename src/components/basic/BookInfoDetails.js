@@ -1,4 +1,3 @@
-import React from "react"
 import { StyleSheet, View, Text, Platform } from "react-native"
 import { i18n } from "inline-i18n"
 

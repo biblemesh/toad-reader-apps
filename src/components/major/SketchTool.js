@@ -79,7 +79,9 @@ const SketchTool = React.memo(({
     if(viewingPreview) return null
     try {
       return JSON.parse(priorEngagement.text)
-    } catch(err) {}
+    } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+      /* empty */
+    }
     return null
   })
 
@@ -161,7 +163,7 @@ const mapStateToProps = ({ idps, accounts, books }) => ({
   books,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   updateToolEngagement,
 }, dispatch)
 

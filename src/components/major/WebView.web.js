@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import CoverAndSpin from '../basic/CoverAndSpin'
 import Iframe from '../basic/Iframe'
@@ -11,9 +11,9 @@ const styles = StyleSheet.create({
   iframe: {
     borderWidth: 0,
   },
-  activityIndicatorContainer: {
-    ...StyleSheet.absoluteFillObject,
-  },
+  //activityIndicatorContainer: {
+    //...StyleSheet.absoluteFillObject,
+  //},
 })
 
 const WebView = ({
@@ -83,12 +83,12 @@ const WebView = ({
 
       const onMessageWrapper = nativeEvent => {
         // check that it is the same origin
-        if(source.uri && nativeEvent.origin !== (source.uri || "").replace(/^(https?:\/\/[^\/]+).*$/, '$1')) return
+        if(source.uri && nativeEvent.origin !== (source.uri || "").replace(/^(https?:\/\/[^/]+).*$/, '$1')) return
 
         // check that it is the right iframe sending the postmessage
         if(frameRef.current.contentWindow !== nativeEvent.source) return
 
-        onMessage && onMessage({ nativeEvent })
+        if (onMessage) onMessage({ nativeEvent });
       }
 
       window.addEventListener('message', onMessageWrapper, true)
@@ -112,7 +112,7 @@ const WebView = ({
           const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
           const origin = source.html
             ? (isSafari ? '*' : null)
-            : source.uri.replace(/^(https?:\/\/[^\/]*).*$/, '$1')
+            : source.uri.replace(/^(https?:\/\/[^/]*).*$/, '$1')
 
           frameRef.current.contentWindow.postMessage(
             {
@@ -142,16 +142,16 @@ const WebView = ({
   )
 
   const onErrorWrapper = nativeEvent => {
-    onError && onError({
+    if (onError) onError({
       code: nativeEvent.name,
       description: nativeEvent.message,
       nativeEvent,
-    })
+    });
   }
 
   const onLoadWrapper = nativeEvent => {
     setLoaded(true)
-    onLoad && onLoad({ nativeEvent })
+    if (onLoad) onLoad({ nativeEvent });
   }
 
   return (

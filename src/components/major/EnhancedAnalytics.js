@@ -344,7 +344,7 @@ const mapStateToProps = ({
   sidePanelSettings,
 });
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({}, dispatch);
+const matchDispatchToProps = (dispatch) => bindActionCreators({}, dispatch);
 
 export default connect(
   mapStateToProps,

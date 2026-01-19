@@ -1,6 +1,4 @@
-import React from "react"
 import { StyleSheet, View, Text, Platform } from "react-native"
-import { i18n } from "inline-i18n"
 
 import useDimensions from "../../hooks/useDimensions"
 
@@ -32,11 +30,11 @@ const styles = StyleSheet.create({
 
 const ToastContainer = ({
   text,
-  buttonText=i18n("Okay"),
+  //buttonText=i18n("Okay"),
 }) => {
 
   const { width, height } = useDimensions().window
-  
+
   return (
     <View
       style={[

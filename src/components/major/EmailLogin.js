@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -135,7 +135,7 @@ const EmailLogin = ({
 
   const goSendEmail = useCallback(
     async () => {
-      
+
       setError()
       setStage('SENDING_EMAIL')
 
@@ -187,7 +187,9 @@ const EmailLogin = ({
 
       try {
         jsonResponse = response.json ? await response.json() : {}
-      } catch(err) {}
+      } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+        /* empty */
+      }
 
       const { success, error, cookie, currentServerTime, userInfo } = jsonResponse
 
@@ -252,7 +254,7 @@ const EmailLogin = ({
         {!HAS_LOGIN_LOGO &&
           <View style={styles.titleContainer}>
             <Image
-              source={require("../../../assets/icons/logo.png")}
+              source={require("../../../assets/icons/logo.png")}  // eslint-disable-line @typescript-eslint/no-require-imports
               style={styles.titleLogoImage}
             />
             <Text style={styles.title}>
@@ -262,7 +264,7 @@ const EmailLogin = ({
         }
         {HAS_LOGIN_LOGO &&
           <Image
-            source={require("../../../assets/icons/login-logo.png")}
+            source={require("../../../assets/icons/login-logo.png")}  // eslint-disable-line @typescript-eslint/no-require-imports
             style={styles.titleImage}
           />
         }
@@ -372,7 +374,7 @@ const mapStateToProps = ({ idps }) => ({
   idps,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   addAccount,
 }, dispatch)
 

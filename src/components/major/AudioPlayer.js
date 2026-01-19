@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { i18n } from "inline-i18n"
 import { Audio } from 'expo-av'
@@ -147,7 +147,7 @@ const AudioPlayer = ({
           setDurationMS(0)
 
           await Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
-          const { sound, status } = await Audio.Sound.createAsync(
+          const { sound } = await Audio.Sound.createAsync(
             source,
             {
               progressUpdateIntervalMillis: 16,
@@ -164,7 +164,7 @@ const AudioPlayer = ({
         } catch (error) {
           setError(error.message)
         }
-  
+
       })()
     },
     [ source ],
@@ -203,10 +203,10 @@ const AudioPlayer = ({
 
   const percentage = Math.ceil(Math.min(positionMS / (durationMS || 1), 1) * 100)
 
-  const BackFiveIcon = useCallback(({ style }) => <Icon name='replay-5' pack="material" style={styles.icon} />, [])
-  const ForwardFiveIcon = useCallback(({ style }) => <Icon name='forward-5' pack="material" style={styles.icon} />, [])
-  const PlayIcon = useCallback(({ style }) => <Icon name='play' style={styles.bigIcon} />, [])
-  const PauseIcon = useCallback(({ style }) => <Icon name='pause' style={styles.bigIcon} />, [])
+  const BackFiveIcon = useCallback(({ style }) => <Icon name='replay-5' pack="material" style={[style, styles.icon]} />, [])
+  const ForwardFiveIcon = useCallback(({ style }) => <Icon name='forward-5' pack="material" style={[style, styles.icon]} />, [])
+  const PlayIcon = useCallback(({ style }) => <Icon name='play' style={[style, styles.bigIcon]} />, [])
+  const PauseIcon = useCallback(({ style }) => <Icon name='pause' style={[style, styles.bigIcon]} />, [])
 
   return (
     <View style={styles.container}>

@@ -1,6 +1,6 @@
 import Constants from 'expo-constants'
 import React, { useEffect, useCallback } from "react"
-import { StyleSheet, View, Platform, AppState, Alert } from "react-native"
+import { StyleSheet, View, Platform, Alert } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
 import { useParams } from "react-router-dom"
@@ -82,7 +82,9 @@ const Audiobook = React.memo(({
   let latestLocation = {}
   try {
     latestLocation = JSON.parse(latest_location)
-  } catch(e) {}
+  } catch(e) { // eslint-disable-line @typescript-eslint/no-unused-vars
+    /* empty */
+  }
 
   const toggleDownloaded = useCallback(
     () => {
@@ -249,7 +251,7 @@ const mapStateToProps = ({ idps, accounts, books, userDataByBookId, downloadProg
   downloadProgressByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setLatestLocation,
   startRecordReading,
   endRecordReading,

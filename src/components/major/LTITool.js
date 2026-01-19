@@ -97,7 +97,7 @@ const LTITool = React.memo(({
         logUsageEvent({
           toolUid,
           usageType: `LTI launch`,
-          'LTI domain': (url.match(/^https?:\/\/([^:\/\n?]+)/i) || [])[1],
+          'LTI domain': (url.match(/^https?:\/\/([^:/\n?]+)/i) || [])[1],
         })
 
       } catch(err) {
@@ -163,7 +163,7 @@ const mapStateToProps = ({ idps, accounts, books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(LTITool)

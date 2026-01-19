@@ -14,8 +14,8 @@ const TextInput = React.memo(({
 
   const customOnChangeText = useCallback(
     value => {
-      onChangeText && onChangeText(value)
-      onChangeInfo && onChangeInfo({ id, value, info })
+      if (onChangeText) onChangeText(value);
+      if (onChangeInfo) onChangeInfo({ id, value, info });
     },
     [ id, info, onChangeText, onChangeInfo ],
   )

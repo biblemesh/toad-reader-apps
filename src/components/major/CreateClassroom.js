@@ -113,7 +113,7 @@ const CreateClassroom = React.memo(
         historyPush,
       });
 
-      !inEditMode && toggleInEditMode();
+      if (!inEditMode) toggleInEditMode();
 
       requestHide({ hideAll: true });
     }, [bookId, name, userId, fullname, email, basedOffUid, inEditMode]);
@@ -208,7 +208,7 @@ const mapStateToProps = ({ accounts, books, userDataByBookId }) => ({
   userDataByBookId,
 });
 
-const matchDispatchToProps = (dispatch, x) =>
+const matchDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       createClassroom,

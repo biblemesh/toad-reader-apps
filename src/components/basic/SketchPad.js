@@ -149,8 +149,10 @@ const SketchPad = React.memo(({
 
       let sketchObj = { objects: [] }
       try {
-        sketchObj = JSON.parse(sketchData) || sketchObj
-      } catch (err) {}
+        sketchObj = JSON.parse(sketchData) || sketchObj;
+      } catch (err) { // eslint-disable-line @typescript-eslint/no-unused-vars
+        /* empty */
+      }
 
       if(!canvasWidth || sketchObj.objects.length === 0) {
         scale.current = 1
@@ -216,8 +218,9 @@ const SketchPad = React.memo(({
       try {
         const sketchObj = JSON.parse(sketchData)
         return sketchObj.objects.length > 0
-      } catch (err) {}
-      return false
+      } catch (err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+        /* empty */
+      }
     },
     [ sketchData ],
   )
@@ -263,7 +266,7 @@ const SketchPad = React.memo(({
             sketchData = JSON.stringify(sketchObj)
             bgScale /= scaleAdjustment.current
           }
-  
+
           goUpdateSketchInEdit({
             sketchData,
             bgScale,

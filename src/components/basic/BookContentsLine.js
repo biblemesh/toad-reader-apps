@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from "react"
+import { useCallback, useMemo, useEffect } from "react"
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -114,7 +114,7 @@ const BookContentsLine = ({
       event.stopPropagation()
 
       if(toolType) {
-        setModeToPage && setModeToPage()
+        if (setModeToPage) setModeToPage();
         setSelectedToolUid({
           bookId,
           uid,
@@ -198,7 +198,7 @@ const BookContentsLine = ({
           }
         </>
       }
-      
+
     </View>
   )
 
@@ -224,7 +224,7 @@ const mapStateToProps = ({ books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setSelectedToolUid,
 }, dispatch)
 

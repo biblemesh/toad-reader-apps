@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { Platform, Text, StyleSheet } from 'react-native';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -402,7 +402,7 @@ const mapStateToProps = ({
   downloadProgressByBookId,
 });
 
-const matchDispatchToProps = (dispatch, x) =>
+const matchDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       toggleView,

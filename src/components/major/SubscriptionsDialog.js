@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { i18n, getLocale } from "inline-i18n"
 import { bindActionCreators } from "redux"
@@ -144,7 +144,9 @@ const SubscriptionsDialog = ({
           try {
             const json = await response.json()
             errorMessage = json.errorMessage
-          } catch(err) {}
+          } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+            /* empty */
+          }
 
           setErrorMessage(errorMessage)
           return
@@ -157,14 +159,14 @@ const SubscriptionsDialog = ({
           updateSubscriptions(subscriptions)
           setEditedSubscriptions(cloneAndOrderSubscriptions(subscriptions))
 
-        } catch(err) {
+        } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
           setErrorMessage(i18n("Configuration error"))
           return
         }
 
         console.log(`...done updating subscriptions (accountId: ${accountId}).`)
 
-      } catch(err) {
+      } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
 
         setSubmitting(false)
         setErrorMessage(i18n("Internet connection error"))
@@ -295,7 +297,7 @@ const mapStateToProps = ({ idps, accounts, subscriptions }) => ({
   subscriptions,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   updateSubscriptions,
 }, dispatch)
 

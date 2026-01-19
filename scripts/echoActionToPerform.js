@@ -1,7 +1,7 @@
-const appInfo = require('../app.json')
+const appInfo = require('../app.json');
 
-const arguments = process.argv.slice(2)
-const actionIndex = arguments.indexOf("--action") + 1
+const arguments_ = process.argv.slice(2)
+const actionIndex = arguments_.indexOf("--action") + 1
 
 if(actionIndex === 0) {
   console.log('')
@@ -40,7 +40,7 @@ const actionStrings = {
   'submit-ios-production': `About to submit iOS PRODUCTION app for ${domain}.`,
 }
 
-const action = actionStrings[arguments[actionIndex]]
+const action = actionStrings[arguments_[actionIndex]]
 
 if(!action) {
   console.log('')

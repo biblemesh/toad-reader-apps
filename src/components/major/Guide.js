@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from "react"
+import { useRef, useCallback, useEffect } from "react"
 import { View, Animated } from "react-native"
 import { StyleSheet } from "react-native"
 import { i18n } from "inline-i18n"
@@ -19,10 +19,10 @@ const styles = StyleSheet.create({
     zIndex: 15,
     backgroundColor: 'transparent',
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-  },
+  //content: {
+    //flex: 1,
+    //justifyContent: 'center',
+  //},
   buttonContainer: {
     marginHorizontal: 30,
     alignSelf: 'center',
@@ -46,7 +46,7 @@ const Guide = ({
 
   const opacity = useRef(new Animated.Value(0)).current
 
-  const CheckIcon = useCallback(({ style }) => <Icon name="check" pack="materialCommunity" style={styles.checkIcon} />, [])
+  const CheckIcon = useCallback(({ style }) => <Icon name="check" pack="materialCommunity" style={[style, styles.checkIcon]} />, [])
 
   const [ setShowTimeout ] = useSetTimeout()
 

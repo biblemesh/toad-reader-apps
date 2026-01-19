@@ -1,9 +1,8 @@
-import React from 'react'
-import { useKeepAwake } from 'expo-keep-awake'
+import { useKeepAwake } from 'expo-keep-awake';
 
 const CustomKeepAwake = () => {
-  useKeepAwake()
-  return null
-}
+  useKeepAwake();
+  return null;
+};
 
-export default CustomKeepAwake
+export default CustomKeepAwake;

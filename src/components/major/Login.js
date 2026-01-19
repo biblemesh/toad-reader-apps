@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import { StyleSheet, Platform } from "react-native"
 import WebView from './WebView'
 import { bindActionCreators } from "redux"
@@ -53,7 +53,7 @@ const Login = ({
   const [ loading, setLoading ] = useState(true)
   const [ leaving, setLeaving ] = useState(false)
   const [ error, setError ] = useState(null)
-  
+
   const webView = useRef()
   const initialStateChangeAlreadyHappened = useRef()
   const askedForLoginInfoAtLeastOnce = useRef()
@@ -114,15 +114,17 @@ const Login = ({
       if(query.loginInfo) {
         try {
           if(logIn(JSON.parse(query.loginInfo))) {
-            let [ x, path=`/`, state={} ] = query.hash.match(/^(?:#([^#]+))?#(.*)$/) || []
+            let [ , path=`/`, state={} ] = query.hash.match(/^(?:#([^#]+))?#(.*)$/) || []
             try {
               state = JSON.parse(decodeURIComponent(state))
-            } catch(e) {}
+            } catch(e) { // eslint-disable-line @typescript-eslint/no-unused-vars
+              /* empty */
+            }
 
             historyReplace(`/`)
             historyPush(path, state)
           }
-        } catch(err) {
+        } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
           historyPush("/error", {
             critical: true,
           })
@@ -137,7 +139,7 @@ const Login = ({
   )
 
   const onError = useCallback(
-    err => {
+    () => {
       // There was an unknown error
 
       historyPush("/error", {
@@ -163,7 +165,7 @@ const Login = ({
         askedForLoginInfoAtLeastOnce.current = true
         setLoading(loading)
       }
-      
+
     },
     [ idps ],
   )
@@ -178,13 +180,13 @@ const Login = ({
 
   const onMessageEvent = useCallback(
     async event => {
-      
+
       let data
 
       try {
         data = typeof event.nativeEvent.data !== 'object' ? JSON.parse(event.nativeEvent.data) : event.nativeEvent.data
-      } catch (e) {
-        return
+      } catch (e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+        return;
       }
 
       if(data.identifier === 'sendCookiePlus') {
@@ -212,7 +214,7 @@ const Login = ({
     )
   }
 
-  const spinMessage = 
+  const spinMessage =
     error
       ? error
       : (
@@ -280,7 +282,7 @@ const mapStateToProps = ({ idps, accounts }) => ({
   accounts,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   addAccount,
 }, dispatch)
 

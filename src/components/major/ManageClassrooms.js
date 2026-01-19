@@ -233,7 +233,7 @@ const mapStateToProps = ({ books, userDataByBookId, syncStatus }) => ({
   syncStatus,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   deleteClassroomMember,
   deleteClassroom,
 }, dispatch)
