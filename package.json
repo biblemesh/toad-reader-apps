@@ -110,7 +110,7 @@
     "expo-updates": "~0.28.17",
     "find-in-files": "^0.5.0",
     "inline-i18n": "github:biblemesh/inline-i18n#d44421bfd684ceddf38e13c7f437ada9fa98432b",
-    "jspdf": "^2.5.1",
+    "jspdf": "^4.0.0",
     "jszip": "3.2.2",
     "md5": "2.2.1",
     "minisearch": "2.4.1",
