@@ -155,7 +155,6 @@ const DiscussionQuestionTool = React.memo(
     bookId,
     toolUid,
     viewingPreview,
-    //extraKeyboardVerticalOffset = 0,
     logUsageEvent,
 
     question,

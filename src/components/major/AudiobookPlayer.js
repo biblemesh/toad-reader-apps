@@ -64,7 +64,6 @@ const AudiobookPlayer = ({
   const getFilename = useInstanceValue(filename)
   const getSpines = useInstanceValue(spines)
   const uri = `${downloadProgressByFilename[filename] === 1 ? localSourceBase : uriBase}${filename}`
-  //const getUri = useInstanceValue(uri)
   const [ setUpdateLatestLocationTimeout ] = useSetTimeout()
 
   const [ durationMS, setDurationMS ] = useRefState(durationMSFromInfo)

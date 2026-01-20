@@ -9,13 +9,6 @@ import Dialog from "./Dialog"
 import Input from "../basic/Input"
 
 const styles = StyleSheet.create({
-  //expl:  {
-    //marginBottom: 15,
-  //},
-  //error:  {
-    //marginBottom: 15,
-    //color: 'red',
-  //},
   typeLabel: {
     color: 'rgb(143, 155, 179)',
     fontSize: 15,

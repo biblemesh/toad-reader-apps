@@ -19,10 +19,6 @@ const styles = StyleSheet.create({
     zIndex: 15,
     backgroundColor: 'transparent',
   },
-  //content: {
-    //flex: 1,
-    //justifyContent: 'center',
-  //},
   buttonContainer: {
     marginHorizontal: 30,
     alignSelf: 'center',

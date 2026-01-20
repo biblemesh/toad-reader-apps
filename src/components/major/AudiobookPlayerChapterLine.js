@@ -10,11 +10,6 @@ import Icon from "../basic/Icon"
 import Button from "../basic/Button"
 import AudiobookPlayerChapterChooserLine from "./AudiobookPlayerChapterChooserLine"
 
-//const line = {
-  //paddingHorizontal: 17,
-  //paddingVertical: 10,
-//}
-
 const styles = StyleSheet.create({
   chapter: {
     alignSelf: `stretch`,
@@ -48,13 +43,6 @@ const styles = StyleSheet.create({
   spacer: {
     height: 10,
   },
-  //line: {
-    //...line,
-  //},
-  //selectedLine: {
-    //...line,
-    //fontWeight: 'bold',
-  //},
   chaptersBackdrop: {
     backgroundColor: `transparent`,
   },

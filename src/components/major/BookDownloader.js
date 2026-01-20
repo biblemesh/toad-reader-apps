@@ -5,7 +5,6 @@ import { connect } from "react-redux"
 import { i18n } from "inline-i18n"
 
 import useInstanceValue from '../../hooks/useInstanceValue'
-//import useSetTimeout from '../../hooks/useSetTimeout'
 import useRouterState from '../../hooks/useRouterState'
 import { getBookCookie } from '../../hooks/useBookCookies'
 import { getBooksDir, getDataOrigin, getIdsFromAccountId, getIDPOrigin } from "../../utils/toolbox"
@@ -38,7 +37,6 @@ const BookDownloader = ({
 
   const [ currentDownloadBookId, setCurrentDownloadBookId ] = useState(null)
 
-  //const [ setThrottleTimeout ] = useSetTimeout()
   const getDownloadPaused = useInstanceValue(downloadPaused)
   const getDownloadProgressByBookId = useInstanceValue(downloadProgressByBookId)
   const getBooks = useInstanceValue(books)
@@ -85,7 +83,6 @@ const BookDownloader = ({
           setCurrentDownloadBookId(null)
         }
 
-        //let throttleLastRan = 0
         const { idpId } = getIdsFromAccountId(accountId)
         const idp = idps[idpId]
         const downloadOrigin = __DEV__ && DEV_USE_DEVELOPMENT_BACKEND ? getDataOrigin(idp) : getIDPOrigin(idp)

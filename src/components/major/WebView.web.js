@@ -11,10 +11,7 @@ const styles = StyleSheet.create({
   iframe: {
     borderWidth: 0,
   },
-  //activityIndicatorContainer: {
-    //...StyleSheet.absoluteFillObject,
-  //},
-})
+});
 
 const WebView = ({
   source={},  // Need to support uri and headers keys

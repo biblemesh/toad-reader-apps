@@ -74,9 +74,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  //key: {
-    //flex: 1,
-  //},
   keyOptionButton: {
     ...keyOptionButton,
   },
@@ -96,19 +93,10 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginBottom: 8,
   },
-  //image: {
-    //backgroundColor: 'rgba(0, 0, 0, .1)',
-    //width: 100,
-    //height: 100,
-  //},
   spineLabelInput: {
     flex: 1,
     marginRight: 5,
   },
-  //coverEditIcon: {
-    //width: 20,
-    //height: 20,
-  //},
   size: {
     fontSize: 11,
     fontWeight: 'bold',

@@ -21,10 +21,6 @@ const styles = StyleSheet.create({
   durationTime: {
     fontSize: 11,
   },
-  //positionDurationTimeSeparator: {
-    //marginHorizontal: 5,
-    //opacity: .5,
-  //},
   progressLineContainer: {
     paddingVertical: 15,
     marginVertical: -15,

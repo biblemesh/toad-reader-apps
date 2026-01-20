@@ -53,10 +53,6 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     backgroundColor: '#e8e8e8',
   },
-  //title: {
-    //fontSize: 15,
-    //fontWeight: '400',
-  //},
   createdByContainer: {
     paddingTop: 10,
     paddingBottom: 5,
@@ -66,11 +62,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999999',
   },
-  //launchYour: {
-    //textAlign: 'center',
-    //fontSize: 12,
-    //color: '#999999',
-  //},
   subversion: {
     fontSize: 9,
     textAlign: 'center',
@@ -111,9 +102,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     color: "red",
   },
-  //apply: {
-    //color: "red",
-  //},
   willTryAgain: {
     paddingBottom: 10,
 
@@ -389,11 +377,9 @@ const AppMenu = ({
   // const logOutIcon = useCallback(style => <Ionicons {...style} name="log-out" />, [])
 
   let isAdmin = false
-  //let bookImporterAccountId
   Object.keys(accounts).some(accountId => {
     if(accounts[accountId].isAdmin) {
       isAdmin = true
-      //bookImporterAccountId = accountId
       return true
     }
   })

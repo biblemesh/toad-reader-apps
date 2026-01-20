@@ -8,12 +8,7 @@ import { connect } from "react-redux"
 import FileImporter from "./FileImporter"
 
 const styles = StyleSheet.create({
-  //failed: {
-    //fontWeight: 'bold',
-    //color: "red",
-  //},
-  result: {
-  },
+  result: {},
   bookId: {
     color: "rgba(0,0,0,.4)",
   },

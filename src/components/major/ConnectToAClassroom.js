@@ -12,7 +12,6 @@ import useRouterState from "../../hooks/useRouterState"
 import { getDataOrigin, getReqOptionsWithAdditions, getIdsFromAccountId, safeFetch } from '../../utils/toolbox'
 import { refreshUserData } from "../../utils/syncUserData"
 import { setCurrentClassroom } from "../../redux/actions"
-//import useDimensions from "../../hooks/useDimensions"
 
 import Dialog from "./Dialog"
 import DialogInput from "../basic/DialogInput"
@@ -54,7 +53,6 @@ const ConnectToAClassroom = React.memo(({
   const [ mode, setMode ] = useState("text")
   const [permission, requestPermission] = useCameraPermissions()
 
-  //const windowDimensions = useDimensions().window
   const safeAreaInsets = useSafeAreaInsets()
 
   const { historyPush, historyReplace } = useRouterState()

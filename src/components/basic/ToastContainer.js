@@ -28,12 +28,8 @@ const styles = StyleSheet.create({
   },
 })
 
-const ToastContainer = ({
-  text,
-  //buttonText=i18n("Okay"),
-}) => {
-
-  const { width, height } = useDimensions().window
+const ToastContainer = ({ text }) => {
+  const { width, height } = useDimensions().window;
 
   return (
     <View

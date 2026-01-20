@@ -32,10 +32,6 @@ const styles = StyleSheet.create({
   suggestionScrollView: {
     flex: 1,
   },
-  //suggestion: {
-    //paddingHorizontal: 20,
-    //paddingVertical: 10,
-  //},
   bookSuggestion: {
     paddingHorizontal: 20,
     paddingVertical: 10,

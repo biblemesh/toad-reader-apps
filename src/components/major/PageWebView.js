@@ -312,7 +312,7 @@ const PageWebView = ({
         source={source}
         onError={onError}
         onMessage={onMessageEvent}
-        //onLoad={setRenderedOnceTrue}
+        //onLoad={setRenderedOnceTrue}  // DISABLED. Can we remove this?
         forwardRef={webView}
 
         // The rest of the props are ignored when on web platform
