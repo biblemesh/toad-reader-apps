@@ -164,7 +164,7 @@ export default function WebReflectionDropdown({
           padding: '0 12px',
           cursor: 'pointer',
           fontSize: 'inherit',
-          fontFamily: 'inherit',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
           textAlign: 'left',
         }}
       >
