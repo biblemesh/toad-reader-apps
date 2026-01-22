@@ -73,8 +73,6 @@ const patchMiddleware = () => next => action => {
   return result
 }
 
-const themes = { lightTheme, darkTheme };
-
 // const store = compose(autoRehydrate())(createStore)(reducers, applyMiddleware(patchMiddleware))
 
 const persistConfig = {
@@ -293,7 +291,7 @@ const App = () => {
           <ApplicationProvider
             mapping={mapping}
             customMapping={customMapping}
-            theme={colorScheme === 'dark' ? themes.darkTheme : themes.lightTheme}
+            theme={colorScheme === 'dark' ? darkTheme : lightTheme}
           >
             <SafeAreaProvider>
               <Provider store={store}>
