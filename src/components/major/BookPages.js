@@ -19,7 +19,7 @@ import usePageSize from "../../hooks/usePageSize"
 import useInstanceValue from "../../hooks/useInstanceValue"
 import useWideMode from "../../hooks/useWideMode"
 import useClassroomInfo from "../../hooks/useClassroomInfo"
-//import { getSpineInlineToolsHash } from "../../hooks/useSpineInlineToolsHash"
+//import { getSpineInlineToolsHash } from "../../hooks/useSpineInlineToolsHash"  // this is currently unused
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
 
@@ -58,7 +58,7 @@ const BookPages = React.memo(({
 
   books,
   userDataByBookId,
-  //displaySettings,
+  //displaySettings,  // this is currently unused
   sidePanelSettings,
 }) => {
 

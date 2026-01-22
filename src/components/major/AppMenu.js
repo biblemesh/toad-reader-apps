@@ -27,8 +27,8 @@ import Button from "../basic/Button"
 
 const {
   LINK_TO_TOAD_READER_MARKETING_SITE,
-  //INCLUDE_TOAD_READER_PROMO_TEXT,
-} = Constants.expoConfig.extra
+  //INCLUDE_TOAD_READER_PROMO_TEXT,  // this is currently unused
+} = Constants.expoConfig.extra;
 
 const styles = StyleSheet.create({
   separator: {
