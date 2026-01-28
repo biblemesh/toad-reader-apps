@@ -71,9 +71,9 @@ const ToolFlipperButton = React.memo(({
   const themedStateEvents = useThemedStates({ dispatch, states: [ 'hover' ] })
 
   const ButtonIcon = useCallback(
-    ({ style }) => (
+    () => (
       <Icon
-        style={[style, styles.icon, iconThemedStyle]}
+        style={[styles.icon, iconThemedStyle]}
         pack="fontAwesome"
         name={`angle-${side}`}
       />

@@ -282,32 +282,31 @@ const ReadingScheduleDate = React.memo(({
   )
 
   const EditButtonIcon = useCallback(
-    ({ style }) => (
+    () => (
       <Icon
         name="pencil"
         pack="materialCommunity"
-        style={[style, styles.icon]}
+        style={[styles.icon]}
       />
     ),
     [],
   )
 
   const TrashButtonIcon = useCallback(
-    ({ style }) => (
+    () => (
       <Icon
         name="trash"
-        style={[style, styles.icon]}
+        style={[styles.icon]}
       />
     ),
     [],
   )
 
   const CalendarIcon = useCallback(
-    ({ style }) => (
+    () => (
       <Icon
         name="calendar"
         style={[
-          style,
           styles.calendarIcon,
         ]}
       />

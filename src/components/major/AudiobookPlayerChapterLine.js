@@ -59,7 +59,7 @@ const AudiobookPlayerChapterLine = ({
 
   const { label=`` } = spines[currentSpineIndex] || spines[0] || {}
 
-  const ChaptersIcon = useCallback(({ style }) => <Icon name='text' pack="materialCommunity" style={[style, styles.icon]} />, [])
+  const ChaptersIcon = useCallback(() => <Icon name='text' pack="materialCommunity" style={[styles.icon]} />, [])
 
   const selectChapter = useCallback(
     index => {

@@ -91,12 +91,12 @@ const AudiobookPlayerButtonRow = ({
     [ getPlaybackSpeed, setPlaybackSpeed ],
   )
 
-  const BackTenIcon = useCallback(({ style }) => <Icon name='replay-10' pack="material" style={[style, styles.icon2]} />, [])
-  const ForwardTenIcon = useCallback(({ style }) => <Icon name='forward-10' pack="material" style={[style, styles.icon2]} />, [])
-  const PlayIcon = useCallback(({ style }) => <Icon name='play-sharp' style={[style, styles.playIcon]} />, [])
-  const PauseIcon = useCallback(({ style }) => <Icon name='pause-sharp' style={[style, styles.pauseIcon]} />, [])
-  const DownloadIcon = useCallback(({ style }) => <Icon name='file-download' pack="material" style={[style, styles.icon]} />, [])
-  const DownloadedIcon = useCallback(({ style }) => <Icon name='file-download-done' pack="material" style={[style, styles.icon]} />, [])
+  const BackTenIcon = useCallback(() => <Icon name='replay-10' pack="material" style={[styles.icon2]} />, [])
+  const ForwardTenIcon = useCallback(() => <Icon name='forward-10' pack="material" style={[styles.icon2]} />, [])
+  const PlayIcon = useCallback(() => <Icon name='play-sharp' style={[styles.playIcon]} />, [])
+  const PauseIcon = useCallback(() => <Icon name='pause-sharp' style={[styles.pauseIcon]} />, [])
+  const DownloadIcon = useCallback(() => <Icon name='file-download' pack="material" style={[styles.icon]} />, [])
+  const DownloadedIcon = useCallback(() => <Icon name='file-download-done' pack="material" style={[styles.icon]} />, [])
 
   if(error) return null
 
