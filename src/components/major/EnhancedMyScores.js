@@ -136,7 +136,7 @@ const EnhancedMyScores = React.memo(({
         orderSpineIdRefKeyedObj({ obj: data.quizzesByLoc, spines }).forEach(quizzesByCfi => {
           orderCfiKeyedObj({ obj: quizzesByCfi }).forEach(quizzes => {
             quizzes.forEach(({ name, scores }) => {
-              const formattedScores = scores.map(({ score, submitted_at }, idx) => (
+              const formattedScores = scores.map(({ score, submitted_at }) => (
                 score == undefined
                   ? ``
                   : i18n("{{percent}}% ({{date}})", "", "enhanced", {
@@ -281,7 +281,7 @@ const mapStateToProps = ({ idps, accounts, books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(EnhancedMyScores)

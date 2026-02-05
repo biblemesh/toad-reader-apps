@@ -70,7 +70,7 @@ const addDirToHref = ({ href, navRelativeUri, opfDir }) => {
   if(href && !/^\//.test(href)) {
     const navRelativeUriWithoutOpfDir = navRelativeUri.substr(opfDir.length)
     if(/\//.test(navRelativeUriWithoutOpfDir)) {
-      href = normalizePath(navRelativeUriWithoutOpfDir.replace(/\/[^\/]+$/, `/${href}`))
+      href = normalizePath(navRelativeUriWithoutOpfDir.replace(/\/[^/]+$/, `/${href}`))
     }
   }
 
@@ -105,12 +105,12 @@ export default async ({ bookId, idp, account }) => {
         opfManifestItemsByHref[item.$.href] = item
       }
     })
-    
+
   } catch(e) {
 
     console.log("ERROR: Bad opf.", bookId, e)
     return {}
-    
+
   }
 
 
@@ -135,7 +135,7 @@ export default async ({ bookId, idp, account }) => {
     // it is an epub 3
 
     try {
-    
+
       // get nav document
       let navRelativeUri
 
@@ -161,11 +161,11 @@ export default async ({ bookId, idp, account }) => {
       const getEpub3TocObjInfo = ol => (
         (ol.li || [])
           .map(li => {
-            const label = 
+            const label =
               li.a
               && li.a[0]
               && ((li.a[0].$ && li.a[0].$.title) || li.a[0]._)
-            let href = 
+            let href =
               li.a
               && li.a[0]
               && li.a[0].$
@@ -196,7 +196,7 @@ export default async ({ bookId, idp, account }) => {
           })
           .filter(tocItem => tocItem)
         )
-  
+
       toc = getEpub3TocObjInfo(navTocObj.ol[0])
 
     } catch(e) {
@@ -205,24 +205,24 @@ export default async ({ bookId, idp, account }) => {
       return {}
 
     }
-        
+
   } else {
     // it is an epub 2
-    
+
     try {
-      
+
       const navRelativeUri = `${opfDir}${opfManifestItemsByIdref[opfObj.package.spine[0].$.toc].$.href}`
       const navObj = await getXmlAsObj({ url: `${baseUri}${navRelativeUri}`, account })
-  
+
       const getEpub2TocObjInfo = cont => (
         cont.navPoint
           .map(navPoint => {
-            const label = 
+            const label =
               navPoint.navLabel
               && navPoint.navLabel[0]
               && navPoint.navLabel[0].text
               && (navPoint.navLabel[0].text[0]._ || navPoint.navLabel[0].text[0])
-            let href = 
+            let href =
               navPoint.content
               && navPoint.content[0]
               && navPoint.content[0].$
@@ -265,7 +265,7 @@ export default async ({ bookId, idp, account }) => {
 
     }
 
-  }    
+  }
 
   try {
     // get the spines
@@ -274,14 +274,14 @@ export default async ({ bookId, idp, account }) => {
       return {
         idref,
         label: (
-          opfManifestItemsByIdref[idref] 
+          opfManifestItemsByIdref[idref]
           && opfManifestItemsByIdref[idref].$
           && tocLabelsByHref[opfManifestItemsByIdref[idref].$.href]
         ) || "",
         path: normalizePath(`${opfDir}${opfManifestItemsByIdref[idref].$.href}`),
       }
     })
-    
+
   } catch(e) {
 
     console.log("ERROR: Could not determine spines.", bookId, e)
@@ -290,5 +290,5 @@ export default async ({ bookId, idp, account }) => {
   }
 
   return { toc, spines, success: true }
-  
+
 }

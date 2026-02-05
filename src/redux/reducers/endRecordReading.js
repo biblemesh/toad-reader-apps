@@ -71,7 +71,9 @@ export default function(state, action) {
               properties['classroom id'] = classroom.uid
             }
           }
-        } catch(e) {}
+        } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+          /* empty */
+        }
       }
 
       logEvent({
@@ -100,7 +102,7 @@ export default function(state, action) {
         || !lastActivityTime
       ) {
         console.log('ERROR: Tried ending invalid reading record.', state.currentReadingRecord)
-        
+
         newState.currentReadingRecord = null
         return newState
       }
@@ -128,7 +130,7 @@ export default function(state, action) {
         || !lastActivityTime
       ) {
         console.log('ERROR: Tried to indicate activity on invalid reading record.', state.currentReadingRecord)
-        
+
         newState.currentReadingRecord = null
         return newState
       }

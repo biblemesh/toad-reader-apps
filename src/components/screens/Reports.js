@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { StyleSheet, View, Text, ScrollView } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -159,7 +159,7 @@ const Reports = ({
 
           <ScrollView style={styles.tabContent}>
             {((info[selectedTabIndex.row] || {}).data || []).map(({ heading, rows, summary }, idx) => {
-              const flexArr = rows.length > 0 && Object.values(rows[0]).map(val => /^[-0-9\.$]*$/.test(val) ? 1 : 2)
+              const flexArr = rows.length > 0 && Object.values(rows[0]).map(val => /^[-0-9.$]*$/.test(val) ? 1 : 2)
 
               return (
                 <View style={styles.tableContainer} key={idx}>
@@ -211,7 +211,7 @@ const mapStateToProps = ({ idps, accounts }) => ({
   accounts,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(Reports)

@@ -38,7 +38,7 @@ export default async ({ view, uri, width, height, viewWidth, viewHeight, pageInd
       height,
     })
   )
-  
+
   let snapshotBase64 = await getSnapshot()
 
   if(stopProcessing() || !snapshotBase64) return false
@@ -78,7 +78,9 @@ export default async ({ view, uri, width, height, viewWidth, viewHeight, pageInd
 
   try {
     await FileSystem.makeDirectoryAsync(dir, { intermediates: true })
-  } catch(e) {}
+  } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+    /* empty */
+  }
 
   await FileSystem.writeAsStringAsync(uri, snapshotBase64, {
     encoding: FileSystem.EncodingType.Base64,

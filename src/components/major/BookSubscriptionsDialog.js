@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react"
+import { useState, useCallback, useEffect, useMemo } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { i18n } from "inline-i18n"
 import { bindActionCreators } from "redux"
@@ -223,7 +223,7 @@ const mapStateToProps = ({ idps, accounts, subscriptions }) => ({
   subscriptions,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setSubscriptions,
 }, dispatch)
 

@@ -10,7 +10,7 @@ const Radio = React.memo(({
 
   const customOnChange = useCallback(
     value => {
-      onChange && onChange({ id, value, info })
+      if (onChange) onChange({ id, value, info });
     },
     [ id, info, onChange ],
   )

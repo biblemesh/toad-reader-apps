@@ -1,6 +1,5 @@
-import React, { useCallback } from "react"
+import { useCallback } from "react"
 import { StyleSheet, TouchableOpacity, View, Text, Alert } from "react-native"
-// import { i18n } from "inline-i18n"
 
 import { openURL } from "../../utils/toolbox"
 import useRouterState from "../../hooks/useRouterState"

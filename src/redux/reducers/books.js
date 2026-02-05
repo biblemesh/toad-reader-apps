@@ -181,7 +181,7 @@ export default function(state = initialState, action) {
       }
       return state
 
-    case "ADD_SPINE_PAGE_CFIS":
+    case "ADD_SPINE_PAGE_CFIS": {
       const objToInsert = { [action.key]: action.pageCfis }
       if(newState[action.bookId]) {
         newState[action.bookId] = { ...newState[action.bookId] }
@@ -202,6 +202,7 @@ export default function(state = initialState, action) {
         return newState
       }
       return state
+    }
 
     case "CLEAR_ALL_SPINE_PAGE_CFIS":
       if(newState[action.bookId] && newState[action.bookId].spines) {
@@ -232,7 +233,7 @@ export default function(state = initialState, action) {
         }
         return state
       }
-  
+
   }
 
   return state

@@ -57,7 +57,7 @@ const getComponentSetup = ({ parameters={}, appearance="default", variantGroups=
       })),
       ...(!isCustom ? {} : {
         variantGroups: objectMap(variantGroups, group => (
-          objectMap(group, (val, key, index) => ({
+          objectMap(group, () => ({
             default: false,
           }))
         )),
@@ -66,7 +66,7 @@ const getComponentSetup = ({ parameters={}, appearance="default", variantGroups=
           [appearance]: {
             default: appearance === 'default',
           },
-        },  
+        },
       }),
     },
     appearances: {
@@ -88,7 +88,7 @@ const getComponentMapping = componentInfos => (
 
 const mapping = {
 
-  // See https://github.com/eva-design/eva/blob/master/packages/eva/mapping.json  
+  // See https://github.com/eva-design/eva/blob/master/packages/eva/mapping.json
 
   // Eg.
   // components: {
@@ -102,7 +102,7 @@ const mapping = {
   //     },
   //   },
   // },
-  
+
   components: getComponentMapping([
     {
       component: 'Input',
@@ -440,7 +440,7 @@ const mapping = {
     },
     ...MAPPING_CUSTOMIZATION,
   ]),
-  
+
 }
 
 export default mapping

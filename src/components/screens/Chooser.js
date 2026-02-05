@@ -1,4 +1,3 @@
-import React from "react"
 import { Text, View } from "react-native"
 import { Button } from "@ui-kitten/components"
 import SafeLayout from "../basic/SafeLayout"

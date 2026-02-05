@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import { useCallback } from "react"
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native"
 import { styled } from "@ui-kitten/components"
 import { bindActionCreators } from "redux"
@@ -75,10 +75,10 @@ const MetadataFilterChip = ({
   )
 }
 
-const mapStateToProps = ({ x }) => ({
+const mapStateToProps = () => ({
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   changeLibraryFilter,
 }, dispatch)
 

@@ -86,31 +86,31 @@ const BookHeader = React.memo(({
   useEffect(() => {
     if (Platform.OS !== "web") return;
     if (!showOptions) return;
-  
+
     const anchor = anchorRef.current;
     const menu = menuRef.current;
-  
+
     const handlePointerDownCapture = (e) => {
       // All clicks, including those on React Native Web components, will be captured here
       const path = e.composedPath ? e.composedPath() : [];
-  
+
       const insideMenu = menu && path.includes(menu);
       const insideAnchor = anchor && path.includes(anchor);
-  
+
       if (!insideMenu && !insideAnchor) {
         toggleShowOptions(false);
       }
     };
-  
+
     // Listen at the top level using capture mode
     document.addEventListener("pointerdown", handlePointerDownCapture, true);
-  
+
     return () => {
       document.removeEventListener("pointerdown", handlePointerDownCapture, true);
     };
   }, [showOptions]);
-    
-  
+
+
 
   const goToBookLink = useCallback(
     () => {
@@ -184,7 +184,7 @@ const BookHeader = React.memo(({
         })
       }
 
-      setModeToPage && setTimeout(setModeToPage)
+      if (setModeToPage) setTimeout(setModeToPage);
     },
     [ bookId, canViewDashboard ],
   )
@@ -303,7 +303,7 @@ const BookHeader = React.memo(({
         iconStyle={styles.libraryIcon}
         onPress={onLibraryPress}
         uiStatus={wideMode ? "faded" : null}
-        iconName={require("../../../assets/library.png")}
+        iconName={require("../../../assets/library.png")}  // eslint-disable-line @typescript-eslint/no-require-imports
       />
     ),
     [wideMode]
@@ -367,7 +367,7 @@ const mapStateToProps = ({ books, userDataByBookId, sidePanelSettings }) => ({
   sidePanelSettings,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   removeFromBookDownloadQueue,
   setDownloadStatus,
   clearTocAndSpines,

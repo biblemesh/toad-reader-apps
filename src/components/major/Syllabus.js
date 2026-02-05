@@ -46,7 +46,7 @@ const Syllabus = React.memo(({
 
   const wideMode = useWideMode()
 
-  const { accountId, classroom, idpId, hasFrontMatterDraftData } = useClassroomInfo({ books, bookId, userDataByBookId })
+  const { accountId, classroom, hasFrontMatterDraftData } = useClassroomInfo({ books, bookId, userDataByBookId })
   const { uid, syllabus, draftData } = classroom || {}
 
   const changeIndex = useChangeIndex(hasFrontMatterDraftData, (prev, current) => (prev && !current))
@@ -119,7 +119,7 @@ const mapStateToProps = ({ idps, accounts, books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(Syllabus)

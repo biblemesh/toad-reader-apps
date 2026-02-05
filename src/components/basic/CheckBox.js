@@ -1,31 +1,16 @@
-import React, { useCallback } from "react"
-// import { StyleSheet } from "react-native"
-import { CheckBox as UIKittenCheckBox } from "@ui-kitten/components"
+import React, { useCallback } from 'react';
+import { CheckBox as UIKittenCheckBox } from '@ui-kitten/components';
 
-// const styles = StyleSheet.create({
-// })
-
-const CheckBox = React.memo(({
-  id,
-  onChange,
-  onChangeInfo,
-  ...otherProps
- }) => {
-
+const CheckBox = React.memo(({ id, onChange, onChangeInfo, ...otherProps }) => {
   const customOnChange = useCallback(
-    value => {
-      onChange && onChange(value)
-      onChangeInfo && onChangeInfo({ id, value })
+    (value) => {
+      if (onChange) onChange(value);
+      if (onChangeInfo) onChangeInfo({ id, value });
     },
-    [ id, onChange, onChangeInfo ],
-  )
+    [id, onChange, onChangeInfo],
+  );
 
-  return (
-    <UIKittenCheckBox
-      {...otherProps}
-      onChange={customOnChange}
-    />
-  )
-})
+  return <UIKittenCheckBox {...otherProps} onChange={customOnChange} />;
+});
 
-export default CheckBox
+export default CheckBox;

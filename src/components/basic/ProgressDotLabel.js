@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { StyleSheet, Platform, Text } from "react-native"
 import { i18n } from "inline-i18n"
 import useSetTimeout from '../../hooks/useSetTimeout'

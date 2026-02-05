@@ -51,7 +51,7 @@ export const binaryExtensionToMimeTypeMap = {
 const getTextFile = async ({ relativeUri, downloadBaseUrl, localBaseUri, tempAddOn=``, options }) => {
   try {
     return await FileSystem.readAsStringAsync(`${localBaseUri}${relativeUri}${tempAddOn}`)
-  } catch(err) {
+  } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
     const { status } = await FileSystem.downloadAsync(
       `${downloadBaseUrl}${relativeUri}`,
       `${localBaseUri}${relativeUri}${tempAddOn}`,
@@ -80,7 +80,7 @@ const cancelDownloadByBookId = {}
 const abortFunctionsByBookId = {}
 
 const runAbort = ({ bookId }) => {
-  abortFunctionsByBookId[bookId] && abortFunctionsByBookId[bookId]()
+  if (abortFunctionsByBookId[bookId]) { abortFunctionsByBookId[bookId](); }
   delete abortFunctionsByBookId[bookId]
 }
 
@@ -128,7 +128,7 @@ export const fetchEpubAndAssets = async ({ downloadOrigin, bookId, cookie, progr
       let filesDownloaded = 0
       let downloadIdx = 0
 
-      progressCallback && progressCallback(0.01)
+      if (progressCallback) { progressCallback(0.01); }
 
       // find which files need downloading
       await FileSystem.makeDirectoryAsync(`${localBaseUri}META-INF`, { intermediates: true })
@@ -232,7 +232,7 @@ export const fetchEpubAndAssets = async ({ downloadOrigin, bookId, cookie, progr
 
         }
 
-        progressCallback && progressCallback(Math.max(++filesDownloaded / filesToDownload.length, 0.01))
+        if (progressCallback) { progressCallback(Math.max(++filesDownloaded / filesToDownload.length, 0.01)); }
 
         await downloadAFile()
 
@@ -261,7 +261,7 @@ export const fetchEpubAndAssets = async ({ downloadOrigin, bookId, cookie, progr
       //     errorMessage: i18n("You are not connected to the internet. Please check your connection and try again."),
       //   }
       }
-      
+
       throw new Error('Invalid response to epub fetch.')
     }
 

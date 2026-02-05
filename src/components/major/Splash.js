@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
 import { Animated, StyleSheet, Dimensions } from 'react-native'
 import * as SplashScreen from 'expo-splash-screen'
 import * as Updates from 'expo-updates'
@@ -132,7 +132,7 @@ const Splash = ({
         }
       ]}>
       <Animated.Image
-        source={require("../../../assets/icons/splash-tablet.png")}
+        source={require("../../../assets/icons/splash-tablet.png")}  // eslint-disable-line @typescript-eslint/no-require-imports
         style={[
           styles.image,
           {

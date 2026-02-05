@@ -23,7 +23,7 @@ export const cloneObj = obj => JSON.parse(JSON.stringify(obj))
 const parseContentCfi = cont => (
   cont
     .replace(/\[(.*?)\]/, "")
-    .split(/[\/,:]/)
+    .split(/[/,:]/)
     .map(n => parseInt(n))
     .filter(Boolean)
 )
@@ -96,7 +96,7 @@ export const getSnapshotURI = params => {
 export const getToolCfiCounts = ({ visibleTools, spineIdRef }) => {
   const countsByCfi = {}
 
-  visibleTools.forEach(({ uid, cfi, published_at, ...tool }) => {
+  visibleTools.forEach(({ cfi, ...tool }) => {
     if(tool.spineIdRef !== spineIdRef) return
     if(!countsByCfi[cfi]) {
       countsByCfi[cfi] = 0
@@ -165,7 +165,7 @@ export const fetchWithProgress = (url, { progressCallback, abortFunctionCallback
       }
     }
 
-    xhr.onreadystatechange = evt => {
+    xhr.onreadystatechange = () => {
       if(xhr.readyState === 4) {
         if(xhr.status === 200) {
           resolve(xhr.response || xhr.responseText)
@@ -224,8 +224,8 @@ export const encodeBase64 = str => {
 
     // To prevent memory from blowing up, I need to index the string every once and a while.
     // https://stackoverflow.com/questions/35354801/why-does-v8-run-out-of-memory-in-this-situation
-    if (i % 3000000 === 0) output[0]
-    
+    if (i % 3000000 === 0) output[0]  // eslint-disable-line @typescript-eslint/no-unused-expressions
+
   }
 
   return output
@@ -255,7 +255,7 @@ export const getFirstBookLinkInfo = book => {
   }
 }
 
-export const showConsent = ({ idps, setConsentShown }) => {
+export const showConsent = ({ idps }) => {
 
   let text = i18n("Note: By using this app, you consent to us recording usage data for the purposes of providing instructors with analytics and better improving our services.", "", "enhanced")
 
@@ -341,7 +341,7 @@ export const getMBSizeStr = numBytes => {
   if(sizeInMB) {
     return i18n("{{num}} mb", { num: sizeInMB })
   }
-  
+
   const sizeInKB = Math.round(numBytes/10, 10) / 100
   return i18n("{{num}} kb", { num: sizeInKB })
 }
@@ -448,7 +448,7 @@ export const combineItems = (...labels) => {
 }
 
 export const isValidEmail = email => {
-  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return re.test(email)
 }
 
@@ -485,7 +485,7 @@ export const validLTIUrl = ({ url, fromDefaultClassroom, classroom }) => {
     && (
       fromDefaultClassroom
       || (lti_configurations || []).some(({ domain }) => (
-        url.replace(/^https?:\/\/([^\/]*).*$/, '$1') === domain
+        url.replace(/^https?:\/\/([^/]*).*$/, '$1') === domain
       ))
     )
   )
@@ -500,7 +500,7 @@ export const openURL = ({ url, newTab=true, historyPush }) => {
 
   Linking.openURL(url).catch(err => {
     console.log('ERROR: Request to open URL failed.', err)
-    historyPush && historyPush("/error", {
+    if (historyPush) historyPush("/error", {
       message: i18n("Your device is not allowing us to open this link."),
     })
   })
@@ -560,7 +560,7 @@ export const getTimeLine = ({ date, timestamp, short }) => {
 
   let timeLine = date.toLocaleTimeString(getLocale(), options)
   const timeLinePieces = timeLine.split(':')
-  
+
   if(timeLinePieces.length === 3) {  // i.e. toLocaleTimeString did not accept options (an Android issue)
     timeLine = `${timeLinePieces[0]}:${timeLinePieces[1]}`
   }
@@ -621,7 +621,7 @@ export const orderCfiKeyedObj = ({ obj }) => {
 
   arrayOfObjs.sort((a, b) => contentCfiComparator(a[0], b[0]))
 
-  return arrayOfObjs.map(([ key, val ]) => val)
+  return arrayOfObjs.map(([ , val ]) => val)
 }
 
 export const getHoursMinutesStr = minutes => {
@@ -655,10 +655,10 @@ export const concatText = ({ text, maxLen }) => {
 
 export const customizeTheme = ({ theme, fontFamily }) => {
   // See https://formidable.com/open-source/victory/guides/themes
-  
+
   const NewVictoryTheme = { ...theme }
   NewVictoryTheme.customMaterial = cloneObj(NewVictoryTheme.material)
-  
+
   NewVictoryTheme.customMaterial.area.style.labels.fontFamily =
   NewVictoryTheme.customMaterial.axis.style.axisLabel.fontFamily =
   NewVictoryTheme.customMaterial.axis.style.tickLabels.fontFamily =
@@ -677,7 +677,7 @@ export const customizeTheme = ({ theme, fontFamily }) => {
   NewVictoryTheme.customMaterial.tooltip.style.fontFamily =
   NewVictoryTheme.customMaterial.voronoi.style.labels.fontFamily =
     fontFamily
-  
+
   return NewVictoryTheme
 }
 
@@ -731,7 +731,7 @@ export const normalizePath = path => {
   path = path.replace(/\/\/+/g, "/")
 
   // get rid of unneeded ../'s
-  const removeDirBack = p => p.replace(/[^\/]+\/\.\.\//g, "")
+  const removeDirBack = p => p.replace(/[^/]+\/\.\.\//g, "")
   while(removeDirBack(path) !== path) {
     path = removeDirBack(path)
   }

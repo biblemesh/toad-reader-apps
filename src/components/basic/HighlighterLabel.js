@@ -197,7 +197,7 @@ const HighlighterLabel = React.memo(({
         })
 
         setShowDeletedMsgAndUndoColor(highlight.color)
-        
+
       } else {
 
         setHighlight({
@@ -378,7 +378,7 @@ const mapStateToProps = ({ idps, books, userDataByBookId, accounts }) => ({
   accounts,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setHighlight,
   deleteHighlight,
 }, dispatch)

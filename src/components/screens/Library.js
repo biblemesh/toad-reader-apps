@@ -1,4 +1,4 @@
-import React, {
+import {
   useState,
   useEffect,
   useLayoutEffect,
@@ -133,13 +133,6 @@ const styles = StyleSheet.create({
   notLoggedInButtonContainer: {
     display: 'flex',
   },
-  hiddenWebview: {
-    position: 'absolute',
-    top: -100,
-    left: 0,
-    width: 1,
-    height: 1,
-  },
   p: {
     color: 'rgba(0,0,0,.4)',
     marginBottom: 10,
@@ -266,7 +259,6 @@ const Library = ({
   const hasNoAuth = useHasNoAuth(accounts);
   const { online } = useNetwork();
 
-  const getBooks = useInstanceValue(books);
   const getIdps = useInstanceValue(idps);
 
   const previousPathname = usePrevious(pathname);
@@ -416,7 +408,7 @@ const Library = ({
   }, []);
 
   const handleNewLibrary = useCallback(
-    async ({ response, idpId, accountId }) => {
+    async ({ response, accountId }) => {
       if (response.status != 200) {
         // they need to login again
         // TODO: I should probably look for other possibilities like 3XX or 5XX errors
@@ -1249,7 +1241,7 @@ const mapStateToProps = ({
   selectedBookTypeIndex,
 });
 
-const matchDispatchToProps = (dispatch, x) =>
+const matchDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       addBooks,

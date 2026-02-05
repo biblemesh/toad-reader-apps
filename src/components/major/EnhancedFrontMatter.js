@@ -175,7 +175,7 @@ const mapStateToProps = ({ books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   updateClassroom,
 }, dispatch)
 

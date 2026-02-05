@@ -1,4 +1,3 @@
-import React from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { i18n } from "inline-i18n"
 import { styled } from '@ui-kitten/components'
@@ -23,7 +22,6 @@ const styles = StyleSheet.create({
 
 const InstructorsHighlightLabel = ({
   style,
-  iconStyle,
 
   eva: {
     style: themedStyle,

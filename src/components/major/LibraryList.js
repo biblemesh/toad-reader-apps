@@ -38,7 +38,7 @@ const LibraryList = React.memo(({
   const flatListRef = useRef()
 
   const scrollToTop = () => {
-    flatListRef.current && flatListRef.current.scrollToOffset({ offset: 0, animated: false })
+    if (flatListRef.current) flatListRef.current.scrollToOffset({ offset: 0, animated: false });
   }
 
   const prevLibrary = usePrevious(library)
@@ -102,7 +102,7 @@ const mapStateToProps = ({ books, library }) => ({
   library,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(LibraryList)

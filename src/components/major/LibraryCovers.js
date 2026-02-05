@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback } from "react"
+import { useMemo, useRef, useCallback } from "react"
 import Constants from 'expo-constants'
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -60,7 +60,7 @@ const LibraryCovers = ({
         const startingIndexForNormalInHighlightRow2 = 1 + numNormalInEachHighlightRow
         const startingIndexForNormalRows = 1 + numNormalInEachHighlightRow * 2
         const numNormalRows = Math.ceil((bookList.length - 1 - numNormalInEachHighlightRow) / coversPerRow)
-        
+
         return [
           {
             key: `i:0`,
@@ -101,7 +101,7 @@ const LibraryCovers = ({
   const flatListRef = useRef()
 
   const scrollToTop = () => {
-    flatListRef.current && flatListRef.current.scrollToOffset({ offset: 0, animated: false })
+    if (flatListRef.current) flatListRef.current.scrollToOffset({ offset: 0, animated: false });
   }
 
   const prevLibrary = usePrevious(library)
@@ -147,7 +147,7 @@ const LibraryCovers = ({
       )
 
       if(highlightedBookId) {  // this is a highlight row
-        
+
         const highlightedCover = getCover({
           bookId: highlightedBookId,
           width: coverWidth + LIBRARY_COVERS_HORIZONTAL_MARGIN + coverWidth,
@@ -171,7 +171,7 @@ const LibraryCovers = ({
             </View>
           </CoversRow>
         )
-    
+
       } else {
 
         const covers = bookIds.map(bookId => getCover({ bookId }))
@@ -210,7 +210,7 @@ const mapStateToProps = ({ library, books }) => ({
   books,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(LibraryCovers)

@@ -1,4 +1,3 @@
-import React from "react"
 import { Text, View, StyleSheet } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -67,7 +66,7 @@ const mapStateToProps = ({ metadataKeys }) => ({
   metadataKeys,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(MetadataFilterChips)

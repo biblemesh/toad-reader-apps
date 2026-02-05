@@ -10,10 +10,10 @@ export default function(state, action) {
     ...state,
     library: {...state.library},
   }
-    
+
   switch (action.type) {
 
-    case "SET_SORT":
+    case "SET_SORT": {
       newState.library.sort = sortOptions.includes(action.sort) ? action.sort : (newState.library.sort || sortOptions[0])
       newState.library.bookList = Object.keys(newState.books)
 
@@ -65,7 +65,8 @@ export default function(state, action) {
       })
 
       return newState
+    }
   }
-  
+
   return state
 }

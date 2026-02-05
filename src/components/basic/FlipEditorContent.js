@@ -32,7 +32,7 @@ const FlipEditorContent = React.memo(({
         }}
       />
     )
-  } catch(e) {
+  } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
     return (
       <Text>
         {textToReactNative(content)}

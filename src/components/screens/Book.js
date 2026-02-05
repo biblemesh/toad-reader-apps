@@ -363,7 +363,7 @@ const Book = React.memo(({
           />
         ),
       }]),
-      ...(!(!wideMode) ? [] : [{
+      ...(wideMode ? [] : [{
         id: 'contents',
         tab: (
           <BottomNavigationTab
@@ -374,7 +374,7 @@ const Book = React.memo(({
           />
         ),
       }]),
-      ...(!(!wideMode) ? [] : [{
+      ...(wideMode ? [] : [{
         id: 'search',
         tab: (
           <BottomNavigationTab
@@ -480,7 +480,7 @@ const Book = React.memo(({
         if(mode === 'page') {
           if(currentAppState === 'active' && nextAppState !== 'active') {
             endRecordReading()
-      
+
           } else if(currentAppState !== 'active' && nextAppState === 'active') {
             startRecordReading({
               bookId,
@@ -488,10 +488,10 @@ const Book = React.memo(({
             })
           }
         }
-    
+
         setCurrentAppState(nextAppState)
       }
-    
+
       const subscription = AppState.addEventListener('change', handleAppStateChange)
 
       startRecordReading({
@@ -503,7 +503,7 @@ const Book = React.memo(({
         if(mode === 'page') {
           endRecordReading()
         }
-    
+
         subscription.remove()
       }
     },
@@ -535,15 +535,15 @@ const Book = React.memo(({
           const account = accounts[accountId]
           const { idpId } = getIdsFromAccountId(accountId)
           const idp = idps[idpId]
-    
+
           const { toc, spines, success } = await parseEpub({ bookId, idp, account })
-    
+
           if(success) {
             setTocAndSpines({ bookId, toc, spines })
           } else {
             setGetTOCTimeout(() => getTocForWeb(Math.min(waitSecsOnFail * 2, 1000 * 60 * 5)), waitSecsOnFail)
           }
-    
+
         }
       }
       getTocForWeb(5000)
@@ -744,7 +744,7 @@ const Book = React.memo(({
         spineIdRef: info.spineIdRef || spineIdRef,
         // May start a reading record with current spineIdRef, not necessarily that
         // of the href. If it turns out they are one and the same, this function
-        // call was needed. If the href brings them to a new spine, then this 
+        // call was needed. If the href brings them to a new spine, then this
         // reading record will be stopped once that loads and the new one will
         // be initiated.
       })
@@ -797,7 +797,9 @@ const Book = React.memo(({
     () => {
       try {
         searchInputRef.current.blur()
-      } catch(e) {}
+      } catch(e) { // eslint-disable-line @typescript-eslint/no-unused-vars
+        /* empty */
+      }
 
       setStatusBarTimeout(() => setStatusBarHidden(!wideMode || Platform.OS === 'ios'), PAGE_ZOOM_MILLISECONDS - 100)
 
@@ -1057,7 +1059,7 @@ const Book = React.memo(({
 
         if(toolCfiCounts[cfi] >= MAX_TOOLS_PER_SPOT) {
           alert(i18n("You cannot move a tool to this spot as it already contains the limit of {{num}} tools per location.", "", "enhanced", { num: MAX_TOOLS_PER_SPOT }))
-          
+
         } else {
           updateTool({
             bookId,
@@ -1483,7 +1485,7 @@ const mapStateToProps = ({ idps, accounts, books, userDataByBookId, displaySetti
   readerStatus,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setLatestLocation,
   startRecordReading,
   endRecordReading,

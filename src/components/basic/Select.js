@@ -10,7 +10,7 @@ const Select = React.memo(({
 
   const customOnSelect = useCallback(
     selectionInfo => {
-      onSelect && onSelect({ id, info, ...selectionInfo })
+      if (onSelect) onSelect({ id, info, ...selectionInfo });
     },
     [ id, info, onSelect ],
   )

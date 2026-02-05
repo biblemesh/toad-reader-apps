@@ -1,5 +1,4 @@
 import Constants from 'expo-constants'
-import React from "react"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
 import { StyleSheet, View, Platform } from "react-native"
@@ -79,7 +78,7 @@ const mapStateToProps = ({ downloadProgressByBookId, idps }) => ({
   idps,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(BookInfoCover)

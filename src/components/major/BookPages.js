@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useEffect } from "react"
+import React, { useCallback, useRef, useEffect } from "react"
 import Constants from 'expo-constants'
 import { StyleSheet, View, FlatList, Animated } from "react-native"
 import { bindActionCreators } from "redux"
@@ -11,7 +11,7 @@ import PagesPage from "../basic/PagesPage"
 // import BookProgress from "./BookProgress"
 import EnhancedHeader from "./EnhancedHeader"
 
-import { getToolbarHeight, getPageCfisKey, getStatusBarCurrentHeight } from '../../utils/toolbox'
+import { getToolbarHeight, getStatusBarCurrentHeight } from '../../utils/toolbox'
 import useAdjustedDimensions from "../../hooks/useAdjustedDimensions"
 import useSetTimeout from '../../hooks/useSetTimeout'
 import usePrevious from "react-use/lib/usePrevious"
@@ -19,7 +19,7 @@ import usePageSize from "../../hooks/usePageSize"
 import useInstanceValue from "../../hooks/useInstanceValue"
 import useWideMode from "../../hooks/useWideMode"
 import useClassroomInfo from "../../hooks/useClassroomInfo"
-import { getSpineInlineToolsHash } from "../../hooks/useSpineInlineToolsHash"
+//import { getSpineInlineToolsHash } from "../../hooks/useSpineInlineToolsHash"  // this is currently unused
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
 
@@ -58,14 +58,14 @@ const BookPages = React.memo(({
 
   books,
   userDataByBookId,
-  displaySettings,
+  //displaySettings,  // this is currently unused
   sidePanelSettings,
 }) => {
 
-  const { bookVersion, canViewFrontMatter, visibleTools } = useClassroomInfo({ books, bookId, userDataByBookId, inEditMode })
+  const { bookVersion, canViewFrontMatter } = useClassroomInfo({ books, bookId, userDataByBookId, inEditMode })
 
-  const { pageWidth, pageHeight, pagesPerRow } = usePageSize({ sidePanelSettings })
-  const { fullPageWidth, fullPageHeight, height } = useAdjustedDimensions({ sidePanelSettings })
+  const { pageWidth, pageHeight } = usePageSize({ sidePanelSettings })
+  const { height } = useAdjustedDimensions({ sidePanelSettings })
   const wideMode = useWideMode()
 
   const prevSpineIdRef = usePrevious(spineIdRef)
@@ -82,7 +82,7 @@ const BookPages = React.memo(({
   //   inputRange: [0, 5],
   //   outputRange: [0, 1],
   // })
-    
+
   const onScroll = useCallback(
     Animated.event(
       [{ nativeEvent: { contentOffset: { y: animatedScrollPosition } } }],
@@ -96,6 +96,7 @@ const BookPages = React.memo(({
   // This useMemo calculates maxScroll and list, but list should remain the same
   // mutable array and so is declared via a useRef.
   const list = useRef([]).current
+  /*  DISABLED because it's not used
   const { maxScroll } = useMemo(
     () => {
 
@@ -103,10 +104,10 @@ const BookPages = React.memo(({
 
       // clear the list, but keep the same array
       list.splice(0, list.length)
-    
+
       const listHeight = (height - footerHeight - getToolbarHeight())
       let offset = 0
-      
+
       spines.forEach(spine => {
         const { idref, label='', pageCfis } = spine
         list.push({
@@ -131,7 +132,7 @@ const BookPages = React.memo(({
           const pageCfisInThisRow = []
           for(let j=0; j<(numRowsInSpine || 1); j++) {
             pageIndicesInSpine.push(i+j)
-            pageCfisInThisSpine && pageCfisInThisRow.push(pageCfisInThisSpine[i+j])
+            if (pageCfisInThisSpine) pageCfisInThisRow.push(pageCfisInThisSpine[i+j]);
           }
           list.push({
             key: `P:${pageWidth}:${i}:${idref}`,  // P = pages
@@ -143,9 +144,9 @@ const BookPages = React.memo(({
           offset += pageHeight + PAGES_VERTICAL_MARGIN
         }
       })
-    
+
       const maxScroll = Math.max(offset - listHeight, 0)
-    
+
       return {
         maxScroll,
       }
@@ -153,6 +154,7 @@ const BookPages = React.memo(({
     },
     [ spines, height, displaySettings, fullPageWidth, fullPageHeight, visibleTools, footerHeight ],
   )
+  */
 
   const getItemLayout = useCallback(
     (data, index) => {
@@ -189,7 +191,7 @@ const BookPages = React.memo(({
 
         // if it is a header row, no match
         if(key.substr(0,2) === 'H:') return false
-        
+
         // if not the correct spine, no match
         if(key.split(':').slice(3).join(':') !== spineIdRef) return false
 
@@ -254,7 +256,7 @@ const BookPages = React.memo(({
       const { key, label, pageIndicesInSpine, pageCfisKey, cfis } = item
 
       if(key.substr(0,2) === 'H:') {
-        
+
         return <PagesSpineHeading>{label}</PagesSpineHeading>
 
       } else {
@@ -301,17 +303,19 @@ const BookPages = React.memo(({
     [],
   )
 
+  /*  DISABLED because it's not used
   const scrollToPercentage = useCallback(
     percent => {
       flatList.current && flatList.current.scrollToOffset({ offset: (percent/100) * maxScroll, animated: false })
     },
     [ maxScroll ],
   )
+  */
 
   if(list.length === 0) return null
 
   const estimatedRowsPerPage = parseInt(height / (pageHeight + PAGES_VERTICAL_MARGIN), 10) + 2
-  
+
   return (
     <View
       style={styles.container}
@@ -365,7 +369,7 @@ const mapStateToProps = ({ books, userDataByBookId, displaySettings, sidePanelSe
   sidePanelSettings,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(BookPages)

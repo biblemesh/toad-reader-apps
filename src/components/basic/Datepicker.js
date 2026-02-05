@@ -12,7 +12,7 @@ const Datepicker = React.memo(({
 
   const customOnSelect = useCallback(
     date => {
-      onSelect && onSelect(date, { id, info })
+      if (onSelect) onSelect(date, { id, info });
     },
     [ id, info, onSelect ],
   )

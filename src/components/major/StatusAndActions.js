@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   hotToLink: {
-    fontSize: 12,    
+    fontSize: 12,
     marginTop: 4,
     color: 'rgb(51, 102, 255)',
     textDecorationLine: 'underline',
@@ -142,7 +142,7 @@ const StatusAndActions = React.memo(({
           draftData,
           published_at: Date.now(),
         })
-  
+
       } else if(viewingOptions) {
         if(!confirm("Are you sure you want to publish these options?")) return
 
@@ -185,14 +185,14 @@ const StatusAndActions = React.memo(({
       } else if(viewingOptions) {
         if(!confirm("Are you sure you want to discard the draft options?")) return
 
-        const [ x, draftData ] = splitDraftDataToOptionsAndFrontMatter(getClassroomDraftData())
+        const [ , draftData ] = splitDraftDataToOptionsAndFrontMatter(getClassroomDraftData())
 
         updateClassroom({
           uid: classroomUid,
           bookId,
           draftData,
         })
-  
+
       } else {
         const isDraftOfPublished = !!selectedTool.currently_published_tool_uid
         if(isDraftOfPublished && !confirm("Are you sure you want to discard this draft?")) return
@@ -396,7 +396,7 @@ const mapStateToProps = ({ books, userDataByBookId, syncStatus }) => ({
   syncStatus,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   publishTool,
   updateClassroom,
   deleteTool,

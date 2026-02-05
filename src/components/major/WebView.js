@@ -1,4 +1,3 @@
-import React from "react"
 import { WebView as RDWebView } from 'react-native-webview'
 
 const WebView = ({

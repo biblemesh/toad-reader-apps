@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import { useCallback } from "react"
 import { Platform, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity } from "react-native"
 import { styled } from "@ui-kitten/components"
 

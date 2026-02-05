@@ -1,4 +1,3 @@
-import React from "react"
 import { StyleSheet, Text } from "react-native"
 import { styled } from '@ui-kitten/components'
 import { i18n } from "inline-i18n"

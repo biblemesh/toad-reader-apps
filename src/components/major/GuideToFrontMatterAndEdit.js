@@ -153,7 +153,7 @@ const mapStateToProps = ({ sidePanelSettings, completedGuides }) => ({
   completedGuides,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   addCompletedGuide,
 }, dispatch)
 

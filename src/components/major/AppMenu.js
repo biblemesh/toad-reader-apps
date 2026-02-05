@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react"
+import { useState, useCallback } from "react"
 import Constants from 'expo-constants'
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -27,9 +27,9 @@ import Button from "../basic/Button"
 
 const {
   LINK_TO_TOAD_READER_MARKETING_SITE,
-  INCLUDE_TOAD_READER_PROMO_TEXT,
-} = Constants.expoConfig.extra
-        
+  //INCLUDE_TOAD_READER_PROMO_TEXT,  // this is currently unused
+} = Constants.expoConfig.extra;
+
 const styles = StyleSheet.create({
   separator: {
     backgroundColor: '#e8e8e8',
@@ -53,20 +53,11 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     backgroundColor: '#e8e8e8',
   },
-  title: {
-    fontSize: 15,
-    fontWeight: '400',
-  },
   createdByContainer: {
     paddingTop: 10,
     paddingBottom: 5,
   },
   createdBy: {
-    textAlign: 'center',
-    fontSize: 12,
-    color: '#999999',
-  },
-  launchYour: {
     textAlign: 'center',
     fontSize: 12,
     color: '#999999',
@@ -109,9 +100,6 @@ const styles = StyleSheet.create({
   },
   error: {
     paddingTop: 10,
-    color: "red",
-  },
-  apply: {
     color: "red",
   },
   willTryAgain: {
@@ -215,7 +203,7 @@ const AppMenu = ({
           {
             text: i18n("Log out"),
             onPress: () => {
-              
+
               setLoading(true)  // timeout needed after this to allow it to show
 
               // Use requestAnimationFrame to ensure proper batching of state updates
@@ -291,7 +279,7 @@ const AppMenu = ({
                   clearTocAndSpines,
                   clearUserDataExceptProgress,
                 })
-  
+
                 setLoading(false)
 
                 Alert.alert(i18n("All books have been removed."))
@@ -323,7 +311,7 @@ const AppMenu = ({
     () => (
       <>
         <Image
-          source={require('../../../assets/images/drawer.png')}
+          source={require('../../../assets/images/drawer.png')}  // eslint-disable-line @typescript-eslint/no-require-imports
           style={styles.image}
         />
         {!isUpdatePending && isUpdateAvailable && isDownloading &&
@@ -389,11 +377,9 @@ const AppMenu = ({
   // const logOutIcon = useCallback(style => <Ionicons {...style} name="log-out" />, [])
 
   let isAdmin = false
-  let bookImporterAccountId
   Object.keys(accounts).some(accountId => {
     if(accounts[accountId].isAdmin) {
       isAdmin = true
-      bookImporterAccountId = accountId
       return true
     }
   })
@@ -550,7 +536,7 @@ const AppMenu = ({
     try {
       // Handle different possible event structures from UI Kitten
       let index;
-      
+
       if (typeof event === 'number') {
         index = event;
       } else if (event && typeof event.row === 'number') {
@@ -563,7 +549,7 @@ const AppMenu = ({
       }
 
       const route = drawerData[index];
-      
+
       if (!route) {
         console.warn('No route found for index:', index);
         return;
@@ -657,7 +643,7 @@ const mapStateToProps = ({ accounts, idps, books }) => ({
   books,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   removeFromBookDownloadQueue,
   setDownloadStatus,
   clearTocAndSpines,

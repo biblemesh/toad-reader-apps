@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import { useCallback } from "react"
 import Constants from 'expo-constants'
 import { StyleSheet, Platform, View } from "react-native"
 import { bindActionCreators } from "redux"
@@ -58,7 +58,7 @@ const BookProgress = ({
       const { pageX } = event.nativeEvent
       const percentageFraction = (pageX - PROGRESS_BAR_SIDE_SPACING) / (width - PROGRESS_BAR_SIDE_SPACING*2)
       const percent = Math.min(Math.max(percentageFraction * 100, 0), 100)
-      
+
       scrollToPercentage(percent)
     },
     [ scrollToPercentage, width ],
@@ -88,10 +88,10 @@ const BookProgress = ({
   )
 }
 
-const mapStateToProps = ({}) => ({
+const mapStateToProps = () => ({
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(BookProgress)

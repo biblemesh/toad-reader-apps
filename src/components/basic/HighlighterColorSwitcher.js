@@ -35,7 +35,7 @@ const HighlighterColorSwitcher = React.memo(({
 const mapStateToProps = () => ({
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setHighlight,
 }, dispatch)
 

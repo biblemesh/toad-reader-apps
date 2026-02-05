@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { i18n } from "inline-i18n"
 import { bindActionCreators } from "redux"
@@ -107,7 +107,9 @@ const CopyToolsDialog = ({
             try {
               const json = await response.json()
               errorMessage = json.errorMessage
-            } catch(err) {}
+            } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+              /* empty */
+            }
 
             setErrorMessage(errorMessage)
             return
@@ -125,20 +127,20 @@ const CopyToolsDialog = ({
             setGroupMemberIndex(0)
             setBookIndex(-1)
 
-          } catch(err) {
+          } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
             setErrorMessage(i18n("Configuration error"))
             return
           }
 
           console.log(`...done fetching common books from associated sites (accountId: ${accountId}).`)
 
-        } catch(err) {
+        } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
 
           setSubmitting(false)
           setErrorMessage(i18n("Internet connection error"))
 
         }
-  
+
       })()
     },
     [ open ],
@@ -177,7 +179,9 @@ const CopyToolsDialog = ({
           try {
             const json = await response.json()
             errorMessage = json.errorMessage
-          } catch(err) {}
+          } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+            /* empty */
+          }
 
           setErrorMessage(errorMessage)
           return
@@ -196,14 +200,14 @@ const CopyToolsDialog = ({
           setNumToolsCopied(numToolsCopied)
           setSuccess(true)
 
-        } catch(err) {
+        } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
           setErrorMessage(i18n("Configuration error"))
           return
         }
 
         console.log(`...done updating metadata keys (accountId: ${accountId}).`)
 
-      } catch(err) {
+      } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
 
         setSubmitting(false)
         setErrorMessage(i18n("Internet connection error"))
@@ -335,7 +339,7 @@ const mapStateToProps = ({ idps, accounts }) => ({
   accounts,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(CopyToolsDialog)

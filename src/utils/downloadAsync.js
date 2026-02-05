@@ -13,13 +13,15 @@ export default async (remoteUri, localUri, { skipIfExists, headers }={}, doSafeF
 
   console.log(`Attempting to download ${remoteUri} to ${localUri}...`)
 
-  const localDir = `${localUri.replace(/\/[^\/]*$/, '')}`
+  const localDir = `${localUri.replace(/\/[^/]*$/, '')}`
   // const localDirInfo = await FileSystem.getInfoAsync(localDir)
 
   // if(!localDirInfo.exists) {
   try {
     await FileSystem.makeDirectoryAsync(localDir, { intermediates: true })
-  } catch(e) {}
+  } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+    /* empty */
+  }
 
   let success
   if((headers || {}).cookie && doSafeFetch) {
