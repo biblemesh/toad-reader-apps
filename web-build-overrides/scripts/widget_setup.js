@@ -1,4 +1,5 @@
-!(function (d) {
+/* global erasereader */
+(function (d) {
 
     var newEl = function (type, attrs) {
         var el = d.createElement(type);
@@ -181,7 +182,9 @@
                     .replace(/\/#(\/book\/[0-9]+)#(.*)$/, function (x, bookString, extraInfo) {
                         try {
                             queryParamPassAlongObj.latestLocation = JSON.parse(decodeURIComponent(extraInfo)).latestLocation;
-                        } catch (e) { }
+                        } catch (e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+                            /* empty */
+                        }
 
                         return '/#' + bookString + '#' + encodeURIComponent(JSON.stringify(queryParamPassAlongObj));
                     })
@@ -194,7 +197,9 @@
                             delete latestLocation.idref;
                             delete latestLocation.elementCfi;
                             queryParamPassAlongObj.latestLocation = latestLocation;
-                        } catch (e) {}
+                        } catch (e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+                            /* empty */
+                        }
 
                         return '/#' + bookString + '#' + encodeURIComponent(JSON.stringify(queryParamPassAlongObj));
                     });
@@ -282,14 +287,18 @@
                             try {
                                 iframeEl.parentNode.replaceChild(forbiddenEl, iframeEl);
                                 spinnerEl.parentNode.removeChild(spinnerEl);
-                            } catch(e) {}
+                            } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+                                /* empty */
+                            }
                             break;
 
                         case 'loading':
                             try {
                                 iframeEl.style.opacity = "";
                                 spinnerEl.parentNode.removeChild(spinnerEl);
-                            } catch(e) {}
+                            } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+                                /* empty */
+                            }
                             break;
 
                         case 'setReference':
@@ -300,7 +309,7 @@
                             var refElA = newEl('a', {
                                 className: "erasereader-widget-reference-a",
                                 target: '_blank',
-                                href: iframeEl.getAttribute('data-nowidgetsrc').replace(/&widget=1.*$/, '&flash=1').replace(/^https?:\/\/[^\/]+/, event.origin),
+                                href: iframeEl.getAttribute('data-nowidgetsrc').replace(/&widget=1.*$/, '&flash=1').replace(/^https?:\/\/[^/]+/, event.origin),
                             });
                             var spineLblEl = newEl('div', {
                                 className: "erasereader-widget-spinelabel",
@@ -321,7 +330,9 @@
 
                             try {
                                 initialRefElA.parentNode.removeChild(initialRefElA);
-                            } catch(e) {}
+                            } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+                                /* empty */
+                            }
                             refElA.appendChild(spineLblEl);
                             refElA.appendChild(titleEl);
                             refElA.appendChild(authorEl);

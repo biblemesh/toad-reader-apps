@@ -67,8 +67,8 @@ const EnhancedMembers = React.memo(({
     [ members, bookId, classroomUid ],
   )
 
-  const RemoveIcon = useCallback(({ style }) => <Icon name='remove-circle' style={styles.removeIcon} />, [])
-  
+  const RemoveIcon = useCallback(() => <Icon name='remove-circle' style={[styles.removeIcon]} />, [])
+
   const renderItem = useCallback(
     ({ item, index }) => (
       <ListItem
@@ -124,7 +124,7 @@ const mapStateToProps = ({ books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   deleteClassroomMember,
 }, dispatch)
 

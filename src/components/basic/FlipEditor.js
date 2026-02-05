@@ -12,8 +12,8 @@ const FlipEditor = React.memo(({
 
   const customUpdateContent = useCallback(
     value => {
-      updateContent && updateContent(value)
-      onChangeInfo && onChangeInfo({ id, value, info })
+      if (updateContent) updateContent(value);
+      if (onChangeInfo) onChangeInfo({ id, value, info });
     },
     [ id, info, updateContent, onChangeInfo ],
   )

@@ -192,12 +192,12 @@ const HighlighterInstructorHighlightSection = React.memo(({
   )
 })
 
-const mapStateToProps = ({ idps, accounts, books, userDataByBookId }) => ({
+const mapStateToProps = ({ books, userDataByBookId }) => ({
   books,
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   createInstructorHighlight,
   deleteInstructorHighlight,
 }, dispatch)

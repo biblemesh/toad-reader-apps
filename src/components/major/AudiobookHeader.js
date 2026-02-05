@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { StyleSheet } from "react-native"
 import useToggle from "react-use/lib/useToggle"
-import { Modal, Card } from "@ui-kitten/components"
+import { Modal } from "@ui-kitten/components"
 import { View, Text } from "react-native"
 import { i18n } from "inline-i18n"
 import { bindActionCreators } from "redux"
@@ -71,7 +71,7 @@ const AudiobookHeader = React.memo(({
         iconStyle={styles.libraryIcon}
         onPress={historyGoBackToLibrary}
         uiStatus={wideMode ? "faded" : null}
-        iconName={require('../../../assets/library.png')}
+        iconName={require('../../../assets/library.png')}  // eslint-disable-line @typescript-eslint/no-require-imports
       />
     ),
     [ wideMode ],
@@ -136,7 +136,7 @@ const mapStateToProps = ({ metadataKeys }) => ({
   metadataKeys,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(AudiobookHeader)

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { i18n } from "inline-i18n"
 import { bindActionCreators } from "redux"
@@ -142,7 +142,9 @@ const MetadataDialog = ({
           try {
             const json = await response.json()
             errorMessage = json.errorMessage
-          } catch(err) {}
+          } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+            /* empty */
+          }
 
           setErrorMessage(errorMessage)
           return
@@ -155,14 +157,14 @@ const MetadataDialog = ({
           updateMetadataKeys(metadataKeys)
           setEditedMetadataKeys(cloneObj(metadataKeys))
 
-        } catch(err) {
+        } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
           setErrorMessage(i18n("Configuration error"))
           return
         }
 
         console.log(`...done updating metadata keys (accountId: ${accountId}).`)
 
-      } catch(err) {
+      } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
 
         setSubmitting(false)
         setErrorMessage(i18n("Internet connection error"))
@@ -219,10 +221,10 @@ const MetadataDialog = ({
               </>
             }
 
-            {editedMetadataKeys.map(({ id, name, options }, idx) => {
+            {editedMetadataKeys.map(({ name, options }, idx) => {
               const upDisabled = idx === 0 || submitting
               const downDisabled = idx === editedMetadataKeys.length - 1 || submitting
-            
+
               return (
                 <View key={idx} style={styles.line}>
                   <View style={styles.keyLine}>
@@ -285,7 +287,7 @@ const MetadataDialog = ({
                   </Text>
                   {!!options &&
                     <Text key={idx} style={styles.options}>
-                      {combineItems(...(options || []).map((option, idx) => option))}
+                      {combineItems(...(options || []).map((option) => option))}
                     </Text>
                   }
                 </View>
@@ -332,7 +334,7 @@ const mapStateToProps = ({ idps, accounts, metadataKeys }) => ({
   metadataKeys,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   updateMetadataKeys,
 }, dispatch)
 

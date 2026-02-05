@@ -11,6 +11,13 @@ export default tseslint.config([
   prettierConfig, // Disable rules that conflict with Prettier
   pluginReact.configs.flat['jsx-runtime'],
   {
+    files: ['./web-build-overrides/**/*.js'],
+    languageOptions: {
+      sourceType: 'script',
+      globals: globals.browser, // Enable browser global variables
+    },
+  },
+  {
     files: ['**/*.{js,mjs,cjs,jsx}'],
     languageOptions: {
       ecmaVersion: 'latest',

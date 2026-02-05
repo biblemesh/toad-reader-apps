@@ -1,4 +1,3 @@
-import React from "react"
 import Constants from 'expo-constants'
 import { StyleSheet, Platform, Animated } from "react-native"
 // import { i18n } from "inline-i18n"

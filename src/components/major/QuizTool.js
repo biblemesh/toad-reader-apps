@@ -153,7 +153,7 @@ const QuizTool = React.memo(({
       if(currentQuestionSubmitted) return
 
       setCurrentQuestionSubmitted(true)
-      
+
       if(!viewingPreview && pageIndex === questions.length - 1) {
         const score = numAnsweredCorrectly / preppedQuestions.length
 
@@ -329,7 +329,7 @@ const mapStateToProps = ({ books }) => ({
   books,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   submitToolEngagement,
 }, dispatch)
 

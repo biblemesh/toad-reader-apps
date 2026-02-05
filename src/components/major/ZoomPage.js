@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react"
+import { useRef, useEffect } from "react"
 import Constants from 'expo-constants'
 import { Animated, Easing, StyleSheet, Image } from "react-native"
 import { bindActionCreators } from "redux"
@@ -59,7 +59,6 @@ const ZoomPage = ({
   const {
     fullPageWidth,
     fullPageHeight,
-    truePageHeight,
     truePageMarginTop,
   } = useAdjustedDimensions({ sidePanelSettings })
   const wideMode = useWideMode()
@@ -86,7 +85,7 @@ const ZoomPage = ({
               useNativeDriver: true,
             }
           ).start(onZoomCompletion)
-      
+
         } else {
           Animated.sequence([
             Animated.timing(
@@ -108,12 +107,12 @@ const ZoomPage = ({
               }
             )
           ]).start(onZoomCompletion)
-    
+
           requestAnimationFrame(() => {
             opacity.current = new Animated.Value(1)
           })
-      
-        }    
+
+        }
       })
     },
     [ zoomed, zoomScale ],
@@ -199,7 +198,7 @@ const mapStateToProps = ({ sidePanelSettings }) => ({
   sidePanelSettings,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(ZoomPage)

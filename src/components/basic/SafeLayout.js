@@ -1,4 +1,3 @@
-import React from "react"
 import { StyleSheet, View } from "react-native"
 import { Layout } from "@ui-kitten/components"
 import { useSafeAreaInsets } from 'react-native-safe-area-context'

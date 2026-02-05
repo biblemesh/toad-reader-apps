@@ -1,5 +1,5 @@
 import Constants from 'expo-constants'
-import React, { useCallback } from "react"
+import { useCallback } from "react"
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native"
 import { i18n } from "inline-i18n"
 import useToggle from "react-use/lib/useToggle"

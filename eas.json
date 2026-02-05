@@ -1,55 +1,73 @@
 {
-  "cli": {
-    "version": ">= 3.7.2"
-  },
   "build": {
+    "beta": {
+      "channel": "beta",
+      "distribution": "internal",
+      "env": {
+        "channel": "beta"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
+      }
+    },
     "development": {
+      "channel": "development",
       "developmentClient": true,
       "distribution": "internal",
-      "channel": "development",
+      "env": {
+        "EXPO_UPDATES_ENABLE": "false",
+        "channel": "development"
+      },
       "ios": {
         "resourceClass": "m-medium",
         "simulator": true
+      }
+    },
+    "production": {
+      "android": {
+        "autoIncrement": "versionCode"
       },
+      "channel": "production",
       "env": {
-        "channel": "development",
-        "EXPO_UPDATES_ENABLE": "false"
+        "channel": "production"
+      },
+      "ios": {
+        "autoIncrement": "buildNumber",
+        "resourceClass": "m-medium"
       }
     },
     "staging": {
       "android": {
-        "distribution": "internal"
+        "autoIncrement": "versionCode",
+        "distribution": "store"
       },
       "channel": "staging",
-      "ios": {
-        "distribution": "store",
-        "resourceClass": "m-medium"
-      },
       "env": {
         "channel": "staging"
-      }
-    },
-    "beta": {
-      "distribution": "internal",
-      "channel": "beta",
-      "ios": {
-        "resourceClass": "m-medium"
       },
-      "env": {
-        "channel": "beta"
-      }
-    },
-    "production": {
-      "channel": "production",
       "ios": {
+        "autoIncrement": "buildNumber",
+        "distribution": "store",
         "resourceClass": "m-medium"
-      },
-      "env": {
-        "channel": "production"
       }
     }
   },
+  "cli": {
+    "appVersionSource": "local",
+    "version": ">= 12.0.0"
+  },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "releaseStatus": "draft",
+        "track": "internal"
+      }
+    },
+    "staging": {
+      "android": {
+        "releaseStatus": "draft",
+        "track": "internal"
+      }
+    }
   }
 }

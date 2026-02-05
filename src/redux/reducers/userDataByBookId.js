@@ -139,7 +139,7 @@ const logHighlightEvent = ({
 }
 
 export default function(state = initialState, action) {
-    
+
   const newState = {...state}
   const userDataForThisBook = newState[action.bookId] || {}
   let highlights = (userDataForThisBook.highlights || [])
@@ -211,7 +211,7 @@ export default function(state = initialState, action) {
                   return member
                 }
                 return newMember
-              })        
+              })
               if(!foundMember) {
                 newMembers.push(member)
               }
@@ -227,7 +227,7 @@ export default function(state = initialState, action) {
                 return newTool
               })
               if(!foundTool) {
-                newTool.push(tool)
+                newTools.push(tool);
               }
             })
 
@@ -406,7 +406,7 @@ export default function(state = initialState, action) {
         if(newState[action.bookId].progress !== undefined) {
           resetUserDataForThisBook = newState[action.bookId].progress
         }
-  
+
         if(newState[action.bookId].updated_at !== undefined) {
           resetUserDataForThisBook = newState[action.bookId].updated_at
         }
@@ -444,9 +444,9 @@ export default function(state = initialState, action) {
       classrooms.push(newClassroom)
 
       if(action.based_off_classroom_uid) {
-        classrooms.some((classroom, idx) => {
+        classrooms.some((classroom) => {
           if(classroom.uid === action.based_off_classroom_uid) {
-  
+
             ;[
               'syllabus',
               'scheduleDates',
@@ -471,7 +471,7 @@ export default function(state = initialState, action) {
             newClassroom.tools = []
             const oldToNewUidMap = {}
             const pushOnTools = doDraftsOfPublished => {
-              ;(classroom.tools || []).forEach(({ uid: oldUid, currently_published_tool_uid, _delete, classroom_group_uid, ...otherToolInfo }) => {
+              ;(classroom.tools || []).forEach(({ uid: oldUid, currently_published_tool_uid, _delete, ...otherToolInfo }) => {
                 if(_delete) return
                 if(doDraftsOfPublished && !currently_published_tool_uid) return
                 if(!doDraftsOfPublished && currently_published_tool_uid) return
@@ -500,7 +500,7 @@ export default function(state = initialState, action) {
                 created_at: now,
               })
             })
-  
+
           }
         })
       }
@@ -549,7 +549,7 @@ export default function(state = initialState, action) {
           ...userDataForThisBook,
           classrooms,
         }
-  
+
         return newState
 
       }
@@ -558,7 +558,7 @@ export default function(state = initialState, action) {
     }
 
     case "UPDATE_CLASSROOM_MEMBER": {
-      if(classrooms.some((classroom, idx) => {
+      if(classrooms.some((classroom) => {
         if(classroom.uid === action.classroomUid) {
 
           return (classroom.members || []).some((member, idx) => {
@@ -596,7 +596,7 @@ export default function(state = initialState, action) {
           ...userDataForThisBook,
           classrooms,
         }
-  
+
         return newState
 
       }
@@ -648,7 +648,7 @@ export default function(state = initialState, action) {
           ...userDataForThisBook,
           classrooms,
         }
-  
+
         return newState
 
       }
@@ -705,7 +705,7 @@ export default function(state = initialState, action) {
                 ...classroom,
                 tools,
               }
-  
+
               if(tool.published_at && action._delete) {
                 logPublishDeleteToolEvent({
                   eventName: `Delete published tool`,
@@ -727,7 +727,7 @@ export default function(state = initialState, action) {
           ...userDataForThisBook,
           classrooms,
         }
-  
+
         return newState
 
       }
@@ -797,7 +797,7 @@ export default function(state = initialState, action) {
           return tools.some((tool, idx2) => {
             if(tool.uid === action.toolUid) {
               tools[idx2] = tool = { ...tool }
-              
+
               if(tool.engagement) {
                 tool.engagement = { ...tool.engagement }
               } else {
@@ -814,14 +814,14 @@ export default function(state = initialState, action) {
                   tool.engagement[param] = action[param]
                 }
               })
-  
+
               tool.engagement.updated_at = now
 
               classrooms[idx] = {
                 ...classroom,
                 tools,
               }
-  
+
               return true
             }
           })
@@ -832,7 +832,7 @@ export default function(state = initialState, action) {
           ...userDataForThisBook,
           classrooms,
         }
-  
+
         return newState
 
       }
@@ -889,7 +889,7 @@ export default function(state = initialState, action) {
           ...userDataForThisBook,
           classrooms,
         }
-  
+
         return newState
 
       }
@@ -921,7 +921,7 @@ export default function(state = initialState, action) {
                     ...classroom,
                     tools,
                   }
-      
+
                   return true
                 }
               })
@@ -934,7 +934,7 @@ export default function(state = initialState, action) {
           ...userDataForThisBook,
           classrooms,
         }
-  
+
         return newState
 
       }
@@ -1004,7 +1004,7 @@ export default function(state = initialState, action) {
               instructorHighlight._delete = true
 
               // Since there is no updated_at one's own instructor highlights, we need
-              // to update created_at so patch knows to run it. This field will not 
+              // to update created_at so patch knows to run it. This field will not
               // actually get updated in the db.
               instructorHighlight.created_at = now
 
@@ -1012,7 +1012,7 @@ export default function(state = initialState, action) {
                 ...classroom,
                 instructorHighlights,
               }
-  
+
               return true
             }
           })
@@ -1023,7 +1023,7 @@ export default function(state = initialState, action) {
           ...userDataForThisBook,
           classrooms,
         }
-  
+
         return newState
 
       }
@@ -1087,7 +1087,7 @@ export default function(state = initialState, action) {
           ...userDataForThisBook,
           classrooms,
         }
-  
+
         return newState
 
       }

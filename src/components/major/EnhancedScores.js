@@ -165,18 +165,18 @@ const EnhancedScores = React.memo(({
             })
           })
         })
-  
+
         students.forEach(({ user_id }) => {
           studentIndexes[user_id] = studentIndex++
         })
-  
+
         dataColumns = orderedQuizzes.map(({ name, scores }) => {
           const scoreArray = []
-  
+
           Object.keys(scores).forEach(userId => {
             scoreArray[studentIndexes[userId]] = scores[userId]
           })
-  
+
           return [
             name || i18n("Quiz", "", "enhanced"),
             ...scoreArray.map(score => score == undefined ? `` : i18n("{{percent}}%", {
@@ -349,7 +349,7 @@ const mapStateToProps = ({ idps, accounts, books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(EnhancedScores)

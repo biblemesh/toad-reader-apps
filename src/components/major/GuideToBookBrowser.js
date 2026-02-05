@@ -128,7 +128,7 @@ const GuideToBookBrowser = React.memo(({
         <Icon
           style={styles.highlightedLibraryIcon}
           pack="image"
-          name={require('../../../assets/library.png')}
+          name={require('../../../assets/library.png')}  // eslint-disable-line @typescript-eslint/no-require-imports
         />
       </View>
       <View style={styles.backToLibraryText}>
@@ -171,7 +171,7 @@ const mapStateToProps = ({ completedGuides }) => ({
   completedGuides,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   addCompletedGuide,
 }, dispatch)
 

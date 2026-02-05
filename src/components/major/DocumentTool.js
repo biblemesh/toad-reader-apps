@@ -19,7 +19,7 @@ const DocumentTool = React.memo(({
   books,
 }) => {
 
-  const { accountId, idpId, classroomUid } = useClassroomInfo({ books, bookId })
+  const { accountId, classroomUid } = useClassroomInfo({ books, bookId })
   const baseUri = useAssetBaseUri({ idps, accounts, forceCookieInUri: !classroomQueryString })
   const baseUriWithCookieInPath = useAssetBaseUri({ idps, accounts, forceCookieInUri: true })
 
@@ -45,7 +45,7 @@ const mapStateToProps = ({ idps, accounts, books }) => ({
   books,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(DocumentTool)

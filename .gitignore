@@ -1,6 +1,6 @@
 /.expo/*
 /.devcontainer/staging/.env
-/assets/*
+/assets
 /dist/*
 /node_modules/*
 /src/utils/translations/current.json

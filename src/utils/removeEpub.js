@@ -6,21 +6,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getBooksDir, getSnapshotsDir } from "./toolbox"
 import { cancelFetch } from "./epubDownloader"
 
-// This constant is better here than in app.json since it needs to accord with the 
+// This constant is better here than in app.json since it needs to accord with the
 // current version of the reader apps, not specific tenants.
 const MOST_RECENT_CHANGE_REQUIRING_PAGE_RECAPTURE_DATE = "2024-02-17"
 // The exact value of this constant does not so much matter. It just needs to uniquely
 // change each time there is a modification to the apps that may change the layout
 // flow of the epubs.
 
-export const removeEpub = async ({ books, bookId, removeFromBookDownloadQueue, setDownloadStatus, clearTocAndSpines, clearUserDataExceptProgress }) => {
+export const removeEpub = async ({ bookId, removeFromBookDownloadQueue, setDownloadStatus, clearTocAndSpines, clearUserDataExceptProgress }) => {
   const localBaseUri = `${getBooksDir()}${bookId}/`
   const searchIndexLocalUri = `${FileSystem.documentDirectory}search_indexes/${bookId}.json`
 
   removeFromBookDownloadQueue({ bookId })
   cancelFetch({ bookId })
   setDownloadStatus({ bookId, downloadStatus: 0 })
-  clearTocAndSpines && clearTocAndSpines({ bookId })
+  if (clearTocAndSpines) { clearTocAndSpines({ bookId }); }
   clearUserDataExceptProgress({ bookId })
 
   const asyncTasks = [
@@ -28,7 +28,7 @@ export const removeEpub = async ({ books, bookId, removeFromBookDownloadQueue, s
     FileSystem.deleteAsync(`${getSnapshotsDir()}${bookId}`, { idempotent: true }),
     FileSystem.deleteAsync(searchIndexLocalUri, { idempotent: true }),
   ]
-  
+
   await Promise.all(asyncTasks)
 
   console.log(`Done removing snapshots and contents for book ${bookId}.`)

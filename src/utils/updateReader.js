@@ -15,7 +15,7 @@ export const updateReader = async ({ setReaderStatus }) => {
     setReaderStatus({ readerStatus: "updating" })
     console.log('Updating reader...')
 
-    await FileSystem.makeDirectoryAsync(readerDestinationPath.replace(/\/[^\/]*$/, ''), { intermediates: true })
+    await FileSystem.makeDirectoryAsync(readerDestinationPath.replace(/\/[^/]*$/, ''), { intermediates: true })
     await FileSystem.writeAsStringAsync(readerDestinationPath, getReaderCode())
 
     console.log('...reader updated.')

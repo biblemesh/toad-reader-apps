@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react"
+import { useRef, useCallback } from "react"
 import { StyleSheet, View, Text } from "react-native"
 // import { i18n } from "inline-i18n"
 import { useLayout } from '@react-native-community/hooks'
@@ -20,10 +20,6 @@ const styles = StyleSheet.create({
   },
   durationTime: {
     fontSize: 11,
-  },
-  positionDurationTimeSeparator: {
-    marginHorizontal: 5,
-    opacity: .5,
   },
   progressLineContainer: {
     paddingVertical: 15,
@@ -92,9 +88,12 @@ const AudiobookPlayerProgressBar = ({
   const onResponderRelease = useCallback(
     () => {
       if(typeof wasPlayingWhenPositionChangeBegan.current === `boolean`) {
-        wasPlayingWhenPositionChangeBegan.current && play()
-        !wasPlayingWhenPositionChangeBegan.current && pause()
-        wasPlayingWhenPositionChangeBegan.current = null
+        if (wasPlayingWhenPositionChangeBegan.current) {
+          play();
+        } else {
+          pause();
+        }
+        wasPlayingWhenPositionChangeBegan.current = null;
       }
       setClearScanIconToShowTimeout(setScanIconToShow, 500)
     },

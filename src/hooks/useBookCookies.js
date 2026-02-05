@@ -21,9 +21,9 @@ export const getBookCookie = async ({ books, accounts, idp, setBookCookies, book
   const accountId = Object.keys(book.accounts)[0]
   const { cookie } = accounts[accountId]
   const dataOrigin = getDataOrigin(idp)
-  
+
   try {
-    
+
     let needsFreshCookies = getNeedsFreshCookies(book)
     let { bookCookies } = book || {}
 
@@ -61,7 +61,9 @@ export const getBookCookie = async ({ books, accounts, idp, setBookCookies, book
       return bookCookiesToCookieStr(bookCookies)
     }
 
-  } catch(e) {}
+  } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+    /* empty */
+  }
 
   return false
 }

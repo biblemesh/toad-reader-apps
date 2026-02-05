@@ -401,7 +401,7 @@ const mapStateToProps = ({ books, userDataByBookId }) => ({
   userDataByBookId,
 });
 
-const matchDispatchToProps = (dispatch, x) =>
+const matchDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       createTool,

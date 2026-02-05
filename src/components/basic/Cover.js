@@ -1,4 +1,3 @@
-import React, { useState, useCallback } from "react"
 import Constants from 'expo-constants'
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -49,7 +48,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   trial: {
-    backgroundColor: 'black',
     position: 'absolute',
     top: -5,
     right: -20,
@@ -80,7 +78,7 @@ const Cover = ({
   idps,
 }) => {
 
-  const { title, flags, downloadStatus, epubSizeInMB, totalCharacterCount, accounts, audiobookInfo } = bookInfo
+  const { title, flags, downloadStatus, accounts } = bookInfo
   const coverHref = useCoverHref({ bookInfo, bookId })
   const idpId = Object.keys(accounts)[0].split(':')[0]
   const downloadProgress = useDownloadProgress({ downloadProgressByBookId, bookInfo, bookId })
@@ -101,7 +99,7 @@ const Cover = ({
           {
             width: bookWidth,
             height: bookHeight,
-          },  
+          },
         ]}
       />
 
@@ -142,7 +140,7 @@ const mapStateToProps = ({ downloadProgressByBookId, idps }) => ({
   idps,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(Cover)

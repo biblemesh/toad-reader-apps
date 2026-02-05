@@ -52,7 +52,7 @@ const Highlighter = React.memo(({
   setSelectionText,
   updateNoteInEdit,
   updateSketchInEdit,
-  
+
   books,
   userDataByBookId,
 
@@ -60,11 +60,11 @@ const Highlighter = React.memo(({
 }) => {
 
   // We do not use useState here, because we don't want to wait until the next render.
-  // We do not use a simple local variable here, because we sometimes want it to 
+  // We do not use a simple local variable here, because we sometimes want it to
   // not change from the previous value.
   const highlight = useRef()
-  const isEditingNote = noteInEdit != null 
-  const isEditingSketch = sketchInEdit !== undefined 
+  const isEditingNote = noteInEdit != null
+  const isEditingSketch = sketchInEdit !== undefined
 
   if(noteInEdit == null && sketchInEdit == null) {
 
@@ -268,7 +268,7 @@ const mapStateToProps = ({ books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setHighlight,
 }, dispatch)
 

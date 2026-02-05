@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo } from "react"
 import Constants from 'expo-constants'
 import { StyleSheet, View, Text, Platform } from "react-native"
 import { Button } from "@ui-kitten/components"
@@ -153,10 +153,10 @@ const BookInfo = ({
       let adminInfo = false
       Object.keys(bookInfo.accounts).some(accountId => {
         const { isAdmin, cookie } = accounts[accountId] || {}
-    
+
         if(isAdmin) {
           const { subscriptions } = bookInfo.accounts[accountId]
-        
+
           adminInfo = {
             idpId: getIdsFromAccountId(accountId).idpId,
             accountId,
@@ -460,7 +460,7 @@ const mapStateToProps = ({ accounts, idps, subscriptions }) => ({
   subscriptions,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   deleteBook,
   setSubscriptions,
 }, dispatch)

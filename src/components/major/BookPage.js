@@ -75,7 +75,6 @@ const BookPage = React.memo(props => {
     startRecordReading,
     endRecordReading,
     indicateRecordReadingActivity,
-    flushReadingRecords,
     setSelectedToolUid,
   } = props
 
@@ -113,7 +112,7 @@ const BookPage = React.memo(props => {
       if(widget) {
         // pass ref info to widget_setup
         const { title, author, spines } = books[bookId]
-        
+
         let spineLabel = ''
         ;(spines || []).some(({ idref, label }) => {
           if(idref === latestLocation.spineIdRef) {
@@ -162,7 +161,7 @@ const BookPage = React.memo(props => {
           toolCfiCounts,
         })
       })
-  
+
       // TODO: This will need to change as I do the "Do you want to go to the latest location" functionality.
       if(loaded.current) {
         doAfterLoaded.current.forEach(func => func())
@@ -191,7 +190,7 @@ const BookPage = React.memo(props => {
   useDidUpdate(
     () => {
       const insertTools = () => postMessage(webView.current, 'insertTools', { toolCfiCounts })
-      
+
       if(loaded.current) {
         insertTools()
       } else {
@@ -336,7 +335,7 @@ const BookPage = React.memo(props => {
               ordering,
             })),
           })
-  
+
           return true
         }
 
@@ -363,7 +362,7 @@ const BookPage = React.memo(props => {
         case 'textUnselected':
           if(getNoteInEdit() != null) break
           if(getSketchInEdit() !== undefined) break
-        case 'textSelected': {
+        case 'textSelected': {  // eslint-disable-line no-fallthrough
           setSelectionInfo(data.payload)
           indicateRecordReadingActivity()
           return true
@@ -393,7 +392,7 @@ const BookPage = React.memo(props => {
       if(!payload) {
         setSelectionInfo(undefined)
       }
-      Platform.OS !== 'ios' && postMessage(webView.current, 'setSelectionText', payload)
+      if (Platform.OS !== 'ios') postMessage(webView.current, 'setSelectionText', payload);
     },
     [],
   )
@@ -495,7 +494,7 @@ const mapStateToProps = ({ books, userDataByBookId, displaySettings }) => ({
   displaySettings,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setLatestLocation,
   startRecordReading,
   endRecordReading,

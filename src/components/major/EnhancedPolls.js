@@ -218,7 +218,7 @@ const EnhancedPolls = React.memo(({
                           ]
                         }
                       }
-                    }]}              
+                    }]}
                     colorScale={[ "blue", "red", "green" ][idx % 3]}
                   />
                   <Text style={styles.numAnswered}>
@@ -248,7 +248,7 @@ const mapStateToProps = ({ idps, accounts, books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(EnhancedPolls)

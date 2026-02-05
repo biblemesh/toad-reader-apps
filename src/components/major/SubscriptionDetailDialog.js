@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react"
+import { useState, useCallback } from "react"
 import { StyleSheet, View } from "react-native"
 import { i18n } from "inline-i18n"
 

@@ -105,7 +105,7 @@ const DisplaySettings = React.memo(({
 
   const LessIcon = useCallback(({ style }) => <Icon name='remove' style={[ styles.icon, style ]} />, [])
   const MoreIcon = useCallback(({ style }) => <Icon name='add' style={[ styles.icon, style ]} />, [])
-  
+
   return (
     <>
       {!!open && <BackFunction func={requestHide} />}
@@ -185,7 +185,7 @@ const mapStateToProps = ({ displaySettings }) => ({
   displaySettings,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setTextSize,
   setTextSpacing,
   setTheme,

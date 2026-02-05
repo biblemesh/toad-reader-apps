@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import { useCallback } from "react"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
 import { TouchableOpacity, Platform, Alert } from "react-native"
@@ -53,7 +53,7 @@ const LibraryBook = ({
     },
     [ bookId, setDownloadStatus, pushToBookDownloadQueue, books ],
   )
-  
+
   const onLongPress = useCallback(
     () => {
       const { downloadStatus, audiobookInfo } = getBookInfo(bookId)
@@ -115,7 +115,7 @@ const mapStateToProps = ({ books }) => ({
   books,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   removeFromBookDownloadQueue,
   setDownloadStatus,
   pushToBookDownloadQueue,

@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import { useRef } from "react"
 import { StyleSheet, View, TouchableWithoutFeedback, Platform } from "react-native"
 
 import Search from "../major/Search"

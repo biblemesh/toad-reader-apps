@@ -1,5 +1,5 @@
 import Constants from 'expo-constants'
-import React, { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { Audio } from 'expo-av'
 import useUpdateEffect from "react-use/lib/useUpdateEffect"
@@ -43,10 +43,7 @@ const AudiobookPlayer = ({
   goStartRecordReading,
   endRecordReading,
   audiobookInfo,
-  author,
   downloadStatus,
-  epubSizeInMB,
-  title,
 }) => {
 
   const { spines=[] } = audiobookInfo || {}
@@ -67,10 +64,9 @@ const AudiobookPlayer = ({
   const getFilename = useInstanceValue(filename)
   const getSpines = useInstanceValue(spines)
   const uri = `${downloadProgressByFilename[filename] === 1 ? localSourceBase : uriBase}${filename}`
-  const getUri = useInstanceValue(uri)
   const [ setUpdateLatestLocationTimeout ] = useSetTimeout()
 
-  const [ durationMS, setDurationMS, getDurationMS ] = useRefState(durationMSFromInfo)
+  const [ durationMS, setDurationMS ] = useRefState(durationMSFromInfo)
 
   const soundObj = useRef()
   const totalTimePlayed = useRef(0)
@@ -79,7 +75,7 @@ const AudiobookPlayer = ({
   const previousFilename = useRef()
   const isUnmounted = useRef(false)
 
-  const { width, height } = useDimensions().window
+  const { width } = useDimensions().window
 
   const [ setPositionUpdateInterval, clearPositionUpdateInterval ] = useSetInterval()
 
@@ -118,7 +114,7 @@ const AudiobookPlayer = ({
   )
 
   const onPlaybackStatusUpdate = useCallback(
-    ({ isLoaded, error, isPlaying, isBuffering, positionMillis, durationMillis, didJustFinish, uri }) => {
+    ({ isLoaded, error, isPlaying, isBuffering, positionMillis, didJustFinish }) => {
 
       if(error) {
         clearPositionUpdateInterval()
@@ -225,7 +221,7 @@ const AudiobookPlayer = ({
               )
           )
 
-          const { sound, status } = await Audio.Sound.createAsync(
+          const { sound } = await Audio.Sound.createAsync(
             {
               uri,
               ...(downloadProgressByFilename[filename] === 1 ? {} : getReqOptionsWithAdditions({
@@ -264,7 +260,7 @@ const AudiobookPlayer = ({
           }
           setError(error.message.replace(/^.*Exception: /))
         }
-  
+
       })()
     },
     [ uri, !!cookie ],

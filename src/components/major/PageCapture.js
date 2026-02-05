@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect, useCallback } from "react"
+import { i18n } from 'inline-i18n';
+import { useState, useRef, useEffect, useCallback } from "react"
 import { Platform, View } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
@@ -51,7 +52,7 @@ const PageCapture = ({
 }) => {
 
   const { historyPush } = useRouterState()
-  
+
   const [ toolSpots, setToolSpots ] = useState([])
 
   const loadSpineAndGetPagesInfoAlreadyCalled = useRef(false)
@@ -100,7 +101,7 @@ const PageCapture = ({
 
       if(getCfisOrShiftAndSnap.current) {
         getCfisOrShiftAndSnap.current()
-    
+
       } else {
         if(loadSpineAndGetPagesInfoAlreadyCalled.current) return
 
@@ -111,7 +112,7 @@ const PageCapture = ({
           toolCfiCounts: toolCfiCountsInThisSpine,
           width: realWidth,
         })
-    
+
         pageCfis.current = []
         loadSpineAndGetPagesInfoAlreadyCalled.current = true
       }
@@ -175,7 +176,7 @@ const PageCapture = ({
     switch(data.identifier) {
 
       case 'pagesInfo': {
-    
+
         if(spineIdRef !== data.payload.spineIdRef) return // just in case
 
         reportInfoOrCapture(uriAsKey)
@@ -275,7 +276,7 @@ const PageCapture = ({
           key: [getPageCfisKey({ displaySettings, width, height, spineInlineToolsHash })],
           pageCfis: pageCfis.current.map(cfi => cfi || ''),
         })
-        
+
         reportFinished(uriAsKey)
 
         pageCfis.current = []
@@ -358,7 +359,7 @@ const PageCapture = ({
 const mapStateToProps = () => ({
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   addSpinePageCfis,
 }, dispatch)
 

@@ -98,7 +98,7 @@ const PollTool = React.memo(({
       setSelectedAnswer(answer)
 
       if(viewingPreview) return
-      
+
       updateToolEngagement({
         bookId,
         classroomUid,
@@ -168,7 +168,7 @@ const mapStateToProps = ({ books }) => ({
   books,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   updateToolEngagement,
 }, dispatch)
 

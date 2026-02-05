@@ -48,7 +48,7 @@ const BookTools = React.memo(({
     spots
       .map(({ cfi, y, ordering }) => {
         if(ordering !== 0) return null
-    
+
         return (spineToolsByCfi[cfi] || []).map(({ uid, toolType, data, published_at, name }, idx) => (
           <View
             key={uid}
@@ -72,7 +72,7 @@ const BookTools = React.memo(({
                 bookId,
                 uid,
                 getRouterState,
-                historyPush,      
+                historyPush,
               })}
               onToolMove={onToolMove}
               onToolRelease={onToolRelease}
@@ -93,7 +93,7 @@ const mapStateToProps = ({ books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setSelectedToolUid,
 }, dispatch)
 

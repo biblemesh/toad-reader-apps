@@ -12,7 +12,6 @@ import useRouterState from "../../hooks/useRouterState"
 import { getDataOrigin, getReqOptionsWithAdditions, getIdsFromAccountId, safeFetch } from '../../utils/toolbox'
 import { refreshUserData } from "../../utils/syncUserData"
 import { setCurrentClassroom } from "../../redux/actions"
-import useDimensions from "../../hooks/useDimensions"
 
 import Dialog from "./Dialog"
 import DialogInput from "../basic/DialogInput"
@@ -54,7 +53,6 @@ const ConnectToAClassroom = React.memo(({
   const [ mode, setMode ] = useState("text")
   const [permission, requestPermission] = useCameraPermissions()
 
-  const windowDimensions = useDimensions().window
   const safeAreaInsets = useSafeAreaInsets()
 
   const { historyPush, historyReplace } = useRouterState()
@@ -97,7 +95,9 @@ const ConnectToAClassroom = React.memo(({
           },
           body: JSON.stringify({ code: qrCode || code }),
         }))
-      } catch(e) {}
+      } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+        /* empty */
+      }
 
       if(!response || response.status >= 400) {
         historyPush("/error", {
@@ -230,7 +230,7 @@ const mapStateToProps = ({ idps, accounts, books }) => ({
   books,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
   setCurrentClassroom,
 }, dispatch)
 

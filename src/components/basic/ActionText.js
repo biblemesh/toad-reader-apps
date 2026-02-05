@@ -28,7 +28,7 @@ const ActionText = React.memo(({
 
   const customOnPress = useCallback(
     () => {
-      onPress && onPress({ id, info })
+      if (onPress) onPress({ id, info });
     },
     [ id, info, onPress ],
   )

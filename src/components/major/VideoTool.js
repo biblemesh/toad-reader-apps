@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export const vimeoRegex = /^https:\/\/(?:www\.)?vimeo\.com\/(?:.*?\/video\/|channels\/[^\/]*\/)?([0-9]+)(?:\/[^\/]*)?\/?$/
+export const vimeoRegex = /^https:\/\/(?:www\.)?vimeo\.com\/(?:.*?\/video\/|channels\/[^/]*\/)?([0-9]+)(?:\/[^/]*)?\/?$/
 export const youtubeRegex = /^https:\/\/(?:www\.)?youtube\.com\/watch\?v=([^&]*).*$/
 export const shortYoutubeRegex = /^https:\/\/youtu\.be\/([^?]+).*$/
 
@@ -75,7 +75,9 @@ const VideoTool = React.memo(({
       if(fullscreenUpdate === VideoFullscreenUpdate.PLAYER_WILL_DISMISS) {
         try {
           videoRef.current.pauseAsync()
-        } catch(err) {}  // ignore as it just means the state is already what I am setting it to be
+        } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+          // ignore as it just means the state is already what I am setting it to be
+        }
       }
 
       if(Platform.OS === 'android') {
@@ -112,7 +114,9 @@ const VideoTool = React.memo(({
             } else if(didJustFinish) {
               await videoRef.current.dismissFullscreenPlayer()
             }
-          } catch(err) {}  // ignore as it just means the state is already what I am setting it to be
+          } catch(err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+            // ignore as it just means the state is already what I am setting it to be
+          }
         }
 
         prevIsPlaying.current = isPlaying
@@ -161,7 +165,7 @@ const VideoTool = React.memo(({
 
     if(videoLink.match(vimeoRegex)) {
 
-      const vimeoIframeId = `vimeoiframe-${videoLink.replace(/"/g, '')}-${startTime}-${endTime}`
+      //const vimeoIframeId = `vimeoiframe-${videoLink.replace(/"/g, '')}-${startTime}-${endTime}`
 
       // if((startSecs || endSecs) && Platform.OS === 'web') {
 
@@ -216,7 +220,7 @@ const VideoTool = React.memo(({
       // }
 
       uri = videoLink.replace(
-        vimeoRegex, 
+        vimeoRegex,
         `https://player.vimeo.com/video/$1`
           + `?portrait=0`
           + `&autoplay=0`
@@ -244,7 +248,7 @@ const VideoTool = React.memo(({
       if(matches && matches[1]) {
 
         uri = videoLink.replace(
-          regex, 
+          regex,
           `https://www.youtube.com/embed/$1`
             + `?rel=0`
             + `&modestbranding=1`

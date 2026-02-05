@@ -143,7 +143,7 @@ const EnhancedConnecting = React.memo(({
             {i18n("Users with the enhanced version of this book can connect to this classroom via the main enhanced pull-down.", "", "enhanced")}
           </Text>
           <Image
-            source={require("../../../assets/qr-code-how-to.png")}
+            source={require("../../../assets/qr-code-how-to.png")}  // eslint-disable-line @typescript-eslint/no-require-imports
             style={styles.image}
           />
         </View>
@@ -157,7 +157,7 @@ const mapStateToProps = ({ books, userDataByBookId }) => ({
   userDataByBookId,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(EnhancedConnecting)

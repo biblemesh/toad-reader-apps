@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import { useCallback } from "react"
 import { StyleSheet, Text } from "react-native"
 import { i18n } from "inline-i18n"
 import { Link } from "../../hooks/useRouterState"
@@ -8,12 +8,7 @@ import { connect } from "react-redux"
 import FileImporter from "./FileImporter"
 
 const styles = StyleSheet.create({
-  failed: {
-    fontWeight: 'bold',
-    color: "red",
-  },
-  result: {
-  },
+  result: {},
   bookId: {
     color: "rgba(0,0,0,.4)",
   },
@@ -33,7 +28,7 @@ const BookImporter = ({
   const getFileLink = useCallback(
     ({ mode, name, result }) => {
       return (
-        !!(mode === 'complete' && (result || {}).bookId)
+        mode === 'complete' && (result || {}).bookId
           ? (
             <Link
               to={`/book/${(result || {}).bookId}`}
@@ -109,7 +104,7 @@ const mapStateToProps = ({ accounts, idps }) => ({
   idps,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(BookImporter)

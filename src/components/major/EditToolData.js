@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
   input: {
     paddingLeft: 4,
     paddingRight: 4,
+    flex: 1,
   },
   shortInput: {
     width: 200,
@@ -95,9 +96,6 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: 'row',
-  },
-  input: {
-    flex: 1,
   },
   radio: {
     paddingBottom: 4,
@@ -165,12 +163,12 @@ const EditToolData = React.memo(({
       while(dataNameStack.length > 1) {
         let structureSegment = dataNameStack.shift()
         let defaultValue = []
-  
+
         if(/^[0-9]+$/.test(structureSegment)) {
           structureSegment = parseInt(structureSegment, 10)
           defaultValue = {}
         }
-  
+
         dataSegment = dataSegment[structureSegment] = (dataSegment[structureSegment] || defaultValue)
       }
 
@@ -195,7 +193,7 @@ const EditToolData = React.memo(({
         dataSegment.splice(spliceFrom, dataSegment.length)
       }
 
-      transformData && transformData({ data, isDefaultClassroom })
+      if (transformData) transformData({ data, isDefaultClassroom });
 
       setDataInEdit(data)
       setToolDataSaveTimeout(
@@ -218,10 +216,10 @@ const EditToolData = React.memo(({
   const returnFalse = useCallback(() => false, [])
 
   const TrashButtonIcon = useCallback(
-    ({ style }) => (
+    () => (
       <Icon
         name="trash"
-        style={styles.trashIcon}
+        style={[styles.trashIcon]}
       />
     ),
     [],
@@ -646,7 +644,7 @@ const mapStateToProps = ({ accounts, idps }) => ({
   idps,
 })
 
-const matchDispatchToProps = (dispatch, x) => bindActionCreators({
+const matchDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch)
 
 export default connect(mapStateToProps, matchDispatchToProps)(EditToolData)

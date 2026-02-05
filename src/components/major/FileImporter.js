@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import { StyleSheet, View, Text, Platform } from "react-native"
 import { i18n } from "inline-i18n"
 import { getDataOrigin, getReqOptionsWithAdditions, cloneObj, getMBSizeStr, getIdsFromAccountId, safeFetch } from "../../utils/toolbox"
@@ -64,7 +64,7 @@ const FileImporter = ({
 
       const checkForCancel = () => {
         // There is no straight forward way to detect the file selection was
-        // cancelled. So I do it this way, with a 1000 ms delay to allow 
+        // cancelled. So I do it this way, with a 1000 ms delay to allow
         // fileInput.onchange to first fire.
         setTimeout(() => {
           if(!filesSelected.current) onClose()
@@ -129,7 +129,7 @@ const FileImporter = ({
 
         setMode('refreshing')
 
-        onSuccess && await onSuccess(files)
+        if (onSuccess) await onSuccess(files);
 
         setMode('complete')
 

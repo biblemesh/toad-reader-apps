@@ -1,5 +1,4 @@
 import Constants from 'expo-constants'
-import React from "react"
 import { Text, Platform } from "react-native"
 import MiniSearch from "minisearch"
 import * as FileSystem from 'expo-file-system'
@@ -162,9 +161,8 @@ export const getAutoSuggest = async ({ partialSearchStr, setSuggestions, bookId,
 
       } catch(err) {
         console.log(`/searchtermsuggest error`, err)
-      } finally {
-        if(!suggestions) return
       }
+      if(!suggestions) { return; }
 
     }
 
@@ -197,7 +195,11 @@ export const getAutoSuggest = async ({ partialSearchStr, setSuggestions, bookId,
 
   // set the suggestions for the UI
   if(thisAutoSuggestInfo === currentAutoSuggestInfo) {
-    try { setSuggestions(suggestions) } catch(e) {}
+    try {
+      setSuggestions(suggestions);
+    } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+      /* empty */
+    }
   }
 }
 
@@ -244,9 +246,8 @@ export const searchBook = async ({ searchStr, setResults, bookId, idp, cookie })
 
     } catch(err) {
       console.log(`/search error`, err)
-    } finally {
-      if(!results) return false
     }
+    if(!results) { return false; }
 
   } else {
     results = currentMiniSearch.search(searchStr, {})
@@ -254,7 +255,9 @@ export const searchBook = async ({ searchStr, setResults, bookId, idp, cookie })
 
   // set the suggestions for the UI
   if(thisSearchInfo === currentSearchInfo) {
-    try { setResults(results) } catch(e) {}
+    try { setResults(results) } catch(e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+      /* empty */
+    }
   }
 
   return true

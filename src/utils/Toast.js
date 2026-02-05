@@ -1,4 +1,3 @@
-import React from "react"
 import { ModalService } from '@ui-kitten/components'
 
 import ToastContainer from '../components/basic/ToastContainer'
@@ -12,12 +11,12 @@ const Toast = {
     ...otherProps
   }) => {
 
-    hide && hide()
+    if (hide) { hide(); }
     clearTimeout(timeout)
 
     hide = () => {
       ModalService.hide(id)
-      onClose && onClose()
+      if (onClose) { onClose(); }
       hide = undefined
     }
 
