@@ -26,6 +26,7 @@ export default tseslint.config([
         __DEV__: 'readonly', // __DEV__ comes from Expo, it will always be set in React code
         ...globals.browser,
         ...globals.node,
+        ...globals.jest,
       },
     },
     plugins: {
