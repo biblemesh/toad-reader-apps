@@ -340,63 +340,58 @@ const BookHeader = React.memo(
         {Platform.OS === 'web' &&
           showOptions &&
           createPortal(
-            <>
-              <style>
-                {`
-                .bookHeaderMenuItem:hover {
-                  color: rgb(89, 139, 255) !important;
-                }
-              `}
-              </style>
-
-              <div
-                ref={menuRef}
-                style={{
-                  position: 'absolute',
-                  top: menuPos.top,
-                  left: menuPos.left,
-                  backgroundColor: '#fff',
-                  borderRadius: 0,
-                  boxShadow: '0 2px 6px rgba(60,64,67,.15)',
-                  zIndex: 999999,
-                  width: 220,
-                  overflow: 'hidden',
-                }}
-              >
-                {moreOptions.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="bookHeaderMenuItem"
-                    onClick={() => {
-                      item.onPress?.();
-                      toggleShowOptions(false);
-                    }}
-                    style={{
-                      fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-                      padding: '12px 8px',
-                      marginLeft: 8,
-                      marginRight: 8,
-                      cursor: 'pointer',
-                      borderBottom:
-                        idx === moreOptions.length - 1
-                          ? 'none'
-                          : '1px solid #eee',
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: 'rgb(34, 43, 69)',
-                      textAlign: 'left',
-                      lineHeight: 1.4,
-                      userSelect: 'none',
-                      backgroundColor: 'transparent',
-                      transition: 'color 120ms ease',
-                    }}
-                  >
-                    {item.title}
-                  </div>
-                ))}
-              </div>
-            </>,
+            <div
+              ref={menuRef}
+              style={{
+                position: 'absolute',
+                top: menuPos.top,
+                left: menuPos.left,
+                backgroundColor: '#fff',
+                borderRadius: 0,
+                boxShadow: '0 2px 6px rgba(60,64,67,.15)',
+                zIndex: 999999,
+                width: 220,
+                overflow: 'hidden',
+              }}
+            >
+              {moreOptions.map((item, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => {
+                    item.onPress?.();
+                    toggleShowOptions(false);
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.color = 'rgb(89, 139, 255)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.color = 'rgb(34, 43, 69)';
+                  }}
+                  style={{
+                    fontFamily:
+                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+                    padding: '12px 8px',
+                    marginLeft: 8,
+                    marginRight: 8,
+                    cursor: 'pointer',
+                    borderBottom:
+                      idx === moreOptions.length - 1
+                        ? 'none'
+                        : '1px solid #eee',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: 'rgb(34, 43, 69)',
+                    textAlign: 'left',
+                    lineHeight: 1.4,
+                    userSelect: 'none',
+                    backgroundColor: 'transparent',
+                    transition: 'color 120ms ease',
+                  }}
+                >
+                  {item.title}
+                </div>
+              ))}
+            </div>,
             document.body,
           )}
       </>
