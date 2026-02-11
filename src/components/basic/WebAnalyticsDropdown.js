@@ -158,10 +158,9 @@ export default function WebAnalyticsDropdown({
           style={{
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
             fontSize: 15,
-            fontWeight: '500',
+            fontWeight: 'normal',
             color: '#8F9BB3',
-            marginBottom: 8,
-            letterSpacing: '0.4px',
+            marginBottom: 8
           }}
         >
           {label}
@@ -184,8 +183,9 @@ export default function WebAnalyticsDropdown({
           justifyContent: 'space-between',
           padding: '0 12px',
           cursor: 'pointer',
-          fontSize: 'inherit',
+          fontSize: '15px',
           textAlign: 'left',
+          fontWeight: '500',
         }}
       >
         <span style={{
@@ -193,7 +193,7 @@ export default function WebAnalyticsDropdown({
             overflow: 'hidden',
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
-            marginRight: 8,
+            marginRight: 8
           }}>
             {displayValue}
         </span>

@@ -168,7 +168,7 @@ export default function WebDropdown({
           style={{
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
             fontSize: 15,
-            fontWeight: '500',
+            fontWeight: 'normal',
             color: '#8F9BB3',
             marginBottom: 8,
             letterSpacing: '0.4px',
@@ -194,8 +194,9 @@ export default function WebDropdown({
           justifyContent: 'space-between',
           padding: '0 12px',
           cursor: 'pointer',
-          fontSize: 'inherit',
+          fontSize: '15px',
           textAlign: 'left',
+          fontWeight: '400',
         }}
       >
         <span>
