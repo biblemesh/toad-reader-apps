@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import Constants from 'expo-constants'
+import * as Device from 'expo-device'
 
 export const PUSH_TOKEN_KEY = `pushToken`
 
@@ -10,7 +10,7 @@ const usePushToken = () => {
 
   useEffect(
     () => {
-      if(Constants.isDevice) {
+      if(Device.isDevice) {
         (async () => {
 
           setPushToken(await AsyncStorage.getItem(PUSH_TOKEN_KEY) || "none")
