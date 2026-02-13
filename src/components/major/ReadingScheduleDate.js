@@ -1,24 +1,24 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react"
-import { StyleSheet, View, Text, ScrollView, Platform } from "react-native"
-import { bindActionCreators } from "redux"
-import { connect } from "react-redux"
-import { i18n } from "inline-i18n"
-import useToggle from 'react-use/lib/useToggle'
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { StyleSheet, View, Text, ScrollView, Platform } from 'react-native';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { i18n } from 'inline-i18n';
+import useToggle from 'react-use/lib/useToggle';
 
-import useClassroomInfo from '../../hooks/useClassroomInfo'
-import useInstanceValue from '../../hooks/useInstanceValue'
-import { getDateLine, getTimeLine } from "../../utils/toolbox"
-import useWideMode from "../../hooks/useWideMode"
-import useRouterState from "../../hooks/useRouterState"
-import { setSelectedToolUid } from "../../redux/actions"
+import useClassroomInfo from '../../hooks/useClassroomInfo';
+import useInstanceValue from '../../hooks/useInstanceValue';
+import { getDateLine, getTimeLine } from '../../utils/toolbox';
+import useWideMode from '../../hooks/useWideMode';
+import useRouterState from '../../hooks/useRouterState';
+import { setSelectedToolUid } from '../../redux/actions';
 
-import Dialog from "./Dialog"
-import Button from "../basic/Button"
-import Datepicker from "../basic/Datepicker"
-import Icon from "../basic/Icon"
-import CheckBox from "../basic/CheckBox"
-import Input from "../basic/Input"
-import ActionText from "../basic/ActionText"
+import Dialog from './Dialog';
+import Button from '../basic/Button';
+import Datepicker from '../basic/Datepicker';
+import Icon from '../basic/Icon';
+import CheckBox from '../basic/CheckBox';
+import Input from '../basic/Input';
+import ActionText from '../basic/ActionText';
 
 const styles = StyleSheet.create({
   line: {
@@ -85,147 +85,134 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     borderColor: 'transparent',
   },
-})
+});
 
-const ReadingScheduleDate = React.memo(({
-  info,
-  bookId,
-  editable,
-  goUpdate,
-  scheduleDatesToDisplay,
-  goTo,
+const ReadingScheduleDate = React.memo(
+  ({
+    info,
+    bookId,
+    editable,
+    goUpdate,
+    scheduleDatesToDisplay,
+    goTo,
 
-  books,
+    books,
 
-  setSelectedToolUid,
-}) => {
+    setSelectedToolUid,
+  }) => {
+    const { historyReplace } = useRouterState();
 
-  const { historyReplace } = useRouterState()
+    const { spines } = useClassroomInfo({ books, bookId });
+    const spinesByIdRef = useMemo(() => {
+      const spinesObj = {};
+      spines.forEach((spine) => {
+        spinesObj[spine.idref] = spine;
+      });
+      return spinesObj;
+    }, [spines]);
 
-  const { spines } = useClassroomInfo({ books, bookId })
-  const spinesByIdRef = useMemo(
-    () => {
-      const spinesObj = {}
-      spines.forEach(spine => {
-        spinesObj[spine.idref] = spine
-      })
-      return spinesObj
-    },
-    [ spines ],
-  )
+    const spineIdRefsAssignedToOtherDueDates = useMemo(() => {
+      const spineIdRefs = [];
 
-  const spineIdRefsAssignedToOtherDueDates = useMemo(
-    () => {
-      const spineIdRefs = []
-
-      const spineIdRefsForThisDueDate = ((info || {}).items || []).map(({ spineIdRef }) => spineIdRef)
+      const spineIdRefsForThisDueDate = ((info || {}).items || []).map(
+        ({ spineIdRef }) => spineIdRef,
+      );
 
       scheduleDatesToDisplay.forEach(({ items }) => {
         items.forEach(({ spineIdRef }) => {
-          if(!spineIdRefsForThisDueDate.includes(spineIdRef)) {
-            spineIdRefs.push(spineIdRef)
+          if (!spineIdRefsForThisDueDate.includes(spineIdRef)) {
+            spineIdRefs.push(spineIdRef);
           }
-        })
-      })
+        });
+      });
 
-      return spineIdRefs
-    },
-    [ scheduleDatesToDisplay, info ],
-  )
+      return spineIdRefs;
+    }, [scheduleDatesToDisplay, info]);
 
-  const wideMode = useWideMode()
+    const wideMode = useWideMode();
 
-  const [ editing, toggleEditing ] = useToggle(false)
-  const [ date, setDate ] = useState()
-  const [ timeInEdit, setTimeInEdit ] = useState()
-  const [ checkedSpines, setCheckedSpines ] = useState({})
+    const [editing, toggleEditing] = useToggle(false);
+    const [date, setDate] = useState();
+    const [timeInEdit, setTimeInEdit] = useState();
+    const [checkedSpines, setCheckedSpines] = useState({});
 
-  // Prevent form submissions on web platform when dialog is open
-  useEffect(() => {
-    if (Platform.OS === 'web' && editing) {
-      const preventFormSubmission = (e) => {
-        if (e.target.tagName === 'FORM') {
-          e.preventDefault();
-          e.stopPropagation();
-          return false;
-        }
-      };
+    // Prevent form submissions on web platform when dialog is open
+    useEffect(() => {
+      if (Platform.OS === 'web' && editing) {
+        const preventFormSubmission = (e) => {
+          if (e.target.tagName === 'FORM') {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          }
+        };
 
-      document.addEventListener('submit', preventFormSubmission, true);
+        document.addEventListener('submit', preventFormSubmission, true);
 
-      return () => {
-        document.removeEventListener('submit', preventFormSubmission, true);
-      };
-    }
-  }, [editing]);
+        return () => {
+          document.removeEventListener('submit', preventFormSubmission, true);
+        };
+      }
+    }, [editing]);
 
-  const getTimeInEdit = useInstanceValue(timeInEdit)
-  const today = useMemo(() => new Date(), [])
+    const getTimeInEdit = useInstanceValue(timeInEdit);
+    const today = useMemo(() => new Date(), []);
 
-  const itemsInOrder = useMemo(
-    () => {
-      if(!info) return null
+    const itemsInOrder = useMemo(() => {
+      if (!info) return null;
 
-      const spineIdRefsInOrder = Object.keys(spinesByIdRef)
-      const orderedItems = [ ...info.items ]
+      const spineIdRefsInOrder = Object.keys(spinesByIdRef);
+      const orderedItems = [...info.items];
 
-      orderedItems.sort((a, b) => spineIdRefsInOrder.indexOf(a.spineIdRef) - spineIdRefsInOrder.indexOf(b.spineIdRef))
+      orderedItems.sort(
+        (a, b) =>
+          spineIdRefsInOrder.indexOf(a.spineIdRef) -
+          spineIdRefsInOrder.indexOf(b.spineIdRef),
+      );
 
-      return orderedItems
-    },
-    [ info, spinesByIdRef ],
-  )
+      return orderedItems;
+    }, [info, spinesByIdRef]);
 
-  const goEdit = useCallback(
-    () => {
-      const date = new Date(info.due_at)
-      const checkedSpines = {}
-      ;(info.items || []).forEach(({ spineIdRef }) => {
-        checkedSpines[spineIdRef] = true
-      })
+    const goEdit = useCallback(() => {
+      const date = new Date(info.due_at);
+      const checkedSpines = {};
+      (info.items || []).forEach(({ spineIdRef }) => {
+        checkedSpines[spineIdRef] = true;
+      });
 
-      setDate(date)
-      setTimeInEdit(getTimeLine({ date }))
-      setCheckedSpines(checkedSpines)
-      toggleEditing()
-    },
-    [ info ],
-  )
+      setDate(date);
+      setTimeInEdit(getTimeLine({ date }));
+      setCheckedSpines(checkedSpines);
+      toggleEditing();
+    }, [info]);
 
-  const goDelete = useCallback(
-    () => {
+    const goDelete = useCallback(() => {
       goUpdate({
         origDueAt: (info || {}).due_at,
         goDelete: true,
-      })
-    },
-    [ info, goUpdate ],
-  )
+      });
+    }, [info, goUpdate]);
 
-  const goAdd = useCallback(
-    () => {
-      const date = new Date()
-      date.setHours(23)
-      date.setMinutes(59)
-      date.setSeconds(0)
-      date.setMilliseconds(0)
+    const goAdd = useCallback(() => {
+      const date = new Date();
+      date.setHours(23);
+      date.setMinutes(59);
+      date.setSeconds(0);
+      date.setMilliseconds(0);
 
-      setDate(date)
-      setTimeInEdit(getTimeLine({ date }))
-      setCheckedSpines({})
-      toggleEditing()
-    },
-    [],
-  )
+      setDate(date);
+      setTimeInEdit(getTimeLine({ date }));
+      setCheckedSpines({});
+      toggleEditing();
+    }, []);
 
-  const addOrUpdate = useCallback(
-    () => {
+    const addOrUpdate = useCallback(() => {
       const items = Object.keys(checkedSpines)
-        .filter(idref => checkedSpines[idref])
-        .map(idref => ({
+        .filter((idref) => checkedSpines[idref])
+        .map((idref) => ({
           spineIdRef: idref,
           label: spinesByIdRef[idref].label,
-        }))
+        }));
 
       goUpdate({
         origDueAt: (info || {}).due_at,
@@ -233,239 +220,231 @@ const ReadingScheduleDate = React.memo(({
           due_at: date.getTime(),
           items,
         },
-      })
+      });
 
-      toggleEditing()
-    },
-    [ spinesByIdRef, info, date, checkedSpines, goUpdate ],
-  )
+      toggleEditing();
+    }, [spinesByIdRef, info, date, checkedSpines, goUpdate]);
 
-  const onTimeInputChangeText = useCallback(timeText => setTimeInEdit(timeText.replace(/[^0-9: apm.]/gi, ''), []))
+    const onTimeInputChangeText = useCallback((timeText) =>
+      setTimeInEdit(timeText.replace(/[^0-9: apm.]/gi, ''), []),
+    );
 
-  const goSetDate = useCallback(
-    newDate => {
-      newDate.setHours(date.getHours())
-      newDate.setMinutes(date.getMinutes())
-      setDate(newDate)
-    },
-    [ date ],
-  )
+    const goSetDate = useCallback(
+      (newDate) => {
+        newDate.setHours(date.getHours());
+        newDate.setMinutes(date.getMinutes());
+        setDate(newDate);
+      },
+      [date],
+    );
 
-  const goSetTime = useCallback(
-    () => {
-      let [ , hours, minutesWithColon, amPm="" ] = getTimeInEdit().trim().match(/^([0-9]{1,2}) *(:[0-9]{1,2}|) *([amp .]+)$/i) || []
+    const goSetTime = useCallback(() => {
+      let [, hours, minutesWithColon, amPm = ''] =
+        getTimeInEdit()
+          .trim()
+          .match(/^([0-9]{1,2}) *(:[0-9]{1,2}|) *([amp .]+)$/i) || [];
 
-      const isPm = amPm.replace(/[^apm]/gi, '').toUpperCase() === 'PM'
-      hours = hours && isPm ? parseInt(hours, 10) + 12 : parseInt(hours, 10)
+      const isPm = amPm.replace(/[^apm]/gi, '').toUpperCase() === 'PM';
+      hours = hours && isPm ? parseInt(hours, 10) + 12 : parseInt(hours, 10);
 
-      if(hours && hours >= 0 && hours <= 23) {
-        date.setHours(hours)
+      if (hours && hours >= 0 && hours <= 23) {
+        date.setHours(hours);
 
-        if(minutesWithColon) {
-          const minutes = minutesWithColon && parseInt(minutesWithColon.substr(1), 10)
+        if (minutesWithColon) {
+          const minutes =
+            minutesWithColon && parseInt(minutesWithColon.substr(1), 10);
 
-          if(minutes >= 0 && minutes <= 59) {
-            date.setMinutes(minutes)
+          if (minutes >= 0 && minutes <= 59) {
+            date.setMinutes(minutes);
           }
         }
 
-        setDate(date)
+        setDate(date);
       }
 
-      setTimeInEdit(getTimeLine({ date }))
-    },
-    [ date ],
-  )
+      setTimeInEdit(getTimeLine({ date }));
+    }, [date]);
 
-  const onCheckBoxChangeInfo = useCallback(
-    ({ id, value }) => {
-      setCheckedSpines({
-        ...checkedSpines,
-        [id]: value,
-      })
-    },
-    [ checkedSpines ],
-  )
+    const onCheckBoxChangeInfo = useCallback(
+      ({ id, value }) => {
+        setCheckedSpines({
+          ...checkedSpines,
+          [id]: value,
+        });
+      },
+      [checkedSpines],
+    );
 
-  const onItemPress = useCallback(
-    ({ id: spineIdRef }) => {
-      const newRouterState = goTo({ spineIdRef })
-      setSelectedToolUid({  // unselects any tool
-        bookId,
-        getRouterState: () => newRouterState,
-        historyReplace,
-      })
+    const onItemPress = useCallback(
+      ({ id: spineIdRef }) => {
+        const newRouterState = goTo({ spineIdRef });
+        setSelectedToolUid({
+          // unselects any tool
+          bookId,
+          getRouterState: () => newRouterState,
+          historyReplace,
+        });
+      },
+      [bookId, goTo],
+    );
 
-    },
-    [ bookId, goTo ],
-  )
+    const EditButtonIcon = useCallback(
+      () => (
+        <Icon name="pencil" pack="materialCommunity" style={[styles.icon]} />
+      ),
+      [],
+    );
 
-  const EditButtonIcon = useCallback(
-    () => (
-      <Icon
-        name="pencil"
-        pack="materialCommunity"
-        style={[styles.icon]}
-      />
-    ),
-    [],
-  )
+    const TrashButtonIcon = useCallback(
+      () => <Icon name="trash" style={[styles.icon]} />,
+      [],
+    );
 
-  const TrashButtonIcon = useCallback(
-    () => (
-      <Icon
-        name="trash"
-        style={[styles.icon]}
-      />
-    ),
-    [],
-  )
+    const CalendarIcon = useCallback(
+      () => <Icon name="calendar" style={[styles.calendarIcon]} />,
+      [],
+    );
 
-  const CalendarIcon = useCallback(
-    () => (
-      <Icon
-        name="calendar"
-        style={[
-          styles.calendarIcon,
-        ]}
-      />
-    ),
-    [],
-  )
-
-  return (
-    <>
-
-      {!!info &&
-        <View style={styles.line}>
-          <View style={wideMode ? styles.wideModeDateAndTime : styles.dateAndTime}>
-            <Text style={styles.date}>
-              {getDateLine({ timestamp: info.due_at, short: !wideMode })}
-            </Text>
-            <Text style={styles.time}>
-              {getTimeLine({ timestamp: info.due_at, short: !wideMode })}
-            </Text>
+    return (
+      <>
+        {!!info && (
+          <View style={styles.line}>
+            <View
+              style={wideMode ? styles.wideModeDateAndTime : styles.dateAndTime}
+            >
+              <Text style={styles.date}>
+                {getDateLine({ timestamp: info.due_at, short: !wideMode })}
+              </Text>
+              <Text style={styles.time}>
+                {getTimeLine({ timestamp: info.due_at, short: !wideMode })}
+              </Text>
+            </View>
+            <View style={styles.spines}>
+              {itemsInOrder.map(({ spineIdRef, label }) => (
+                <ActionText
+                  id={spineIdRef}
+                  key={spineIdRef}
+                  style={styles.spine}
+                  onPress={onItemPress}
+                >
+                  {label}
+                </ActionText>
+              ))}
+            </View>
+            {!!editable && (
+              <View style={wideMode ? styles.wideModeOptions : styles.options}>
+                <Button
+                  style={styles.button}
+                  appearance="ghost"
+                  status="basic"
+                  accessoryLeft={EditButtonIcon}
+                  onPress={goEdit}
+                />
+                <Button
+                  style={styles.button}
+                  appearance="ghost"
+                  status="basic"
+                  accessoryLeft={TrashButtonIcon}
+                  onPress={goDelete}
+                />
+              </View>
+            )}
           </View>
-          <View style={styles.spines}>
-            {itemsInOrder.map(({ spineIdRef, label }) => (
-              <ActionText
-                id={spineIdRef}
-                key={spineIdRef}
-                style={styles.spine}
-                onPress={onItemPress}
-              >
-                {label}
-              </ActionText>
-            ))}
-          </View>
-          {!!editable &&
-            <View style={wideMode ? styles.wideModeOptions : styles.options}>
-              <Button
-                style={styles.button}
-                appearance="ghost"
-                status="basic"
-                accessoryLeft={EditButtonIcon}
-                onPress={goEdit}
-              />
-              <Button
-                style={styles.button}
-                appearance="ghost"
-                status="basic"
-                accessoryLeft={TrashButtonIcon}
-                onPress={goDelete}
-              />
-            </View>
-          }
-        </View>
-      }
-
-      {!info &&
-        <View style={styles.buttonContainer}>
-          <Button
-            status="primary"
-            size="small"
-            onPress={goAdd}
-          >
-            {i18n("Add due date", "", "enhanced")}
-          </Button>
-        </View>
-      }
-
-      <Dialog
-        open={editing}
-        style={styles.dialog}
-        title={
-          info
-            ? i18n("Update this due date", "", "enhanced")
-            : i18n("Create a new due date", "", "enhanced")
-        }
-        message={(
-          <>
-            <View style={styles.datePickerContainer}>
-              <Datepicker
-                label={i18n("Date")}
-                date={date}
-                min={today}
-                max={new Date(Date.now() + (1000*60*60*24*265*10))}
-                onSelect={goSetDate}
-                accessoryLeft={CalendarIcon}
-                style={styles.datePickerItem}
-              />
-              <Input
-                label={i18n("Time")}
-                value={timeInEdit}
-                onChangeText={onTimeInputChangeText}
-                onBlur={goSetTime}
-                style={styles.datePickerItem}
-              />
-            </View>
-            <View style={styles.selectSectionsContainer}>
-              <ScrollView>
-                <Text style={styles.insructions}>
-                  {i18n("Select which sections are due to be read by this date.", "", "enhanced")}
-                </Text>
-                {spines.map(({ label, idref }) => (
-                  <View
-                    key={idref}
-                    style={styles.selectSection}
-                  >
-                    <CheckBox
-                      id={idref}
-                      checked={checkedSpines[idref]}
-                      disabled={spineIdRefsAssignedToOtherDueDates.includes(idref)}
-                      onChangeInfo={onCheckBoxChangeInfo}
-                      style={styles.checkBox}
-                    >
-                      {label}
-                    </CheckBox>
-                  </View>
-                ))}
-              </ScrollView>
-            </View>
-          </>
         )}
-        noScroll={true}
-        type="confirm"
-        onCancel={toggleEditing}
-        onConfirm={addOrUpdate}
-        confirmButtonDisabled={Object.values(checkedSpines).filter(Boolean).length === 0}
-        confirmButtonText={
-          info
-            ? i18n("Update", "", "enhanced")
-            : i18n("Add", "", "enhanced")
-        }
-      />
 
-    </>
-  )
-})
+        {!info && (
+          <View style={styles.buttonContainer}>
+            <Button status="primary" size="small" onPress={goAdd}>
+              {i18n('Add due date', '', 'enhanced')}
+            </Button>
+          </View>
+        )}
+
+        <Dialog
+          open={editing}
+          style={styles.dialog}
+          title={
+            info
+              ? i18n('Update this due date', '', 'enhanced')
+              : i18n('Create a new due date', '', 'enhanced')
+          }
+          message={
+            <>
+              <View style={styles.datePickerContainer}>
+                <Datepicker
+                  label={i18n('Date')}
+                  date={date}
+                  min={today}
+                  max={new Date(Date.now() + 1000 * 60 * 60 * 24 * 265 * 10)}
+                  onSelect={goSetDate}
+                  accessoryLeft={CalendarIcon}
+                  style={styles.datePickerItem}
+                />
+                <Input
+                  label={i18n('Time')}
+                  value={timeInEdit}
+                  onChangeText={onTimeInputChangeText}
+                  onBlur={goSetTime}
+                  style={styles.datePickerItem}
+                />
+              </View>
+              <View style={styles.selectSectionsContainer}>
+                <ScrollView>
+                  <Text style={styles.insructions}>
+                    {i18n(
+                      'Select which sections are due to be read by this date.',
+                      '',
+                      'enhanced',
+                    )}
+                  </Text>
+                  {spines.map(({ label, idref }) => (
+                    <View key={idref} style={styles.selectSection}>
+                      <CheckBox
+                        id={idref}
+                        checked={checkedSpines[idref]}
+                        disabled={spineIdRefsAssignedToOtherDueDates.includes(
+                          idref,
+                        )}
+                        onChangeInfo={onCheckBoxChangeInfo}
+                        style={styles.checkBox}
+                      >
+                        {label}
+                      </CheckBox>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            </>
+          }
+          noScroll={true}
+          type="confirm"
+          onCancel={toggleEditing}
+          onConfirm={addOrUpdate}
+          confirmButtonDisabled={
+            Object.values(checkedSpines).filter(Boolean).length === 0
+          }
+          confirmButtonText={
+            info ? i18n('Update', '', 'enhanced') : i18n('Add', '', 'enhanced')
+          }
+        />
+      </>
+    );
+  },
+);
 
 const mapStateToProps = ({ books }) => ({
   books,
-})
+});
 
-const matchDispatchToProps = (dispatch) => bindActionCreators({
-  setSelectedToolUid,
-}, dispatch)
+const matchDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      setSelectedToolUid,
+    },
+    dispatch,
+  );
 
-export default connect(mapStateToProps, matchDispatchToProps)(ReadingScheduleDate)
+export default connect(
+  mapStateToProps,
+  matchDispatchToProps,
+)(ReadingScheduleDate);
