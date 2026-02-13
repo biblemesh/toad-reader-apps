@@ -68,7 +68,7 @@ else
 
     # copy tenant items to the base dir
     for TENANT_ITEM in "${TENANT_ITEMS[@]}" ; do
-      ln -s "$PWD/tenants/$TENANT_TO_SWITCH_TO/$TENANT_ITEM" "./$TENANT_ITEM";
+      ln -s "tenants/$TENANT_TO_SWITCH_TO/$TENANT_ITEM" "./$TENANT_ITEM";
     done
 
     # update src/utils/translations/current.json with the current language data
