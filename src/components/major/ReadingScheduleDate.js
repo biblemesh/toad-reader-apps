@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useMemo } from "react"
-import { StyleSheet, View, Text, ScrollView } from "react-native"
+import React, { useState, useCallback, useMemo, useEffect } from "react"
+import { StyleSheet, View, Text, ScrollView, Platform } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
 import { i18n } from "inline-i18n"
@@ -139,6 +139,25 @@ const ReadingScheduleDate = React.memo(({
   const [ date, setDate ] = useState()
   const [ timeInEdit, setTimeInEdit ] = useState()
   const [ checkedSpines, setCheckedSpines ] = useState({})
+
+  // Prevent form submissions on web platform when dialog is open
+  useEffect(() => {
+    if (Platform.OS === 'web' && editing) {
+      const preventFormSubmission = (e) => {
+        if (e.target.tagName === 'FORM') {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      };
+
+      document.addEventListener('submit', preventFormSubmission, true);
+
+      return () => {
+        document.removeEventListener('submit', preventFormSubmission, true);
+      };
+    }
+  }, [editing]);
 
   const getTimeInEdit = useInstanceValue(timeInEdit)
   const today = useMemo(() => new Date(), [])
