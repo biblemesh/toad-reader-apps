@@ -31,5 +31,5 @@ RUN \
   # "source ~/.nvm/nvm.sh" fails if node isn't installed
   source ~/.nvm/nvm.sh || nvm install --default --latest-npm && \
   # Install toad-reader-apps dependencies
-  install_packages ruby && \
+  install_packages jq && \
   npm config set script-shell bash
