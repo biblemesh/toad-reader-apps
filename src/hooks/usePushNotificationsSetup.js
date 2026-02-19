@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Platform } from "react-native"
+import { Platform, Alert } from "react-native"
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Notifications from "expo-notifications"
 import * as Device from 'expo-device'
@@ -9,7 +9,7 @@ import usePushToken, { PUSH_TOKEN_KEY } from './usePushToken'
 
 const usePushNotificationsSetup = () => {
 
-  const pushToken = usePushToken()
+  const { pushToken, refreshToken } = usePushToken()
 
   useEffect(
     () => {
@@ -18,6 +18,7 @@ const usePushNotificationsSetup = () => {
         (async () => {
           try {
             if(pushToken === "none") {
+              // Check permissions
               const { status: existingStatus } = await Notifications.getPermissionsAsync()
               let finalStatus = existingStatus
 
@@ -27,16 +28,32 @@ const usePushNotificationsSetup = () => {
               }
 
               if(finalStatus !== 'granted') {
+                Alert.alert("Push setup error", `Permissions not granted: ${finalStatus}`);
                 return;
               }
 
-              const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+              // Debug project ID
+              const projectId1 = Constants.expoConfig?.extra?.eas?.projectId;
+              const projectId2 = Constants.easConfig?.projectId;
+              Alert.alert("Debug Project IDs", `expoConfig: ${projectId1}\neasConfig: ${projectId2}`);
+
+              // Get device push token (APNs token)
+              try {
+                const deviceToken = await Notifications.getDevicePushTokenAsync();
+                Alert.alert("APNs Device Token", `${deviceToken.data}`);
+              } catch (deviceError) {
+                Alert.alert("APNs Token Error", `${String(deviceError)}\n${deviceError?.message}`);
+              }
+
+              // Get Expo push token
+              const projectId = projectId1 || projectId2;
               const tokenResult = await Notifications.getExpoPushTokenAsync(
                 projectId ? { projectId } : undefined
               );
               const { data } = tokenResult;
               
               await AsyncStorage.setItem(PUSH_TOKEN_KEY, data);
+              await refreshToken(); // Update UI immediately
 
               if(Platform.OS === 'android') {
                 await Notifications.setNotificationChannelAsync('default', {
@@ -49,7 +66,16 @@ const usePushNotificationsSetup = () => {
 
             }
           } catch (error) {
-            console.error('Push setup - Error message:', error.message);
+            const errorDetails = {
+              string: String(error),
+              message: error?.message,
+              code: error?.code,
+              name: error?.name
+            };
+            Alert.alert(
+              "Push setup error", 
+              `${errorDetails.string}\n\nMessage: ${errorDetails.message}\n\nDetails: ${JSON.stringify(errorDetails, null, 2)}`
+            );
           }
         })();
       }

@@ -8,20 +8,27 @@ const usePushToken = () => {
 
   const [ pushToken, setPushToken ] = useState()
 
+  const refreshToken = async () => {
+    if(Device.isDevice) {
+      try {
+        const storedToken = await AsyncStorage.getItem(PUSH_TOKEN_KEY);
+        const finalToken = storedToken || "none";
+        setPushToken(finalToken);
+      } catch (error) {
+        console.error('usePushToken - Error:', error);
+        setPushToken("none");
+      }
+    }
+  }
+
   useEffect(
     () => {
-      if(Device.isDevice) {
-        (async () => {
-
-          setPushToken(await AsyncStorage.getItem(PUSH_TOKEN_KEY) || "none")
-          
-        })()
-      }
+      refreshToken();
     },
     [],
   )
 
-  return pushToken
+  return { pushToken, refreshToken }
 
 }
 
