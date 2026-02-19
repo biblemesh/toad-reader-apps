@@ -18,6 +18,16 @@ const usePushNotificationsSetup = () => {
         (async () => {
           try {
             if(pushToken === "none") {
+              // Set up Android notification channel
+              if(Platform.OS === 'android') {
+                await Notifications.setNotificationChannelAsync('default', {
+                  name: 'default',
+                  sound: 'default',
+                  importance: Notifications.AndroidImportance.MAX,
+                  vibrationPattern: [0, 250, 250, 250],
+                });
+              }
+
               // Check permissions
               const { status: existingStatus } = await Notifications.getPermissionsAsync()
               let finalStatus = existingStatus
@@ -27,42 +37,19 @@ const usePushNotificationsSetup = () => {
                 finalStatus = status;
               }
 
-              if(finalStatus !== 'granted') {
+              // Handle iOS provisional status and Android granted status
+              if(finalStatus !== 'granted' && finalStatus !== 'provisional') {
                 Alert.alert("Push setup error", `Permissions not granted: ${finalStatus}`);
                 return;
               }
 
-              // Debug project ID
-              const projectId1 = Constants.expoConfig?.extra?.eas?.projectId;
-              const projectId2 = Constants.easConfig?.projectId;
-              Alert.alert("Debug Project IDs", `expoConfig: ${projectId1}\neasConfig: ${projectId2}`);
-
-              // Get device push token (APNs token)
-              try {
-                const deviceToken = await Notifications.getDevicePushTokenAsync();
-                Alert.alert("APNs Device Token", `${deviceToken.data}`);
-              } catch (deviceError) {
-                Alert.alert("APNs Token Error", `${String(deviceError)}\n${deviceError?.message}`);
-              }
-
-              // Get Expo push token
-              const projectId = projectId1 || projectId2;
-              const tokenResult = await Notifications.getExpoPushTokenAsync(
-                projectId ? { projectId } : undefined
-              );
+              const tokenResult = await Notifications.getExpoPushTokenAsync({
+                projectId: Constants.expoConfig?.extra?.eas.projectId,
+              });
               const { data } = tokenResult;
               
               await AsyncStorage.setItem(PUSH_TOKEN_KEY, data);
               await refreshToken(); // Update UI immediately
-
-              if(Platform.OS === 'android') {
-                await Notifications.setNotificationChannelAsync('default', {
-                  name: 'default',
-                  sound: 'default',
-                  importance: Notifications.AndroidImportance.MAX,
-                  vibrationPattern: [0, 250, 250, 250],
-                });
-              }
 
             }
           } catch (error) {
