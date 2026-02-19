@@ -10,12 +10,14 @@ try {
   const bucketProduction = `${bucketPrefix}-prd`.slice(0, 63);
   executeCommand(
     `aws s3 sync s3://${bucketBeta} s3://${bucketProduction} --only-show-errors --sse AES256 --delete`,
-    executeCommand(
-      `aws s3 cp s3://${bucketProduction} s3://${versionBucket}/${domain}/${date} --only-show-errors --recursive --sse AES256`,
-      () => {
-        process.exit();
-      },
-    ),
+    () => {
+      executeCommand(
+        `aws s3 cp s3://${bucketProduction} s3://${versionBucket}/${domain}/${date} --only-show-errors --recursive --sse AES256`,
+        () => {
+          process.exit();
+        },
+      );
+    },
   );
 } catch (err) {
   console.log('Error when pushing web beta to production.', err);
