@@ -11,3 +11,5 @@
 /app.json
 .env*.local
 /translationModifier.js
+
+/google-services.json
