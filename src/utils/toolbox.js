@@ -1,12 +1,15 @@
+import Constants from 'expo-constants';
+import * as FileSystem from 'expo-file-system';
+import * as Linking from 'expo-linking';
+import * as Updates from 'expo-updates';
+import { i18n, getLocale } from 'inline-i18n';
+import { createFetch } from 'node-fetch-native/proxy';
 import React from 'react';
 import { Platform, StatusBar, Text } from 'react-native';
-import * as Linking from 'expo-linking';
-import * as FileSystem from 'expo-file-system';
-import Constants from 'expo-constants';
-import { i18n, getLocale } from 'inline-i18n';
-import * as Updates from 'expo-updates';
 
 import Sentry from './sentry';
+
+const PAC = 'https://localhost:3128/proxy.pac'; // XXX
 
 const {
   REQUEST_OPTIONS,
@@ -140,62 +143,6 @@ export const getFullName = (user) =>
 //     setTimeout(() => lastDebounce = undefined, 1500)
 //   }
 // }
-
-export const fetchWithProgress = (
-  url,
-  { progressCallback, abortFunctionCallback, cookie, timeout },
-) =>
-  new Promise((resolve, reject) => {
-    const xhr = new window.XMLHttpRequest();
-
-    xhr.open('GET', url, true);
-
-    // set headers
-    if (__DEV__ && DEV_USE_DEVELOPMENT_BACKEND) {
-      xhr.setRequestHeader('x-cookie-override', cookie);
-    } else {
-      xhr.setRequestHeader('cookie', cookie);
-      xhr.withCredentials = false;
-    }
-
-    // recent browsers
-    if ('responseType' in xhr) {
-      xhr.responseType = 'arraybuffer';
-    }
-
-    // older browser
-    if (xhr.overrideMimeType) {
-      xhr.overrideMimeType('text/plain; charset=x-user-defined');
-    }
-
-    if (timeout) {
-      xhr.timeout = timeout;
-    }
-
-    if (progressCallback) {
-      xhr.onprogress = (evt) => {
-        progressCallback(evt.loaded / evt.total);
-      };
-    }
-
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          resolve(xhr.response || xhr.responseText);
-        } else {
-          // It also goes here with status of 0 for no internet connection
-          // and status of 403 for no auth.
-          reject(xhr.status);
-        }
-      }
-    };
-
-    xhr.send();
-
-    if (abortFunctionCallback) {
-      abortFunctionCallback(xhr.abort.bind(xhr));
-    }
-  });
 
 export const getReqOptionsWithAdditions = (additions) => {
   const reqOptions = JSON.parse(JSON.stringify(REQUEST_OPTIONS || {}));
@@ -385,7 +332,43 @@ export const getIdsFromAccountId = (accountId) => {
 const identicalFetchDelayFactor = 100;
 const identicalFetchMaxDelay = 1000 * 60 * 5;
 const numConsecutiveRequestsByUri = {};
+
+/**
+ * @param url {string}
+ * @return {Promise<typeof fetch>}
+ */
+async function makeFetch(url) {
+  if (!__DEV__) {
+    // There should be no proxying in non-dev environments.
+    // TODO add some kind of warning here
+    return createFetch();
+  }
+  const { default: memoizeOne } = await import("async-memoize-one");
+  const { createPacResolver } = await import('pac-resolver');
+  const { getQuickJS } = await import('quickjs-emscripten');
+  const resolver = await memoizeOne(async () => {
+    const response = await createFetch()(PAC);
+    if (!(response.ok)) {
+      throw new Error("Unable to download proxy.pac");
+    }
+    const data = await response.text();
+    console.log("makeFetch data", data);
+    return createPacResolver(await getQuickJS(), data);
+  })();
+  console.log("makeFetch resolver", resolver);
+  let [type, target] = (await resolver(url)).split(/\s+/);
+  console.log([type, target]);
+  if (type === "DIRECT") {
+    return createFetch();
+  } else if (type === "HTTPS") {
+    return createFetch({ url: `https://${target}` });
+  } else {
+    throw new Error(`Unsupported proxy type: ${type}`)
+  }
+}
+
 export const safeFetch = async (uri, options = {}) => {
+  const fetch = await makeFetch(uri);
   const numConsecutiveRequests = (numConsecutiveRequestsByUri[uri] =
     (numConsecutiveRequestsByUri[uri] || 0) + 1);
 

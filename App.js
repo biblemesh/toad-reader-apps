@@ -1,3 +1,7 @@
+import '@expo/metro-runtime';
+import { Buffer } from 'node-libs-react-native/mock/buffer';
+global.Buffer = Buffer;
+
 import { useState, useEffect, useRef } from "react"
 import Constants from 'expo-constants'
 import * as SplashScreen from 'expo-splash-screen'

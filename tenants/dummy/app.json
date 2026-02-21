@@ -27,8 +27,22 @@
     "ios": {
       "bundleIdentifier": "com.biblemesh.dummy"
     },
+    "plugins": [
+      [
+        "@bam.tech/react-native-app-security",
+        {
+          "sslPinning": {
+            "localhost": [
+              "x0jU76L4HwZu5WAvbYsBNOu5SoZRs4aoEyLVTZdVciQ=",
+              "rFjc3wG7lTZe43zeYTvPq8k4xdDEutCmIhI5dn4oCeE="
+            ]
+          }
+        }
+      ]
+    ],
     "splash": {
       "backgroundColor": "#ffffff",
+      "image": "./assets/icons/splash-tablet.png",
       "resizeMode": "contain"
     }
   }
