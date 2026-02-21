@@ -345,7 +345,7 @@ const Library = ({
       }
 
       console.log(`Updated metadata keys (idpId: ${idpId})...`);
-    })();
+    })().catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -378,7 +378,7 @@ const Library = ({
       }
 
       console.log(`Updated subscriptions (idpId: ${idpId})...`);
-    })();
+    })().catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -536,7 +536,7 @@ const Library = ({
         (async () => {
           setShowLoading(true);
           try {
-            await logOutOnLoad({ accountId });
+            await logOutOnLoad({ accountId }).catch(console.error);
             // Use requestAnimationFrame to batch state updates
             requestAnimationFrame(() => {
               historyGoBackToLibrary();
@@ -590,7 +590,7 @@ const Library = ({
             }
           }
           setFetchingBooks({ value: false });
-        })();
+        })().catch(console.error);
       }
     },
     [idps, accounts, pathname],
@@ -788,9 +788,9 @@ const Library = ({
         const logOutUrl = `${dataOrigin}/logout`;
         window.location.href = logOutUrl;
       } else {
-        logOutOnLoad();
+        await logOutOnLoad();
       }
-    })();
+    })().catch(console.error);
   }, [logOutAccountId, redirectCheckComplete]);
 
   const scope = library.scope || 'all';
