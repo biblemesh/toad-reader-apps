@@ -7,6 +7,7 @@
         "channel": "beta"
       },
       "ios": {
+        "image": "sdk-54",
         "resourceClass": "m-medium"
       }
     },
@@ -20,6 +21,7 @@
       },
       "ios": {
         "resourceClass": "m-medium",
+        "image": "sdk-54",
         "simulator": true
       }
     },
@@ -33,8 +35,8 @@
       },
       "ios": {
         "autoIncrement": "buildNumber",
-        "resourceClass": "m-medium",
-        "image": "latest"
+        "image": "sdk-54",
+        "resourceClass": "m-medium"
       }
     },
     "staging": {
@@ -49,8 +51,8 @@
       "ios": {
         "autoIncrement": "buildNumber",
         "distribution": "store",
-        "resourceClass": "m-medium",
-        "image": "latest"
+        "image": "sdk-54",
+        "resourceClass": "m-medium"
       }
     }
   },
