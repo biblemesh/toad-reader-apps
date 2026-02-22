@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Platform, Alert } from "react-native"
+import { Platform } from "react-native"
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Notifications from "expo-notifications"
 import * as Device from 'expo-device'
@@ -39,7 +39,7 @@ const usePushNotificationsSetup = () => {
 
               // Handle iOS provisional status and Android granted status
               if(finalStatus !== 'granted' && finalStatus !== 'provisional') {
-                Alert.alert("Push setup error", `Permissions not granted: ${finalStatus}`);
+                console.warn(`Push notifications setup failed: Permissions not granted (${finalStatus})`);
                 return;
               }
 
@@ -53,16 +53,12 @@ const usePushNotificationsSetup = () => {
 
             }
           } catch (error) {
-            const errorDetails = {
-              string: String(error),
+            console.error('Push notifications setup failed:', {
               message: error?.message,
               code: error?.code,
-              name: error?.name
-            };
-            Alert.alert(
-              "Push setup error", 
-              `${errorDetails.string}\n\nMessage: ${errorDetails.message}\n\nDetails: ${JSON.stringify(errorDetails, null, 2)}`
-            );
+              name: error?.name,
+              stack: error?.stack
+            });
           }
         })();
       }
