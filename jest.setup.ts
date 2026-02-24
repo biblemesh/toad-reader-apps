@@ -1,3 +1,10 @@
+import React from 'react';
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __DEV__: boolean;
+}
+
 // Global test setup
 global.__DEV__ = true;
 
@@ -28,7 +35,7 @@ jest.mock('expo-file-system', () => ({
 
 // Mock inline-i18n
 jest.mock('inline-i18n', () => ({
-  i18n: (key, params) => {
+  i18n: (key: string, params?: Record<string, string>) => {
     if (params) {
       let result = key;
       Object.keys(params).forEach((param) => {
@@ -49,15 +56,26 @@ jest.mock('@sentry/react-native', () => ({
 
 // Mock UI Kitten components
 jest.mock('@ui-kitten/components', () => {
-  const React = jest.requireActual('react');
   const { TouchableOpacity, Text } = jest.requireActual('react-native');
 
   return {
-    ApplicationProvider: ({ children }) => children,
-    Button: React.forwardRef(({ children, ...props }, ref) => (
-      <TouchableOpacity {...props} ref={ref}>
-        {typeof children === 'string' ? <Text>{children}</Text> : children}
-      </TouchableOpacity>
-    )),
+    ApplicationProvider: ({ children }: { children: React.ReactNode }) =>
+      children,
+    Button: React.forwardRef(
+      (
+        {
+          children,
+          ...props
+        }: { children: React.ReactNode; [key: string]: unknown },
+        ref: React.Ref<unknown>,
+      ) =>
+        React.createElement(
+          TouchableOpacity,
+          { ...props, ref },
+          typeof children === 'string'
+            ? React.createElement(Text, null, children)
+            : children,
+        ),
+    ),
   };
 });

@@ -26,7 +26,6 @@ export default tseslint.config([
         __DEV__: 'readonly', // __DEV__ comes from Expo, it will always be set in React code
         ...globals.browser,
         ...globals.node,
-        ...globals.jest,
       },
     },
     plugins: {
@@ -39,6 +38,14 @@ export default tseslint.config([
       'react-native/no-color-literals': 'warn',
       'react-native/no-raw-text': 'warn',
       'react/react-in-jsx-scope': 'off',
+    },
+  },
+  {
+    files: ['**/*.test.{js,ts,jsx,tsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
     },
   },
   {
