@@ -364,14 +364,14 @@ const EnhancedHeader = React.memo(
                   style={{
                     cursor: 'pointer',
                     outline: 'none',
-                    padding: '8px 12px',
                     borderRadius: '6px',
                     border: 'none',
                     background: 'transparent',
                     fontWeight: 'bold',
-                    fontSize: '16px',
+                    fontSize: '14px',
                     color: 'inherit',
-                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+                    fontFamily:
+                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
                     lineHeight: '1.2',
                     display: 'block',
                     width: '100%',
@@ -464,10 +464,11 @@ const EnhancedHeader = React.memo(
                         }
                       }}
                       style={{
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+                        fontFamily:
+                          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
                         fontSize: 13,
-                        fontWeight: isSelected ? 600 : 400,
-                        padding: '10px 14px',
+                        fontWeight: 600,
+                        padding: '12px 8px',
                         cursor: 'pointer !important',
                         WebkitUserSelect: 'none',
                         MozUserSelect: 'none',

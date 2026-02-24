@@ -59,7 +59,8 @@ export default function WebDropdown({
           <div
             data-dropdown="true"
             style={{
-              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+              fontFamily:
+                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
               position: 'absolute',
               top: rect.bottom + 4,
               left: rect.left,
@@ -166,9 +167,10 @@ export default function WebDropdown({
       {label && (
         <div
           style={{
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+            fontFamily:
+              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
             fontSize: 15,
-            fontWeight: '500',
+            fontWeight: 'normal',
             color: '#8F9BB3',
             marginBottom: 8,
             letterSpacing: '0.4px',
@@ -183,7 +185,8 @@ export default function WebDropdown({
         ref={triggerRef}
         onClick={handleToggle}
         style={{
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
           width: '100%',
           height: 48,
           borderRadius: 6,
@@ -194,8 +197,9 @@ export default function WebDropdown({
           justifyContent: 'space-between',
           padding: '0 12px',
           cursor: 'pointer',
-          fontSize: 'inherit',
+          fontSize: '15px',
           textAlign: 'left',
+          fontWeight: '400',
         }}
       >
         <span>

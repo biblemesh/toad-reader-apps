@@ -65,7 +65,8 @@ export default function WebReflectionDropdown({
           <div
             data-reflection-dropdown="true"
             style={{
-              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+              fontFamily:
+                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
               position: 'absolute',
               top: rect.bottom + 4,
               left: rect.left,
@@ -96,7 +97,8 @@ export default function WebReflectionDropdown({
                   onMouseEnter={() => setHoveredIndex(idx)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   style={{
-                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+                    fontFamily:
+                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
                     minHeight: 40,
                     padding: '8px 16px',
                     cursor: 'pointer',
@@ -109,8 +111,8 @@ export default function WebReflectionDropdown({
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8,
-                    fontSize: 14,
-                    fontWeight: 'normal',
+                    fontSize: '15px',
+                    fontWeight: '600',
                     color: '#333333',
                     borderTopLeftRadius: isFirst ? 6 : 0,
                     borderTopRightRadius: isFirst ? 6 : 0,
@@ -137,11 +139,12 @@ export default function WebReflectionDropdown({
         <div
           style={{
             fontSize: 15,
-            fontWeight: '500',
+            fontWeight: 'normal',
             color: '#8F9BB3',
             marginBottom: 8,
             letterSpacing: '0.4px',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+            fontFamily:
+              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
           }}
         >
           {label}
@@ -163,9 +166,11 @@ export default function WebReflectionDropdown({
           justifyContent: 'space-between',
           padding: '0 12px',
           cursor: 'pointer',
-          fontSize: 'inherit',
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+          fontSize: '15px',
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
           textAlign: 'left',
+          fontWeight: '600',
         }}
       >
         <span>{displayValue}</span>
