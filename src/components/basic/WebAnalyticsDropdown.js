@@ -85,7 +85,8 @@ export default function WebAnalyticsDropdown({
           <div
             data-analytics-dropdown="true"
             style={{
-              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+              fontFamily:
+                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
               fontSize: 13,
               position: 'absolute',
               top: rect.bottom + 4,
@@ -116,7 +117,8 @@ export default function WebAnalyticsDropdown({
                   onMouseEnter={() => setHoveredIndex(idx)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   style={{
-                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+                    fontFamily:
+                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
                     minHeight: 40,
                     padding: '8px 16px',
                     cursor: 'pointer',
@@ -156,12 +158,12 @@ export default function WebAnalyticsDropdown({
       {label && (
         <div
           style={{
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+            fontFamily:
+              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
             fontSize: 15,
-            fontWeight: '500',
+            fontWeight: 'normal',
             color: '#8F9BB3',
             marginBottom: 8,
-            letterSpacing: '0.4px',
           }}
         >
           {label}
@@ -173,7 +175,8 @@ export default function WebAnalyticsDropdown({
         ref={triggerRef}
         onClick={handleToggle}
         style={{
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
           width: '100%',
           height: 48,
           borderRadius: 6,
@@ -184,18 +187,21 @@ export default function WebAnalyticsDropdown({
           justifyContent: 'space-between',
           padding: '0 12px',
           cursor: 'pointer',
-          fontSize: 'inherit',
+          fontSize: '15px',
           textAlign: 'left',
+          fontWeight: '500',
         }}
       >
-        <span style={{
+        <span
+          style={{
             flex: 1,
             overflow: 'hidden',
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
             marginRight: 8,
-          }}>
-            {displayValue}
+          }}
+        >
+          {displayValue}
         </span>
         <span style={{ fontSize: 12 }}>{isOpen ? '▲' : '▼'}</span>
       </button>
