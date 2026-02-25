@@ -1,35 +1,30 @@
-import { useEffect, useState } from "react"
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import * as Device from 'expo-device'
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Device from 'expo-device';
 
-export const PUSH_TOKEN_KEY = `pushToken`
+export const PUSH_TOKEN_KEY = `pushToken`;
 
 const usePushToken = () => {
-
-  const [ pushToken, setPushToken ] = useState()
+  const [pushToken, setPushToken] = useState();
 
   const refreshToken = async () => {
-    if(Device.isDevice) {
+    if (Device.isDevice) {
       try {
         const storedToken = await AsyncStorage.getItem(PUSH_TOKEN_KEY);
-        const finalToken = storedToken || "none";
+        const finalToken = storedToken || 'none';
         setPushToken(finalToken);
       } catch (error) {
         console.error('usePushToken - Error:', error);
-        setPushToken("none");
+        setPushToken('none');
       }
     }
-  }
+  };
 
-  useEffect(
-    () => {
-      refreshToken();
-    },
-    [],
-  )
+  useEffect(() => {
+    refreshToken();
+  }, []);
 
-  return { pushToken, refreshToken }
+  return { pushToken, refreshToken };
+};
 
-}
-
-export default usePushToken
+export default usePushToken;
