@@ -1,4 +1,4 @@
-import React from 'react';
+export {};
 
 declare global {
   // eslint-disable-next-line no-var
@@ -54,28 +54,5 @@ jest.mock('@sentry/react-native', () => ({
   captureMessage: jest.fn(),
 }));
 
-// Mock UI Kitten components
-jest.mock('@ui-kitten/components', () => {
-  const { TouchableOpacity, Text } = jest.requireActual('react-native');
-
-  return {
-    ApplicationProvider: ({ children }: { children: React.ReactNode }) =>
-      children,
-    Button: React.forwardRef(
-      (
-        {
-          children,
-          ...props
-        }: { children: React.ReactNode; [key: string]: unknown },
-        ref: React.Ref<unknown>,
-      ) =>
-        React.createElement(
-          TouchableOpacity,
-          { ...props, ref },
-          typeof children === 'string'
-            ? React.createElement(Text, null, children)
-            : children,
-        ),
-    ),
-  };
-});
+// Mock UI Kitten components — manual mock lives in __mocks__/@ui-kitten/components.tsx
+jest.mock('@ui-kitten/components');

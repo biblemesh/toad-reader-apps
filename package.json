@@ -19,6 +19,7 @@
     "change-tenant": "./scripts/changeTenant.sh",
     "ci:build": "npm run change-tenant dummy && npx expo prebuild --clean",
     "ci:lint": "npm run lint",
+    "ci:test": "npm run test:ci",
     "confirm": "read -p 'Are you sure? (y/N) ' -n 1 -r && echo '\n' && [[ $REPLY =~ ^[Yy]$ ]]",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
