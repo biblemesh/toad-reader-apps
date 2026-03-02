@@ -7,6 +7,7 @@
         "channel": "beta"
       },
       "ios": {
+        "image": "sdk-54",
         "resourceClass": "m-medium"
       }
     },
@@ -20,6 +21,7 @@
       },
       "ios": {
         "resourceClass": "m-medium",
+        "image": "sdk-54",
         "simulator": true
       }
     },
@@ -33,6 +35,7 @@
       },
       "ios": {
         "autoIncrement": "buildNumber",
+        "image": "sdk-54",
         "resourceClass": "m-medium"
       }
     },
@@ -48,6 +51,7 @@
       "ios": {
         "autoIncrement": "buildNumber",
         "distribution": "store",
+        "image": "sdk-54",
         "resourceClass": "m-medium"
       }
     }
