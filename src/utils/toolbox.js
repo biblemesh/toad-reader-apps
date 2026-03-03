@@ -343,27 +343,25 @@ async function makeFetch(url) {
     // TODO add some kind of warning here
     return createFetch();
   }
-  const { default: memoizeOne } = await import("async-memoize-one");
+  const { default: memoizeOne } = await import('async-memoize-one');
   const { createPacResolver } = await import('pac-resolver');
-  const { getQuickJS } = await import('quickjs-emscripten');
+  const getQuickJS = (await import('./js-sandbox')).default;
   const resolver = await memoizeOne(async () => {
     const response = await createFetch()(PAC);
-    if (!(response.ok)) {
-      throw new Error("Unable to download proxy.pac");
+    if (!response.ok) {
+      throw new Error('Unable to download proxy.pac');
     }
     const data = await response.text();
-    console.log("makeFetch data", data);
     return createPacResolver(await getQuickJS(), data);
   })();
-  console.log("makeFetch resolver", resolver);
-  let [type, target] = (await resolver(url)).split(/\s+/);
-  console.log([type, target]);
-  if (type === "DIRECT") {
+  let [type, target] = (await resolver(url, new URL(url).host)).split(/\s+/);
+  console.log([url, type, target]);
+  if (type === 'DIRECT') {
     return createFetch();
-  } else if (type === "HTTPS") {
+  } else if (type === 'HTTPS') {
     return createFetch({ url: `https://${target}` });
   } else {
-    throw new Error(`Unsupported proxy type: ${type}`)
+    throw new Error(`Unsupported proxy type: ${type}`);
   }
 }
 

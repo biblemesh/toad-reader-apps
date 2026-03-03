@@ -154,6 +154,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",
+    "@nyariv/sandboxjs": "^0.8.33",
     "@types/react": "~19.0.10",
     "async-memoize-one": "^1.1.9",
     "baseline-browser-mapping": "^2.8.31",
