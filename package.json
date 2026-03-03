@@ -157,7 +157,7 @@
     "@nyariv/sandboxjs": "^0.8.33",
     "@types/react": "~19.0.10",
     "async-memoize-one": "^1.1.9",
-    "baseline-browser-mapping": "^2.8.31",
+    "baseline-browser-mapping": "^2.10.0",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^10.0.2",
     "eslint-plugin-react": "^7.37.5",
