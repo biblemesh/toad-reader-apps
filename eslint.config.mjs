@@ -41,6 +41,14 @@ export default tseslint.config([
     },
   },
   {
+    files: ['**/*.test.{js,ts,jsx,tsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
+  },
+  {
     files: ['*.config.js', 'scripts/*.js'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',

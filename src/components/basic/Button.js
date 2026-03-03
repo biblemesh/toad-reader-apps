@@ -8,7 +8,6 @@ const Button = React.memo(({ id, info, onPress, ...otherProps }) => {
     }
   }, [id, info, onPress]);
 
-
   return <UIKittenButton {...otherProps} onPress={customOnPress} />;
 });
 

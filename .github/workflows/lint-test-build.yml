@@ -3,15 +3,13 @@ name: Lint / Test / Build
 on:
   pull_request:
 
-
 env:
-  DEFAULT_NODE_VERSION: 20  # FIXME use nvmrc instead
+  DEFAULT_NODE_VERSION: 20 # FIXME use nvmrc instead
 
 permissions:
   contents: read
 
 jobs:
-
   build:
     name: ${{ matrix.action }} (${{ matrix.node-version }})
     runs-on: ubuntu-latest
@@ -20,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [20, 22]
-        action: [build, lint] # , test]
+        action: [build, lint, test]
     steps:
       - uses: actions/checkout@v5
         with:

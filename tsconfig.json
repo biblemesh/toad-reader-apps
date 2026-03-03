@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "jsx": "react-jsx"
+  },
+  "exclude": [
+    "node_modules",
+    "web-build"
+  ],
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
+  ]
+}
