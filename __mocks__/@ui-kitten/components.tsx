@@ -1,6 +1,10 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 
+export const styled =
+  () => (Component: React.ComponentType<Record<string, unknown>>) =>
+    Component;
+
 export const ApplicationProvider = ({
   children,
 }: {
