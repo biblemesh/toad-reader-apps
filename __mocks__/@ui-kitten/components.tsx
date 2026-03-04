@@ -11,6 +11,28 @@ export const ApplicationProvider = ({
   children: React.ReactNode;
 }) => children;
 
+export const CheckBox = React.forwardRef(
+  (
+    {
+      checked,
+      onChange,
+      ...props
+    }: {
+      checked: boolean;
+      onChange?: (value: boolean) => void;
+      [key: string]: unknown;
+    },
+    ref: React.Ref<unknown>,
+  ) => (
+    <TouchableOpacity
+      {...props}
+      ref={ref as React.Ref<typeof TouchableOpacity>}
+      accessibilityRole="checkbox"
+      onPress={() => onChange?.(!checked)}
+    />
+  ),
+);
+
 export const Button = React.forwardRef(
   (
     {
