@@ -33,6 +33,23 @@ export const CheckBox = React.forwardRef(
   ),
 );
 
+export class NativeDateService {
+  constructor() {}
+}
+
+export const Datepicker = ({
+  onSelect,
+  ...props
+}: {
+  onSelect?: (date: Date) => void;
+  [key: string]: unknown;
+}) => (
+  <TouchableOpacity
+    {...props}
+    onPress={() => onSelect?.(new Date('2024-01-15'))}
+  />
+);
+
 export const Button = React.forwardRef(
   (
     {
