@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
+import { TouchableOpacity, Text, TextInput } from 'react-native';
 
 export const styled =
   () => (Component: React.ComponentType<Record<string, unknown>>) =>
@@ -62,6 +62,22 @@ export const Popover = ({
     {anchor?.()}
     {children}
   </>
+);
+
+export const Input = React.forwardRef(
+  (
+    {
+      onChangeText,
+      ...props
+    }: { onChangeText?: (text: string) => void; [key: string]: unknown },
+    ref: React.Ref<unknown>,
+  ) => (
+    <TextInput
+      {...(props as object)}
+      ref={ref as React.Ref<TextInput>}
+      onChangeText={onChangeText}
+    />
+  ),
 );
 
 export const Button = React.forwardRef(
