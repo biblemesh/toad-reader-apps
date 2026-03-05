@@ -50,6 +50,20 @@ export const Datepicker = ({
   />
 );
 
+export const Popover = ({
+  anchor,
+  children,
+}: {
+  anchor?: () => React.ReactNode;
+  children?: React.ReactNode;
+  [key: string]: unknown;
+}) => (
+  <>
+    {anchor?.()}
+    {children}
+  </>
+);
+
 export const Button = React.forwardRef(
   (
     {
