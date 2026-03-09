@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, TextInput } from 'react-native';
+import { TouchableOpacity, Text, TextInput, View } from 'react-native';
 
 export const styled =
   () => (Component: React.ComponentType<Record<string, unknown>>) =>
@@ -79,6 +79,38 @@ export const Input = React.forwardRef(
     />
   ),
 );
+
+export const Layout = ({
+  children,
+  ...props
+}: {
+  children?: React.ReactNode;
+  [key: string]: unknown;
+}) => <View {...(props as object)}>{children}</View>;
+
+export const Radio = React.forwardRef(
+  (
+    {
+      onChange,
+      ...props
+    }: { onChange?: (value: boolean) => void; [key: string]: unknown },
+    ref: React.Ref<unknown>,
+  ) => (
+    <TouchableOpacity
+      {...(props as object)}
+      ref={ref as React.Ref<typeof TouchableOpacity>}
+      onPress={() => onChange?.(true)}
+    />
+  ),
+);
+
+export const RadioGroup = ({
+  onChange,
+  ...props
+}: {
+  onChange?: (index: number) => void;
+  [key: string]: unknown;
+}) => <TouchableOpacity {...(props as object)} onPress={() => onChange?.(0)} />;
 
 export const Button = React.forwardRef(
   (
