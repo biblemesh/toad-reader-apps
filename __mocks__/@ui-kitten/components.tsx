@@ -50,6 +50,33 @@ export const Datepicker = ({
   />
 );
 
+export const Tooltip = ({
+  anchor,
+  children,
+}: {
+  anchor?: () => React.ReactNode;
+  children?: React.ReactNode;
+  [key: string]: unknown;
+}) => (
+  <>
+    {anchor?.()}
+    {children}
+  </>
+);
+
+export const Select = ({
+  onSelect,
+  ...props
+}: {
+  onSelect?: (selectionInfo: Record<string, unknown>) => void;
+  [key: string]: unknown;
+}) => (
+  <TouchableOpacity
+    {...(props as object)}
+    onPress={() => onSelect?.({ row: 0 })}
+  />
+);
+
 export const Popover = ({
   anchor,
   children,
