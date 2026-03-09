@@ -3,10 +3,10 @@ import * as FileSystem from 'expo-file-system';
 import * as Linking from 'expo-linking';
 import * as Updates from 'expo-updates';
 import { i18n, getLocale } from 'inline-i18n';
-import { createFetch } from 'node-fetch-native/proxy';
 import React from 'react';
 import { Platform, StatusBar, Text } from 'react-native';
 
+import ProxyNetworkingModule from '../../modules/proxy-networking';
 import Sentry from './sentry';
 
 const PAC = 'https://localhost:3128/proxy.pac'; // XXX
@@ -334,39 +334,49 @@ const identicalFetchMaxDelay = 1000 * 60 * 5;
 const numConsecutiveRequestsByUri = {};
 
 /**
- * @param url {string}
- * @return {Promise<typeof fetch>}
+ * @param uri {string}
+ * @return {AsyncGenerator<typeof fetch, void, void>}
  */
-async function makeFetch(url) {
+async function* makeFetch(uri) {
   if (!__DEV__) {
     // There should be no proxying in non-dev environments.
     // TODO add some kind of warning here
-    return createFetch();
+    yield fetch;
+    return;
   }
   const { default: memoizeOne } = await import('async-memoize-one');
   const { createPacResolver } = await import('pac-resolver');
   const getQuickJS = (await import('./js-sandbox')).default;
   const resolver = await memoizeOne(async () => {
-    const response = await createFetch()(PAC);
+    const response = await fetch(PAC);
     if (!response.ok) {
       throw new Error('Unable to download proxy.pac');
     }
     const data = await response.text();
     return createPacResolver(await getQuickJS(), data);
   })();
-  let [type, target] = (await resolver(url, new URL(url).host)).split(/\s+/);
-  console.log([url, type, target]);
+  let [type, target] = (await resolver(uri, new URL(uri).host)).split(/\s+/);
   if (type === 'DIRECT') {
-    return createFetch();
+    yield fetch;
   } else if (type === 'HTTPS') {
-    return createFetch({ url: `https://${target}` });
+    try {
+      ProxyNetworkingModule.setProxy(`https://${target}`);
+      yield fetch;
+    } finally {
+      ProxyNetworkingModule.unsetProxy();
+    }
   } else {
     throw new Error(`Unsupported proxy type: ${type}`);
   }
 }
 
+/**
+ * @param uri {string}
+ * @return {Promise<Response>}
+ */
 export const safeFetch = async (uri, options = {}) => {
-  const fetch = await makeFetch(uri);
+  /** @type Response|null **/
+  let response = null;
   const numConsecutiveRequests = (numConsecutiveRequestsByUri[uri] =
     (numConsecutiveRequestsByUri[uri] || 0) + 1);
 
@@ -384,7 +394,12 @@ export const safeFetch = async (uri, options = {}) => {
     );
   }
 
-  const response = await fetch(uri, options);
+  for await (const fetch of makeFetch(uri)) {
+    response = await fetch(uri, options);
+  }
+  if (response === null) {
+    throw new Error('Internal error: makeFetch did not return');
+  }
 
   if (numConsecutiveRequests === numConsecutiveRequestsByUri[uri]) {
     numConsecutiveRequestsByUri[uri] = 0;

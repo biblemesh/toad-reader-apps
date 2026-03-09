@@ -1,0 +1,15 @@
+{
+  "android": {
+    "modules": [
+      "expo.modules.proxynetworking.ProxyNetworkingModule"
+    ]
+  },
+  "apple": {
+    "modules": [
+      "ProxyNetworkingModule"
+    ]
+  },
+  "platforms": [
+    "web"
+  ]
+}

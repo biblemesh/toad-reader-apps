@@ -66,7 +66,6 @@
     ]
   },
   "overrides": {
-    "node-fetch": "npm:node-fetch-native@^1.6.7",
     "react-native-webview": "13.13.5"
   },
   "dependencies": {
@@ -116,7 +115,6 @@
     "jszip": "3.2.2",
     "md5": "2.2.1",
     "minisearch": "2.4.1",
-    "node-fetch-native": "^1.6.7",
     "node-libs-browser": "2.2.1",
     "node-libs-react-native": "^1.2.1",
     "qrcode.react": "^4.0.1",
