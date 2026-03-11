@@ -147,10 +147,7 @@ export const Button = React.forwardRef(
     }: { children: React.ReactNode; [key: string]: unknown },
     ref: React.Ref<unknown>,
   ) => (
-    <TouchableOpacity
-      {...props}
-      ref={ref as React.Ref<typeof TouchableOpacity>}
-    >
+    <TouchableOpacity {...props} ref={ref as React.Ref<View>}>
       {typeof children === 'string' ? <Text>{children}</Text> : children}
     </TouchableOpacity>
   ),

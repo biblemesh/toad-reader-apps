@@ -29,7 +29,7 @@ RUN \
   bash -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash" && \
   source ~/.bashrc && \
   # "source ~/.nvm/nvm.sh" fails if node isn't installed
-  source ~/.nvm/nvm.sh || nvm install --default --latest-npm && \
+  source ~/.nvm/nvm.sh || nvm install --default && \
   # Install toad-reader-apps dependencies
   install_packages jq && \
   npm config set script-shell bash
