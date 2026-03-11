@@ -139,6 +139,39 @@ export const RadioGroup = ({
   [key: string]: unknown;
 }) => <TouchableOpacity {...(props as object)} onPress={() => onChange?.(0)} />;
 
+export const Drawer = ({
+  children,
+  header,
+  footer,
+}: {
+  children?: React.ReactNode;
+  header?: () => React.ReactNode;
+  footer?: () => React.ReactNode;
+  [key: string]: unknown;
+}) => (
+  <View>
+    {header?.()}
+    {children}
+    {footer?.()}
+  </View>
+);
+
+export const DrawerItem = ({
+  title,
+}: {
+  title?: string;
+  [key: string]: unknown;
+}) => (title ? <Text>{title}</Text> : null);
+
+export const Modal = ({
+  children,
+  visible,
+}: {
+  children?: React.ReactNode;
+  visible?: boolean;
+  [key: string]: unknown;
+}) => (visible ? <View>{children}</View> : null);
+
 export const Button = React.forwardRef(
   (
     {
