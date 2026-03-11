@@ -26,7 +26,7 @@ export const CheckBox = React.forwardRef(
   ) => (
     <TouchableOpacity
       {...props}
-      ref={ref as React.Ref<typeof TouchableOpacity>}
+      ref={ref as React.Ref<View>}
       accessibilityRole="checkbox"
       onPress={() => onChange?.(!checked)}
     />
@@ -125,7 +125,7 @@ export const Radio = React.forwardRef(
   ) => (
     <TouchableOpacity
       {...(props as object)}
-      ref={ref as React.Ref<typeof TouchableOpacity>}
+      ref={ref as React.Ref<View>}
       onPress={() => onChange?.(true)}
     />
   ),
