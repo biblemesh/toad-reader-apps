@@ -34,6 +34,10 @@ describe('LibraryBook Component', () => {
     jest.mocked(useRouterState).mockReturnValue({ historyPush: jest.fn() });
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('should render children inside a TouchableOpacity', () => {
     render(
       <LibraryBook {...defaultProps}>
