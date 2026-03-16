@@ -12,6 +12,10 @@ const config: Config = {
     ...tsJestTransformCfg,
     '^.+\\.jsx?$': 'babel-jest',
   },
+  moduleNameMapper: {
+    '^react-native-reanimated$':
+      '<rootDir>/__mocks__/react-native-reanimated.js',
+  },
 };
 
 export default config;

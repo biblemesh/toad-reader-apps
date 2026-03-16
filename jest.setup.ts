@@ -15,13 +15,6 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   ),
 );
 
-// Mock react-native-reanimated
-jest.mock('react-native-reanimated', () => {
-  const Reanimated = jest.requireActual('react-native-reanimated/mock');
-  Reanimated.default.call = () => {};
-  return Reanimated;
-});
-
 // Mock Expo modules
 jest.mock('expo-constants', () => ({
   default: {
@@ -34,14 +27,23 @@ jest.mock('expo-file-system', () => ({
 }));
 
 // Mock inline-i18n
+// Handles all calling conventions: i18n(key), i18n(key, params),
+// i18n(key, namespace, params), i18n(key, default, namespace, params)
 jest.mock('inline-i18n', () => ({
-  i18n: (key: string, params?: Record<string, string>) => {
+  i18n: (...args: unknown[]) => {
+    const key = args[0] as string;
+    const lastArg = args[args.length - 1];
+    const params =
+      typeof lastArg === 'object' && lastArg !== null
+        ? (lastArg as Record<string, string>)
+        : undefined;
     if (params) {
-      let result = key;
-      Object.keys(params).forEach((param) => {
-        result = result.replace(new RegExp(`{{${param}}}`, 'g'), params[param]);
-      });
-      return result;
+      return Object.keys(params).reduce((result, param) => {
+        return result.replace(
+          new RegExp(`{{${param}}}`, 'g'),
+          String(params[param]),
+        );
+      }, key);
     }
     return key;
   },
