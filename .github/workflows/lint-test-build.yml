@@ -3,15 +3,13 @@ name: Lint / Test / Build
 on:
   pull_request:
 
-
 env:
-  DEFAULT_NODE_VERSION: 20  # FIXME use nvmrc instead
+  DEFAULT_NODE_VERSION: 20 # FIXME use nvmrc instead
 
 permissions:
   contents: read
 
 jobs:
-
   build:
     name: ${{ matrix.action }} (${{ matrix.node-version }})
     runs-on: ubuntu-latest
@@ -42,3 +40,21 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
           BASE_BRANCH: ${{ github.base_ref || 'bm-develop' }}
           NODE_VERSION: ${{ matrix.node-version }}
+
+      - name: 'Android testing: Setup Java'
+        if: matrix.action == 'build'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 23 # required for this version of Gradle
+          cache: gradle
+
+      - name: 'Android testing: Setup Gradle'
+        if: matrix.action == 'build'
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: 'Android testing: Run tests'
+        if: matrix.action == 'build'
+        run: |
+          cd android
+          ./gradlew :proxy-networking:testDebugUnitTest
