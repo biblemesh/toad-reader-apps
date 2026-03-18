@@ -15,13 +15,6 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   ),
 );
 
-// Mock react-native-reanimated
-jest.mock('react-native-reanimated', () => {
-  const Reanimated = jest.requireActual('react-native-reanimated/mock');
-  Reanimated.default.call = () => {};
-  return Reanimated;
-});
-
 // Mock Expo modules
 jest.mock('expo-constants', () => ({
   default: {
