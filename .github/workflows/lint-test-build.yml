@@ -2,6 +2,8 @@ name: Lint / Test / Build
 
 on:
   pull_request:
+  push:
+    branch: BM-6-proxy-setup-for-app-frontend
 
 env:
   DEFAULT_NODE_VERSION: 20 # FIXME use nvmrc instead
