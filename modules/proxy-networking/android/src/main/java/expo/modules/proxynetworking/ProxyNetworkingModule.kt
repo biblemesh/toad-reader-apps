@@ -37,7 +37,7 @@ class ProxyNetworkingModule : Module() {
               override fun createNewNetworkModuleClient(): OkHttpClient {
                 val proxy =
                   Proxy(
-                    Proxy.Type.HTTP,
+                    Proxy.Type.SOCKS,
                     InetSocketAddress(host, port.toInt()),
                   )
                 return OkHttpClientProvider
