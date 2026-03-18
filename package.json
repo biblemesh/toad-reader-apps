@@ -73,7 +73,8 @@
     "react-native-webview": "13.13.5"
   },
   "dependencies": {
-    "@amplitude/analytics-react-native": "^1.1.1",
+    "@amplitude/analytics-browser": "^2.36.4",
+    "@amplitude/analytics-react-native": "^1.5.47",
     "@babel/plugin-transform-react-jsx-source": "7.2.0",
     "@eva-design/eva": "2.1.1",
     "@expo/metro-runtime": "~5.0.5",
@@ -86,7 +87,6 @@
     "@sentry/react-native": "~6.14.0",
     "@shopify/flash-list": "1.7.6",
     "@ui-kitten/components": "5.1.2",
-    "amplitude-js": "^8.3.1",
     "babel-plugin-transform-remove-console": "6.9.4",
     "babel-preset-expo": "~13.0.0",
     "copy-to-clipboard": "^3.3.3",
