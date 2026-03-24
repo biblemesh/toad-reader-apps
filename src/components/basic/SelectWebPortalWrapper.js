@@ -17,7 +17,9 @@ const SelectWebPortalWrapper = ({
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   const toggleOpen = () => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
     Animated.timing(rotateAnim, {
       toValue: open ? 0 : 1,
       duration: 150,
