@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react"
-import { StyleSheet, View, ScrollView } from "react-native"
+import { StyleSheet, View, ScrollView, Platform } from "react-native"
 import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
 import { Select, SelectItem, IndexPath } from "@ui-kitten/components"
@@ -17,6 +17,7 @@ import StatusAndActions from "./StatusAndActions"
 import Input from "../basic/Input"
 import EditToolData from "./EditToolData"
 import HeaderIcon from "../basic/HeaderIcon"
+import SelectWebPortalWrapper from "../basic/SelectWebPortalWrapper"
 
 const basicDetailLine = {
   marginBottom: 10,
@@ -180,21 +181,31 @@ const EditTool = React.memo(({
             />
           </View>
           <View style={wideMode ? styles.basicDetailLineWideMode : styles.basicDetailLine}>
-            <Select
-              key={tool.uid}
-              label={i18n("Tool type", "", "enhanced")}
-              value={selectedOption.text}
-              selectedIndex={new IndexPath(toolTypes.indexOf(selectedOption))}
-              onSelect={onSelectToolType}
-              disabled={Object.keys(tool.data || {}).length > 0}
-            >
-              {toolTypes.map(({ text }, idx) => (
-                <SelectItem
-                  key={idx}
-                  title={text}
-                />
-              ))}
-            </Select>
+            {Platform.OS === 'web' ? (
+              <SelectWebPortalWrapper
+                label={i18n("Tool type", "", "enhanced")}
+                value={selectedOption.text}
+                options={toolTypes.map(({ text, toolType }) => ({ title: text, toolType }))}
+                onSelect={(opt) => goUpdateTool({ toolType: opt.toolType, data: {} })}
+                disabled={Object.keys(tool.data || {}).length > 0}
+              />
+            ) : (
+              <Select
+                key={tool.uid}
+                label={i18n("Tool type", "", "enhanced")}
+                value={selectedOption.text}
+                selectedIndex={new IndexPath(toolTypes.indexOf(selectedOption))}
+                onSelect={onSelectToolType}
+                disabled={Object.keys(tool.data || {}).length > 0}
+              >
+                {toolTypes.map(({ text }, idx) => (
+                  <SelectItem
+                    key={idx}
+                    title={text}
+                  />
+                ))}
+              </Select>
+            )}
           </View>
         </View>
         <StatusAndActions
