@@ -2,7 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import { Platform, View, TouchableOpacity, Text, Animated } from 'react-native';
 import { createPortal } from 'react-dom';
 
-const SelectWebPortalWrapper = ({ label, value, options, onSelect }) => {
+const SelectWebPortalWrapper = ({
+  label,
+  value,
+  options,
+  onSelect,
+  disabled,
+}) => {
   if (Platform.OS !== 'web') return null;
 
   const [open, setOpen] = useState(false);
@@ -11,6 +17,9 @@ const SelectWebPortalWrapper = ({ label, value, options, onSelect }) => {
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   const toggleOpen = () => {
+    if (disabled) {
+      return;
+    }
     Animated.timing(rotateAnim, {
       toValue: open ? 0 : 1,
       duration: 150,
@@ -108,7 +117,8 @@ const SelectWebPortalWrapper = ({ label, value, options, onSelect }) => {
             borderRadius: 8,
             paddingVertical: 14,
             paddingHorizontal: 12,
-            backgroundColor: 'white',
+            backgroundColor: disabled ? '#F7F9FC' : 'white',
+            opacity: disabled ? 0.6 : 1,
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',

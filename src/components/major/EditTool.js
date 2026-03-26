@@ -1,26 +1,27 @@
-import React, { useState, useCallback, useEffect } from "react"
-import { StyleSheet, View, ScrollView } from "react-native"
-import { bindActionCreators } from "redux"
-import { connect } from "react-redux"
-import { Select, SelectItem, IndexPath } from "@ui-kitten/components"
-import { v4 as uuidv4 } from 'uuid'
-import { i18n } from "inline-i18n"
+import React, { useState, useCallback, useEffect } from 'react';
+import { StyleSheet, View, ScrollView, Platform } from 'react-native';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { Select, SelectItem, IndexPath } from '@ui-kitten/components';
+import { v4 as uuidv4 } from 'uuid';
+import { i18n } from 'inline-i18n';
 
-import { getToolInfo } from '../../utils/toolInfo'
-import useWideMode from "../../hooks/useWideMode"
-import useSetTimeout from '../../hooks/useSetTimeout'
-import useClassroomInfo from '../../hooks/useClassroomInfo'
-import useRouterState from "../../hooks/useRouterState"
-import { updateTool, createTool } from "../../redux/actions"
+import { getToolInfo } from '../../utils/toolInfo';
+import useWideMode from '../../hooks/useWideMode';
+import useSetTimeout from '../../hooks/useSetTimeout';
+import useClassroomInfo from '../../hooks/useClassroomInfo';
+import useRouterState from '../../hooks/useRouterState';
+import { updateTool, createTool } from '../../redux/actions';
 
-import StatusAndActions from "./StatusAndActions"
-import Input from "../basic/Input"
-import EditToolData from "./EditToolData"
-import HeaderIcon from "../basic/HeaderIcon"
+import StatusAndActions from './StatusAndActions';
+import Input from '../basic/Input';
+import EditToolData from './EditToolData';
+import HeaderIcon from '../basic/HeaderIcon';
+import SelectWebPortalWrapper from '../basic/SelectWebPortalWrapper';
 
 const basicDetailLine = {
   marginBottom: 10,
-}
+};
 
 const styles = StyleSheet.create({
   topSection: {
@@ -50,8 +51,7 @@ const styles = StyleSheet.create({
   bottomSectionContent: {
     flex: 1,
   },
-  bottomSectionWideMode: {
-  },
+  bottomSectionWideMode: {},
   closeContainer: {
     height: 30,
   },
@@ -60,181 +60,204 @@ const styles = StyleSheet.create({
     top: -5,
     right: -12,
   },
-})
+});
 
-const EditTool = React.memo(({
-  bookId,
-  tool,
-  setViewingPreview,
-  xOutOfTool,
+const EditTool = React.memo(
+  ({
+    bookId,
+    tool,
+    setViewingPreview,
+    xOutOfTool,
 
-  books,
-  userDataByBookId,
+    books,
+    userDataByBookId,
 
-  updateTool,
-  createTool,
-}) => {
+    updateTool,
+    createTool,
+  }) => {
+    const { toolTypes, toolInfoByType } = getToolInfo();
 
-  const { toolTypes, toolInfoByType } = getToolInfo()
+    const { accountId, classroomUid, classroom, isDefaultClassroom } =
+      useClassroomInfo({ books, bookId, userDataByBookId });
+    const { getRouterState, historyReplace } = useRouterState();
 
-  const { accountId, classroomUid, classroom, isDefaultClassroom } = useClassroomInfo({ books, bookId, userDataByBookId })
-  const { getRouterState, historyReplace } = useRouterState()
+    const wideMode = useWideMode();
 
-  const wideMode = useWideMode()
+    const [setToolNameSaveTimeout] = useSetTimeout({ fireOnUnmount: true });
 
-  const [ setToolNameSaveTimeout ] = useSetTimeout({ fireOnUnmount: true })
+    const [nameInEdit, setNameInEdit] = useState();
 
-  const [ nameInEdit, setNameInEdit ] = useState()
+    useEffect(() => {
+      setNameInEdit((tool || {}).name || '');
+    }, [tool]);
 
-  useEffect(
-    () => {
-      setNameInEdit((tool || {}).name || '')
-    },
-    [ tool ],
-  )
+    const goUpdateTool = useCallback(
+      (updates) => {
+        if (tool.published_at) {
+          const uid = uuidv4();
 
-  const goUpdateTool = useCallback(
-    updates => {
+          createTool({
+            ...tool,
+            bookId,
+            classroomUid,
+            uid,
+            published_at: null,
+            currently_published_tool_uid: tool.uid,
+            creatorType:
+              !isDefaultClassroom && tool.creatorType === 'PUBLISHER'
+                ? 'BOTH'
+                : tool.creatorType,
+            ...updates,
+            getRouterState,
+            historyReplace,
+          });
+        } else {
+          updateTool({
+            bookId,
+            classroomUid,
+            uid: tool.uid,
+            ...updates,
+          });
+        }
+      },
+      [bookId, classroomUid, tool.uid, tool.published_at],
+    );
 
-      if(tool.published_at) {
-        const uid = uuidv4()
+    const onToolNameChange = useCallback(
+      (name) => {
+        setNameInEdit(name);
+        setToolNameSaveTimeout(() => goUpdateTool({ name }), 300);
+      },
+      [goUpdateTool],
+    );
 
-        createTool({
-          ...tool,
-          bookId,
-          classroomUid,
-          uid,
-          published_at: null,
-          currently_published_tool_uid: tool.uid,
-          creatorType: (
-            (!isDefaultClassroom && tool.creatorType === 'PUBLISHER')
-              ? 'BOTH'
-              : tool.creatorType
-          ),
-          ...updates,
-          getRouterState,
-          historyReplace,
-        })
+    const onSelectToolType = useCallback(
+      ({ row: index }) =>
+        goUpdateTool({
+          toolType: toolTypes[index].toolType,
+          data: {},
+        }),
+      [goUpdateTool, toolTypes],
+    );
 
-      } else {
-        updateTool({
-          bookId,
-          classroomUid,
-          uid: tool.uid,
-          ...updates,
-        })
+    const selectedOption = toolTypes.filter(
+      ({ toolType }) => toolType === tool.toolType,
+    )[0];
 
-      }
-    },
-    [ bookId, classroomUid, tool.uid, tool.published_at ],
-  )
-
-  const onToolNameChange = useCallback(
-    name => {
-      setNameInEdit(name)
-      setToolNameSaveTimeout(
-        () => goUpdateTool({ name }),
-        300,
-      )
-    },
-    [ goUpdateTool ],
-  )
-
-  const onSelectToolType = useCallback(
-    ({ row: index }) => (
-      goUpdateTool({
-        toolType: toolTypes[index].toolType,
-        data: {},
-      })
-    ),
-    [ goUpdateTool, toolTypes ],
-  )
-
-  const selectedOption = toolTypes.filter(({ toolType }) => toolType === tool.toolType)[0]
-
-  return (
-    <>
-      <View
-        style={[
-          styles.topSection,
-          wideMode ? styles.topSectionWideMode : null,
-        ]}
-      >
-        <View style={styles.basicDetails}>
-          {!wideMode &&
-            <View style={styles.closeContainer}>
-              <HeaderIcon
-                iconName="close"
-                onPress={xOutOfTool}
-                uiStatus="faded"
-                style={styles.close}
+    return (
+      <>
+        <View
+          style={[
+            styles.topSection,
+            wideMode ? styles.topSectionWideMode : null,
+          ]}
+        >
+          <View style={styles.basicDetails}>
+            {!wideMode && (
+              <View style={styles.closeContainer}>
+                <HeaderIcon
+                  iconName="close"
+                  onPress={xOutOfTool}
+                  uiStatus="faded"
+                  style={styles.close}
+                />
+              </View>
+            )}
+            <View
+              style={
+                wideMode
+                  ? styles.basicDetailLineWideMode
+                  : styles.basicDetailLine
+              }
+            >
+              <Input
+                placeholder={i18n('Unnamed', '', 'enhanced')}
+                label={i18n('Tool name', '', 'enhanced')}
+                value={nameInEdit}
+                onChangeText={onToolNameChange}
               />
             </View>
-          }
-          <View style={wideMode ? styles.basicDetailLineWideMode : styles.basicDetailLine}>
-            <Input
-              placeholder={i18n("Unnamed", "", "enhanced")}
-              label={i18n("Tool name", "", "enhanced")}
-              value={nameInEdit}
-              onChangeText={onToolNameChange}
-            />
-          </View>
-          <View style={wideMode ? styles.basicDetailLineWideMode : styles.basicDetailLine}>
-            <Select
-              key={tool.uid}
-              label={i18n("Tool type", "", "enhanced")}
-              value={selectedOption.text}
-              selectedIndex={new IndexPath(toolTypes.indexOf(selectedOption))}
-              onSelect={onSelectToolType}
-              disabled={Object.keys(tool.data || {}).length > 0}
+            <View
+              style={
+                wideMode
+                  ? styles.basicDetailLineWideMode
+                  : styles.basicDetailLine
+              }
             >
-              {toolTypes.map(({ text }, idx) => (
-                <SelectItem
-                  key={idx}
-                  title={text}
+              {Platform.OS === 'web' ? (
+                <SelectWebPortalWrapper
+                  label={i18n('Tool type', '', 'enhanced')}
+                  value={selectedOption.text}
+                  options={toolTypes.map(({ text, toolType }) => ({
+                    title: text,
+                    toolType,
+                  }))}
+                  onSelect={(opt) =>
+                    goUpdateTool({ toolType: opt.toolType, data: {} })
+                  }
+                  disabled={Object.keys(tool.data || {}).length > 0}
                 />
-              ))}
-            </Select>
+              ) : (
+                <Select
+                  key={tool.uid}
+                  label={i18n('Tool type', '', 'enhanced')}
+                  value={selectedOption.text}
+                  selectedIndex={
+                    new IndexPath(toolTypes.indexOf(selectedOption))
+                  }
+                  onSelect={onSelectToolType}
+                  disabled={Object.keys(tool.data || {}).length > 0}
+                >
+                  {toolTypes.map(({ text }, idx) => (
+                    <SelectItem key={idx} title={text} />
+                  ))}
+                </Select>
+              )}
+            </View>
           </View>
+          <StatusAndActions
+            bookId={bookId}
+            setViewingPreview={setViewingPreview}
+            xOutOfTool={wideMode ? xOutOfTool : null}
+          />
         </View>
-        <StatusAndActions
-          bookId={bookId}
-          setViewingPreview={setViewingPreview}
-          xOutOfTool={wideMode ? xOutOfTool : null}
-        />
-      </View>
-      <ScrollView
-        style={[
-          styles.bottomSection,
-          wideMode ? styles.bottomSectionWideMode : null,
-        ]}
-        contentContainerStyle={styles.bottomSectionContent}
-      >
-        <EditToolData
-          classroomUid={classroomUid}
-          isDefaultClassroom={isDefaultClassroom}
-          classroom={classroom}
-          toolUid={tool.uid}
-          isDraft={!tool.published_at}
-          accountId={accountId}
-          dataStructure={toolInfoByType[tool.toolType].dataStructure}
-          transformData={toolInfoByType[tool.toolType].transformData}
-          data={tool.data}
-          goUpdateTool={goUpdateTool}
-        />
-      </ScrollView>
-    </>
-  )
-})
+        <ScrollView
+          style={[
+            styles.bottomSection,
+            wideMode ? styles.bottomSectionWideMode : null,
+          ]}
+          contentContainerStyle={styles.bottomSectionContent}
+        >
+          <EditToolData
+            classroomUid={classroomUid}
+            isDefaultClassroom={isDefaultClassroom}
+            classroom={classroom}
+            toolUid={tool.uid}
+            isDraft={!tool.published_at}
+            accountId={accountId}
+            dataStructure={toolInfoByType[tool.toolType].dataStructure}
+            transformData={toolInfoByType[tool.toolType].transformData}
+            data={tool.data}
+            goUpdateTool={goUpdateTool}
+          />
+        </ScrollView>
+      </>
+    );
+  },
+);
 
 const mapStateToProps = ({ books, userDataByBookId }) => ({
   books,
   userDataByBookId,
-})
+});
 
-const matchDispatchToProps = (dispatch) => bindActionCreators({
-  updateTool,
-  createTool,
-}, dispatch)
+const matchDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      updateTool,
+      createTool,
+    },
+    dispatch,
+  );
 
-export default connect(mapStateToProps, matchDispatchToProps)(EditTool)
+export default connect(mapStateToProps, matchDispatchToProps)(EditTool);
